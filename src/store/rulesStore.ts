@@ -5,6 +5,8 @@ interface RulesState {
   rules: Rule[]
   ruleGroups: RuleGroup[]
   selectedRuleId: string | null
+  setRules: (rules: Rule[]) => void
+  setRuleGroups: (groups: RuleGroup[]) => void
   addRule: (rule: Rule) => void
   updateRule: (id: string, updates: Partial<Rule>) => void
   deleteRule: (id: string) => void
@@ -18,6 +20,10 @@ export const useRulesStore = create<RulesState>((set) => ({
   rules: [],
   ruleGroups: [],
   selectedRuleId: null,
+
+  setRules: (rules) => set({ rules }),
+
+  setRuleGroups: (ruleGroups) => set({ ruleGroups }),
 
   addRule: (rule) =>
     set((state) => ({

@@ -17,6 +17,7 @@ A modern, AI-enhanced rules engine built with React, TypeScript, Tailwind CSS 4.
 - **Vite 6** - Lightning-fast build tool
 - **TypeScript** - Type safety throughout
 - **Tailwind CSS 4.0** - Latest Tailwind with new features
+- **Firebase** - Firestore database, Authentication, and Analytics
 - **Zustand** - Lightweight state management
 - **React Hook Form** - Performant form handling
 - **Zod** - Schema validation
@@ -44,15 +45,18 @@ npm install -D tailwindcss@3 @tailwindcss/vite@3
 src/
 ├── components/          # Reusable UI components
 │   └── ui/             # Base UI components (Button, Card, etc.)
+├── config/             # Configuration files
+│   └── firebase.ts     # Firebase initialization
 ├── features/           # Feature-specific components
 │   └── rules-builder/  # Rules builder feature
 │       └── components/ # Rules builder UI components
 ├── services/           # External services
-│   └── ai/            # Claude AI integration
+│   ├── ai/            # Claude AI integration
+│   └── firebase/      # Firebase services (Firestore, Auth)
 ├── store/             # Zustand state management
 ├── types/             # TypeScript type definitions
 ├── utils/             # Utility functions
-└── hooks/             # Custom React hooks
+└── hooks/             # Custom React hooks (including Firebase sync)
 ```
 
 ## 🎯 Getting Started
@@ -87,10 +91,21 @@ The app integrates Claude AI for:
 ## 🔑 Environment Variables
 
 Your API keys are already configured in `.env`:
+
+**Claude AI:**
 - `VITE_ANTHROPIC_API_KEY` - Claude AI API key
 - `VITE_ENABLE_CHAT` - Enable AI chat features
 
-⚠️ **Security Note:** The current setup uses `dangerouslyAllowBrowser: true` for development. For production, implement a backend API to keep your API key secure.
+**Firebase:**
+- `VITE_FIREBASE_API_KEY` - Firebase API key
+- `VITE_FIREBASE_AUTH_DOMAIN` - Firebase auth domain
+- `VITE_FIREBASE_PROJECT_ID` - Firebase project ID
+- `VITE_FIREBASE_STORAGE_BUCKET` - Firebase storage bucket
+- `VITE_FIREBASE_MESSAGING_SENDER_ID` - Firebase messaging sender ID
+- `VITE_FIREBASE_APP_ID` - Firebase app ID
+- `VITE_FIREBASE_MEASUREMENT_ID` - Firebase measurement ID
+
+⚠️ **Security Note:** The current setup uses `dangerouslyAllowBrowser: true` for Claude AI in development. For production, implement a backend API to keep your API key secure.
 
 ## 📝 Core Concepts
 
@@ -121,14 +136,25 @@ Pre-built components ready to use:
 - `Button` - Primary, secondary, outline, ghost, danger variants
 - `Card` - Card, CardHeader, CardContent
 
+## 🔥 Firebase Setup
+
+Before you start, set up Firebase:
+1. Go to [Firebase Console](https://console.firebase.google.com/)
+2. Select project `rulesp`
+3. Enable **Firestore Database** (start in test mode)
+4. Enable **Email/Password Authentication**
+
+See [FIREBASE.md](./FIREBASE.md) for complete setup instructions.
+
 ## 📚 Next Steps
 
 Now you can start building:
-1. Create your rules builder UI components
-2. Implement the rule execution engine
-3. Add more AI-powered features
-4. Build the drag-and-drop interface
-5. Add data persistence (localStorage or API)
+1. **Set up Firebase** (see above and FIREBASE.md)
+2. Create your rules builder UI components
+3. Implement the rule execution engine
+4. Add more AI-powered features
+5. Build the drag-and-drop interface
+6. Rules automatically save to Firestore!
 
 ## 🔧 Development Tools
 

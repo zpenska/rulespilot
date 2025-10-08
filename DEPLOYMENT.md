@@ -26,20 +26,44 @@ Or connect directly in Vercel Dashboard:
 
 ### 2. Configure Environment Variables
 
-**CRITICAL:** Add your Anthropic API key to Vercel:
+**CRITICAL:** Add all environment variables to Vercel.
 
+#### Via Vercel Dashboard (Recommended):
+1. Go to Project Settings → Environment Variables
+2. Add the following variables (get values from your `.env` file):
+
+**Claude AI:**
+- `VITE_ANTHROPIC_API_KEY` - Your Anthropic API key
+- `VITE_ENABLE_CHAT` - Set to `true`
+
+**Firebase:**
+- `VITE_FIREBASE_API_KEY` - Your Firebase API key
+- `VITE_FIREBASE_AUTH_DOMAIN` - Your Firebase auth domain
+- `VITE_FIREBASE_PROJECT_ID` - Your Firebase project ID
+- `VITE_FIREBASE_STORAGE_BUCKET` - Your Firebase storage bucket
+- `VITE_FIREBASE_MESSAGING_SENDER_ID` - Your Firebase messaging sender ID
+- `VITE_FIREBASE_APP_ID` - Your Firebase app ID
+- `VITE_FIREBASE_MEASUREMENT_ID` - Your Firebase measurement ID
+
+3. Check all environments (Production, Preview, Development) for each variable
+
+#### Via CLI:
 ```bash
+# Claude AI
 vercel env add VITE_ANTHROPIC_API_KEY
+vercel env add VITE_ENABLE_CHAT
+
+# Firebase
+vercel env add VITE_FIREBASE_API_KEY
+vercel env add VITE_FIREBASE_AUTH_DOMAIN
+vercel env add VITE_FIREBASE_PROJECT_ID
+vercel env add VITE_FIREBASE_STORAGE_BUCKET
+vercel env add VITE_FIREBASE_MESSAGING_SENDER_ID
+vercel env add VITE_FIREBASE_APP_ID
+vercel env add VITE_FIREBASE_MEASUREMENT_ID
 ```
 
-When prompted, paste your API key from `.env` file.
-
-Select: **Production**, **Preview**, and **Development**
-
-Or add via Vercel Dashboard:
-1. Go to Project Settings → Environment Variables
-2. Add `VITE_ANTHROPIC_API_KEY` with your key
-3. Check all environments (Production, Preview, Development)
+When prompted, paste the values from your `.env` file and select all environments.
 
 ### 3. Deploy
 
@@ -108,14 +132,35 @@ export default async function handler(req, res) {
 }
 ```
 
+## Firebase Setup for Production
+
+Before deploying, ensure Firebase is configured:
+
+1. **Enable Firestore Database:**
+   - Go to [Firebase Console](https://console.firebase.google.com/)
+   - Select project `rulesp`
+   - Enable Firestore Database
+   - Start in production mode with proper security rules
+
+2. **Enable Authentication:**
+   - Enable Email/Password authentication
+   - Configure authorized domains (add your Vercel domain)
+
+3. **Update Security Rules:**
+   - See [FIREBASE.md](./FIREBASE.md) for production security rules
+
 ## Deployment Checklist
 
 - [x] Code pushed to GitHub
+- [ ] Firebase Firestore enabled
+- [ ] Firebase Authentication enabled
+- [ ] Firebase security rules configured for production
 - [ ] Vercel project linked
-- [ ] Environment variables configured
+- [ ] All environment variables configured (Claude AI + Firebase)
 - [ ] First deployment successful
 - [ ] AI features tested in production
-- [ ] Security: Move API calls to backend
+- [ ] Firebase data persistence tested
+- [ ] Security: Move Claude API calls to backend (recommended)
 
 ## Quick Commands
 
