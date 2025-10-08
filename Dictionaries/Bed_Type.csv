@@ -1,0 +1,4 @@
+"Bed_Type","Bed_Type_Description","Active"
+"MEDRB1","Acute Care","true"
+"MEDRB2","Intensive Care","true"
+"MEDRB3","Subacute Care","true"

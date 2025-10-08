@@ -1,0 +1,7 @@
+"Request_Provider_Role","Request_Provider_Role_Description","System_Role","Active"
+"SUB","Submitting Provider","true","true"
+"SERVICING","Servicing Provider","true","true"
+"FACILITY","Facility","true","true"
+"REFERRING","Referring Provider","true","true"
+"ATTENDING","Attending Provider","true","true"
+"ORD","Ordering Provider","false","true"

@@ -1,0 +1,7 @@
+"Request_Urgency","Request_Urgency_Description","Active"
+"MEDRU1","Non-Urgent","true"
+"MEDRU2","Emergent","true"
+"MEDRU3","Expedited","true"
+"MEDRU4","Retrospective","true"
+"MEDRU5","Standard","true"
+"MEDRU6","Urgent","true"

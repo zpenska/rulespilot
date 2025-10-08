@@ -1,0 +1,6 @@
+"Review_Type","Review_Type_Description","Active"
+"MEDRRT01","Non Urgent Pre-Service","true"
+"MEDRRT02","Urgent Pre-Service","true"
+"MEDRRT03","Concurrent Review","true"
+"MEDRRT04","Post-Service","true"
+"MEDRRT05","Initial Review","true"

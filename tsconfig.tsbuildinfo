@@ -1,0 +1,1 @@
+{"root":["./src/app.tsx","./src/main.tsx","./src/vite-env.d.ts","./src/components/ui/button.tsx","./src/components/ui/card.tsx","./src/services/ai/claude.ts","./src/store/rulesstore.ts","./src/types/rules.ts","./src/utils/idgenerator.ts"],"version":"5.6.3"}

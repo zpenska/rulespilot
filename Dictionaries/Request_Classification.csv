@@ -1,0 +1,6 @@
+Request_Classification,Request_Classification_Description,Request_Group_Code,Request_Group_Description,Active
+PRIORAUTH,Prior Authorization,AUTHORIZATION,Authorization,TRUE
+POSTSERVICE,Post-Service,AUTHORIZATION,Authorization,TRUE
+CONCURRENT,Concurrent Review,AUTHORIZATION,Authorization,TRUE
+PHARMACY,Pharmacy,PHARMACY,Pharmacy,FALSE
+GRIEVANCE,Grievance,GRIEVANCE,Grievance,TRUE

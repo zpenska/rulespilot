@@ -1,0 +1,8 @@
+"Requester_Type","Requester_Type_Description","Active"
+"PER","Person","true"
+"PROV","Provider Office","true"
+"FM","Family Member","true"
+"POA","Power of Attonery","true"
+"LG","Legal Guardian","true"
+"FACS","Facility Staff","true"
+"OS","Office Staff","true"

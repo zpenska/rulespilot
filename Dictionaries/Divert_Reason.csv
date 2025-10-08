@@ -1,0 +1,6 @@
+"Divert_Reason","Divert_Reason_Description","Divert_Type","Designation","Active"
+"INWITHERR","Inpatient created in Error","","IPTOOP","true"
+"MEDPTADMIT","Patient Admitted Post Service","","OPTOIP","true"
+"MEDOPERROR","Outpatient Created in Error","","OPTOIP","true"
+"MEDPTSCHIP","Patient was Scheduled as Inpatient","","OPTOIP","true"
+"NEGOUT","Negotiated to Outpatient","","IPTOOP","true"

@@ -1,0 +1,5 @@
+"Appeal_Reason","Appeal_Reason_Description","Reconsideration_Type","Active"
+"ARS01","Medical Necessity","APPEAL","true"
+"ARS02","Co-insurance level","APPEAL","true"
+"ARS03","Out-of-Network","APPEAL","true"
+"ARS04","No Precertification","APPEAL","true"

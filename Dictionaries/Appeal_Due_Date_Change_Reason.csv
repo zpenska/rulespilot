@@ -1,0 +1,4 @@
+"Appeal_Due_Date_Reason","Appeal_Due_Date_Reason_Description","Reconsideration_Type","Active"
+"MEDAPL01","Reason manually entered","APPEAL","true"
+"MEDAPL02","System Calculated","APPEAL","true"
+"MEDAPL03","Expedited","APPEAL","true"

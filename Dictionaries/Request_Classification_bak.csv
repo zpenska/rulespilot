@@ -1,0 +1,6 @@
+"Request_Classification","Request_Classification_Description","Active"
+"PRIORAUTH","Prior Authorization","true"
+"PHARMACY","Pharmacy","true"
+"POSTSERVICE","Post-Service","true"
+"CONCURRENT","Concurrent Review","true"
+"GRIEVANCE","Grievance","true"
