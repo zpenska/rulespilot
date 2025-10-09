@@ -54,8 +54,7 @@ export default function RulesTable({ onEditRule, onCreateRule }: RulesTableProps
       filtered = filtered.filter(
         (r) =>
           r.code?.toLowerCase().includes(term) ||
-          r.ruleDesc.toLowerCase().includes(term) ||
-          r.category?.toLowerCase().includes(term)
+          r.ruleDesc.toLowerCase().includes(term)
       )
     }
 
@@ -154,61 +153,61 @@ export default function RulesTable({ onEditRule, onCreateRule }: RulesTableProps
   return (
     <div className="h-full flex flex-col bg-white">
       {/* Header */}
-      <div className="border-b border-gray-200 px-6 py-4">
-        <div className="flex items-center justify-between mb-4">
-          <h1 className="text-2xl font-semibold text-gray-900">Rules</h1>
+      <div className="border-b border-gray-200 px-4 py-3">
+        <div className="flex items-center justify-between mb-3">
+          <h1 className="text-lg font-semibold text-gray-900">Rules</h1>
           <button
             onClick={onCreateRule}
-            className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700"
+            className="inline-flex items-center px-3 py-1.5 border border-transparent rounded-md shadow-sm text-xs font-medium text-white bg-indigo-600 hover:bg-indigo-700"
           >
-            <Plus className="w-4 h-4 mr-2" />
+            <Plus className="w-3.5 h-3.5 mr-1.5" />
             New Rule
           </button>
         </div>
 
         {/* Tabs and Search */}
-        <div className="flex items-center justify-between">
-          <div className="flex space-x-4">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <div className="flex space-x-2">
             <button
               onClick={() => setActiveTab('all')}
-              className={`px-4 py-2 text-sm font-medium rounded-md ${
+              className={`px-3 py-1.5 text-xs font-medium rounded-md ${
                 activeTab === 'all'
                   ? 'bg-indigo-100 text-indigo-700'
                   : 'text-gray-500 hover:text-gray-700'
               }`}
             >
-              All <span className="ml-1 text-xs">({rules.length})</span>
+              All <span className="ml-1">({rules.length})</span>
             </button>
             <button
               onClick={() => setActiveTab('active')}
-              className={`px-4 py-2 text-sm font-medium rounded-md ${
+              className={`px-3 py-1.5 text-xs font-medium rounded-md ${
                 activeTab === 'active'
                   ? 'bg-indigo-100 text-indigo-700'
                   : 'text-gray-500 hover:text-gray-700'
               }`}
             >
-              Active <span className="ml-1 text-xs">({activeCount})</span>
+              Active <span className="ml-1">({activeCount})</span>
             </button>
             <button
               onClick={() => setActiveTab('inactive')}
-              className={`px-4 py-2 text-sm font-medium rounded-md ${
+              className={`px-3 py-1.5 text-xs font-medium rounded-md ${
                 activeTab === 'inactive'
                   ? 'bg-indigo-100 text-indigo-700'
                   : 'text-gray-500 hover:text-gray-700'
               }`}
             >
-              Inactive <span className="ml-1 text-xs">({inactiveCount})</span>
+              Inactive <span className="ml-1">({inactiveCount})</span>
             </button>
           </div>
 
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <Search className="absolute left-2.5 top-1/2 transform -translate-y-1/2 w-3.5 h-3.5 text-gray-400" />
             <input
               type="text"
               placeholder="Search by Code, Name..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 pr-4 py-2 border border-gray-300 rounded-md text-sm focus:ring-indigo-500 focus:border-indigo-500"
+              className="pl-9 pr-3 py-1.5 border border-gray-300 rounded-md text-xs focus:ring-indigo-500 focus:border-indigo-500 w-full sm:w-64"
             />
           </div>
         </div>
@@ -281,7 +280,7 @@ export default function RulesTable({ onEditRule, onCreateRule }: RulesTableProps
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50 sticky top-0">
               <tr>
-                <th className="px-6 py-3 text-left">
+                <th className="px-4 py-2 text-left">
                   <input
                     type="checkbox"
                     checked={selectedRules.size === filteredRules.length}
@@ -289,28 +288,25 @@ export default function RulesTable({ onEditRule, onCreateRule }: RulesTableProps
                     className="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
                   />
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Status
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Code
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Description
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Category
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Weight
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Rule Actions
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Updated
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Actions
                 </th>
               </tr>
@@ -318,7 +314,7 @@ export default function RulesTable({ onEditRule, onCreateRule }: RulesTableProps
             <tbody className="bg-white divide-y divide-gray-200">
               {filteredRules.map((rule) => (
                 <tr key={rule.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4">
+                  <td className="px-4 py-3">
                     <input
                       type="checkbox"
                       checked={selectedRules.has(rule.id)}
@@ -326,60 +322,57 @@ export default function RulesTable({ onEditRule, onCreateRule }: RulesTableProps
                       className="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
                     />
                   </td>
-                  <td className="px-6 py-4">
+                  <td className="px-4 py-3">
                     <button
                       onClick={() => handleToggleStatus(rule)}
-                      className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                      className={`inline-flex px-2.5 py-1 text-xs font-medium rounded-md ${
                         rule.status === 'active'
-                          ? 'bg-teal-500 text-white'
-                          : 'bg-gray-100 text-gray-800'
+                          ? 'bg-teal-50 text-teal-700'
+                          : 'bg-gray-100 text-gray-600'
                       }`}
                     >
                       {rule.status === 'active' ? 'Active' : 'Inactive'}
                     </button>
                   </td>
-                  <td className="px-6 py-4 text-sm font-medium text-gray-900">
+                  <td className="px-4 py-3 text-xs font-medium text-gray-900">
                     {rule.code}
                   </td>
-                  <td className="px-6 py-4 text-sm text-gray-500 max-w-md truncate">
+                  <td className="px-4 py-3 text-xs text-gray-600 max-w-md truncate">
                     {rule.ruleDesc}
                   </td>
-                  <td className="px-6 py-4 text-sm text-gray-500">
-                    {rule.category || '-'}
-                  </td>
-                  <td className="px-6 py-4 text-sm text-gray-500">
+                  <td className="px-4 py-3 text-xs text-gray-600">
                     {rule.weight ?? '-'}
                   </td>
-                  <td className="px-6 py-4 text-sm text-gray-500">
+                  <td className="px-4 py-3 text-xs text-gray-500">
                     {rule.actions ? (
                       <div className="flex flex-wrap gap-1">
                         {rule.actions.assignSkill && (
-                          <span className="inline-flex px-2 py-0.5 rounded text-xs bg-blue-100 text-blue-800">
+                          <span className="inline-flex px-2 py-0.5 rounded text-xs font-medium bg-indigo-50 text-indigo-600">
                             Assign Skill
                           </span>
                         )}
                         {rule.actions.assignLicense && (
-                          <span className="inline-flex px-2 py-0.5 rounded text-xs bg-cyan-100 text-cyan-800">
+                          <span className="inline-flex px-2 py-0.5 rounded text-xs font-medium bg-purple-50 text-purple-600">
                             Assign License
                           </span>
                         )}
                         {rule.actions.departmentRouting && (
-                          <span className="inline-flex px-2 py-0.5 rounded text-xs bg-purple-100 text-purple-800">
+                          <span className="inline-flex px-2 py-0.5 rounded text-xs font-medium bg-orange-50 text-orange-600">
                             Department Routing
                           </span>
                         )}
                         {rule.actions.close && (
-                          <span className="inline-flex px-2 py-0.5 rounded text-xs bg-red-100 text-red-800">
+                          <span className="inline-flex px-2 py-0.5 rounded text-xs font-medium bg-red-50 text-red-600">
                             Close
                           </span>
                         )}
                         {rule.actions.generateLetters && (
-                          <span className="inline-flex px-2 py-0.5 rounded text-xs bg-green-100 text-green-800">
-                            Generate Letter ({rule.actions.generateLetters.length})
+                          <span className="inline-flex px-2 py-0.5 rounded text-xs font-medium bg-green-50 text-green-600">
+                            Letter ({rule.actions.generateLetters.length})
                           </span>
                         )}
                         {rule.actions.hints && (
-                          <span className="inline-flex px-2 py-0.5 rounded text-xs bg-yellow-100 text-yellow-800">
+                          <span className="inline-flex px-2 py-0.5 rounded text-xs font-medium bg-yellow-50 text-yellow-600">
                             Hints
                           </span>
                         )}
@@ -388,10 +381,10 @@ export default function RulesTable({ onEditRule, onCreateRule }: RulesTableProps
                       '-'
                     )}
                   </td>
-                  <td className="px-6 py-4 text-sm text-gray-500">
+                  <td className="px-4 py-3 text-xs text-gray-600">
                     {new Date(rule.updatedAt).toLocaleDateString()}
                   </td>
-                  <td className="px-6 py-4 text-sm font-medium space-x-2">
+                  <td className="px-4 py-3 text-xs font-medium space-x-2">
                     <button
                       onClick={() => onEditRule(rule)}
                       className="text-indigo-600 hover:text-indigo-900"
