@@ -4,6 +4,10 @@ import { getFirestore } from 'firebase/firestore'
 import { getAuth } from 'firebase/auth'
 import { ENV, getMissingEnvVars } from './env'
 
+// Check if Firebase is properly configured
+const missingVars = getMissingEnvVars()
+const isConfigured = missingVars.length === 0
+
 // Firebase configuration from environment variables
 const firebaseConfig = {
   apiKey: ENV.FIREBASE_API_KEY || 'demo-api-key',
@@ -15,24 +19,24 @@ const firebaseConfig = {
   measurementId: ENV.FIREBASE_MEASUREMENT_ID || 'G-MEASUREMENT',
 }
 
-// Warn if environment variables are missing
-const missingVars = getMissingEnvVars()
-if (missingVars.length > 0) {
+// Only initialize if properly configured, otherwise set to null
+let app: any = null
+let analytics: any = null
+let db: any = null
+let auth: any = null
+
+if (isConfigured) {
+  app = initializeApp(firebaseConfig)
+  analytics = typeof window !== 'undefined' ? getAnalytics(app) : null
+  db = getFirestore(app)
+  auth = getAuth(app)
+  console.log('Firebase initialized successfully')
+} else {
   console.warn(
-    `Missing environment variables: ${missingVars.join(', ')}\n` +
-    'Firebase features will not work properly. Please add them in Vercel dashboard.'
+    `Firebase not configured. Missing: ${missingVars.join(', ')}\n` +
+    'App will run in demo mode without persistence. Add Firebase env vars in Vercel to enable database features.'
   )
 }
 
-// Initialize Firebase (will use demo values if env vars missing)
-const app = initializeApp(firebaseConfig)
-const analytics = typeof window !== 'undefined' ? getAnalytics(app) : null
-const db = getFirestore(app)
-const auth = getAuth(app)
-
-if (missingVars.length === 0) {
-  console.log('Firebase initialized successfully')
-}
-
-export { analytics, db, auth }
+export { analytics, db, auth, isConfigured }
 export default app

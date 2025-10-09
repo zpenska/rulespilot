@@ -315,6 +315,12 @@ export const subscribeToRules = (
   callback: (rules: Rule[]) => void,
   statusFilter?: 'active' | 'inactive'
 ): (() => void) => {
+  if (!db) {
+    console.warn('Firebase not configured, returning empty rules')
+    callback([])
+    return () => {}
+  }
+
   const rulesRef = collection(db, RULES_COLLECTION)
 
   let q = query(rulesRef, orderBy('updatedAt', 'desc'))
@@ -323,10 +329,17 @@ export const subscribeToRules = (
     q = query(rulesRef, where('status', '==', statusFilter), orderBy('updatedAt', 'desc'))
   }
 
-  return onSnapshot(q, (snapshot) => {
-    const rules = snapshot.docs.map((doc) => doc.data() as Rule)
-    callback(rules)
-  })
+  return onSnapshot(
+    q,
+    (snapshot) => {
+      const rules = snapshot.docs.map((doc) => doc.data() as Rule)
+      callback(rules)
+    },
+    (error) => {
+      console.error('Firestore subscription error:', error)
+      callback([])
+    }
+  )
 }
 
 /**

@@ -4,7 +4,8 @@ import RuleBuilder from './components/RuleBuilder'
 import AIAssistant from './components/AIAssistant'
 import { Rule } from './types/rules'
 import { initializeDictionaries } from './services/dictionaryService'
-import { Sparkles } from 'lucide-react'
+import { isConfigured as isFirebaseConfigured } from './config/firebase'
+import { Sparkles, AlertCircle } from 'lucide-react'
 
 function App() {
   const [showRuleBuilder, setShowRuleBuilder] = useState(false)
@@ -102,6 +103,26 @@ function App() {
           </div>
         </div>
       </header>
+
+      {/* Firebase Warning Banner */}
+      {!isFirebaseConfigured && (
+        <div className="bg-amber-50 border-b border-amber-200 px-6 py-3">
+          <div className="flex items-center space-x-2">
+            <AlertCircle className="w-5 h-5 text-amber-600" />
+            <p className="text-sm text-amber-800">
+              <strong>Demo Mode:</strong> Firebase is not configured. Rules will not persist.
+              <a
+                href="https://github.com/zpenska/rulespilot#firebase-setup"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="ml-1 underline hover:text-amber-900"
+              >
+                Add Firebase credentials
+              </a> to enable database features.
+            </p>
+          </div>
+        </div>
+      )}
 
       {/* Main Content */}
       <main className="flex-1 flex flex-col lg:flex-row">
