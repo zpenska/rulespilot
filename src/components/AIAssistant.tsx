@@ -14,9 +14,6 @@ export default function AIAssistant({ onRuleGenerated, onClose }: AIAssistantPro
   const [error, setError] = useState('')
   const [suggestions] = useState([
     'Request with Member in Pennsylvania that has Custom Field MEMCFLD1 not valued with LOW and a Servicing Provider with Primary Specialty Orthopedics',
-    'Medicare members over 65 in PA/NJ requiring orthopedic surgery',
-    'High-unit physical therapy requests in Q1 2024',
-    'Non-emergency requests excluding high-risk members',
     'Emergency urgent requests for members in New Jersey should assign to skill code EMERG001',
     'Inpatient requests for Medicare members over 65 should reassign to department AUTH001 and generate letter Master Ordering Inpatient',
   ])
