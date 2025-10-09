@@ -30,6 +30,18 @@ const generateRuleCode = (): string => {
 }
 
 /**
+ * Remove undefined fields from an object
+ */
+const removeUndefinedFields = <T extends Record<string, any>>(obj: T): Partial<T> => {
+  return Object.entries(obj).reduce((acc, [key, value]) => {
+    if (value !== undefined) {
+      acc[key] = value
+    }
+    return acc
+  }, {} as Partial<T>)
+}
+
+/**
  * Create a new rule
  */
 export const createRule = async (rule: Omit<Rule, 'id' | 'createdAt' | 'updatedAt'>): Promise<Rule> => {
@@ -48,8 +60,11 @@ export const createRule = async (rule: Omit<Rule, 'id' | 'createdAt' | 'updatedA
     updatedAt: now,
   }
 
+  // Remove undefined fields before saving to Firestore
+  const cleanedRule = removeUndefinedFields(newRule)
+
   const docRef = doc(db, RULES_COLLECTION, id)
-  await setDoc(docRef, newRule)
+  await setDoc(docRef, cleanedRule)
 
   return newRule
 }
@@ -121,14 +136,12 @@ export const getInactiveRules = async (): Promise<Rule[]> => {
 export const updateRule = async (id: string, updates: Partial<Rule>): Promise<void> => {
   const docRef = doc(db, RULES_COLLECTION, id)
 
-  await setDoc(
-    docRef,
-    {
-      ...updates,
-      updatedAt: new Date().toISOString(),
-    },
-    { merge: true }
-  )
+  const cleanedUpdates = removeUndefinedFields({
+    ...updates,
+    updatedAt: new Date().toISOString(),
+  })
+
+  await setDoc(docRef, cleanedUpdates, { merge: true })
 }
 
 /**
