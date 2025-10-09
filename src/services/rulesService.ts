@@ -294,6 +294,36 @@ export const exportAsAutoWorkflowRules = async (
 }
 
 /**
+ * Import rules from JSON
+ */
+export const importRulesFromJSON = async (jsonData: RuleExport[]): Promise<Rule[]> => {
+  const importedRules: Rule[] = []
+
+  for (const ruleData of jsonData) {
+    try {
+      // Convert RuleExport to Rule format
+      const ruleToCreate: Partial<Rule> = {
+        ruleDesc: ruleData.ruleDesc,
+        standardFieldCriteria: ruleData.standardFieldCriteria || [],
+        customFieldCriteria: ruleData.customFieldCriteria || [],
+        weight: ruleData.weight,
+        status: ruleData.isActive ? 'active' : 'inactive',
+        actions: ruleData.actions,
+      }
+
+      // Create the rule
+      const createdRule = await createRule(ruleToCreate as Rule)
+      importedRules.push(createdRule)
+    } catch (error) {
+      console.error('Error importing rule:', ruleData.ruleDesc, error)
+      // Continue with other rules even if one fails
+    }
+  }
+
+  return importedRules
+}
+
+/**
  * Search rules
  */
 export const searchRules = async (searchTerm: string): Promise<Rule[]> => {
@@ -340,27 +370,6 @@ export const subscribeToRules = (
       callback([])
     }
   )
-}
-
-/**
- * Import rules from JSON
- */
-export const importRulesFromJSON = async (rules: RuleExport[]): Promise<Rule[]> => {
-  const importedRules: Rule[] = []
-
-  for (const ruleData of rules) {
-    const rule = await createRule({
-      ruleDesc: ruleData.ruleDesc,
-      standardFieldCriteria: ruleData.standardFieldCriteria,
-      customFieldCriteria: ruleData.customFieldCriteria || [],
-      weight: ruleData.weight,
-      status: ruleData.isActive ? 'active' : 'inactive',
-      actions: ruleData.actions,
-    })
-    importedRules.push(rule)
-  }
-
-  return importedRules
 }
 
 /**
