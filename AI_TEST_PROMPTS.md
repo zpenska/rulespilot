@@ -64,16 +64,25 @@ Members in PA with member custom field RISK_SCORE not valued with HIGH and servi
 ```
 Emergency urgent requests for members in New Jersey should assign to skill code EMERG001
 ```
+Expected: `actions: { assignSkill: { skillCode: "EMERG001" } }`
 
 ### 12. Rule with Multiple Criteria and Actions
 ```
 Inpatient requests for Medicare members over 65 with servicing provider NPI 1234567890 should reassign to department AUTH001 and generate letter Master Ordering Inpatient
 ```
+Expected: `actions: { reassign: { departmentCode: "AUTH001" }, generateLetters: [{ letterName: "Master Ordering Inpatient" }] }`
 
-### 13. Diagnosis-Based Rule
+### 13. Diagnosis-Based Rule with Close Action
 ```
 Approved determined referrals with primary diagnosis code K36 should close with disposition APPROVED
 ```
+Expected: `actions: { close: { dispositionCode: "APPROVED" } }`
+
+### 14. Auto-Approval Rule
+```
+Outpatient physical therapy requests under 10 visits should auto-close as approved
+```
+Expected: `actions: { close: { dispositionCode: "AUTO_APPROVED" } }`
 
 ## Expected JSON Output Example
 
