@@ -82,19 +82,19 @@ function App() {
     <div className="min-h-screen bg-gray-50 flex flex-col">
       {/* Header */}
       <header className="bg-white border-b border-gray-200 sticky top-0 z-10">
-        <div className="mx-auto px-4 py-4 sm:px-6 lg:px-8">
+        <div className="mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-bold tracking-tight text-gray-900">
+              <h1 className="text-xl font-bold text-gray-900">
                 Rules Pilot
               </h1>
-              <p className="text-sm text-gray-500">
+              <p className="text-sm text-gray-500 mt-0.5">
                 AI-Powered Healthcare Authorization Rules Engine
               </p>
             </div>
             <button
               onClick={() => setShowAIAssistant(!showAIAssistant)}
-              className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700"
+              className="inline-flex items-center px-4 py-2 border border-transparent rounded-md text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
             >
               <Sparkles className="w-4 h-4 mr-2" />
               AI Assistant
