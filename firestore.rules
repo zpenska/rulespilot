@@ -1,0 +1,23 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Rules collection - allow read/write for authenticated users
+    // For now, allow all (update this in production)
+    match /rules/{ruleId} {
+      allow read, write: if true;
+    }
+
+    // Dictionaries collection - allow read/write for authenticated users
+    // For now, allow all (update this in production)
+    match /dictionaries/{dictionaryId} {
+      allow read, write: if true;
+    }
+
+    // Default deny all other collections
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

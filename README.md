@@ -94,13 +94,12 @@ npm install
 ```
 
 ### 2. Configure Environment Variables
-Create a `.env` file:
 
-```env
-# Claude AI (Anthropic)
+**For Vercel (Production):**
+Add these in Vercel Dashboard → Settings → Environment Variables:
+
+```
 VITE_ANTHROPIC_API_KEY=your_anthropic_api_key
-
-# Firebase Configuration
 VITE_FIREBASE_API_KEY=your_firebase_api_key
 VITE_FIREBASE_AUTH_DOMAIN=your_project.firebaseapp.com
 VITE_FIREBASE_PROJECT_ID=your_project_id
@@ -110,20 +109,51 @@ VITE_FIREBASE_APP_ID=your_app_id
 VITE_FIREBASE_MEASUREMENT_ID=your_measurement_id
 ```
 
-### 3. Set Up Firebase
-1. Create a Firebase project at https://console.firebase.google.com
-2. Enable Firestore Database
-3. Copy your Firebase config to the `.env` file
-4. The app will auto-create these collections:
-   - `dictionaries` - for dictionary data
-   - `rules` - for rules storage
+**For Local Development:**
+Create a `.env` file with the same variables above.
 
-### 4. Get Claude API Key
+### 3. Set Up Firestore Database
+
+**⚠️ IMPORTANT: You must configure Firestore security rules or the app will show 400 errors**
+
+#### Option A: Firebase Console (Easiest)
+
+1. Go to [Firebase Console](https://console.firebase.google.com)
+2. Select your project
+3. Click **Firestore Database** → **Create database** (if not created)
+4. Choose **Start in test mode** (or production mode)
+5. Click **Rules** tab
+6. Copy the contents of `firestore.rules` from this repo
+7. Paste and click **Publish**
+
+#### Option B: Firebase CLI
+
+```bash
+# Install Firebase CLI
+npm install -g firebase-tools
+
+# Login
+firebase login
+
+# Deploy rules and indexes
+firebase deploy --only firestore
+```
+
+### 4. Verify Setup
+
+1. Refresh your app
+2. Warning banner should disappear
+3. **Dictionaries auto-upload** on first load from `/public/dictionaries/*.csv`
+4. Create a test rule to verify persistence
+
+📖 **See [FIRESTORE_SETUP.md](./FIRESTORE_SETUP.md) for detailed troubleshooting**
+
+### 5. Get Claude API Key
 1. Sign up at https://console.anthropic.com
 2. Create an API key
-3. Add it to your `.env` file
+3. Add to Vercel environment variables or `.env`
 
-### 5. Run the Application
+### 6. Run the Application
 ```bash
 npm run dev
 ```
