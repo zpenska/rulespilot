@@ -493,23 +493,21 @@ Actions define what should happen when a rule's criteria match. Rules can have z
   - "assign to SKILL1" → { "assignSkill": { "skillCode": "SKILL1" } }
   - "route to cardiology skill" → { "assignSkill": { "skillCode": "CARDIO_SKILL" } }
 
-**2. reassign**
-- **Purpose**: Reassigns the request to a different department
-- **Structure**: { "reassign": { "departmentCode": "DEPT2" } }
-- **Natural Language**: "reassign to", "move to department", "transfer to"
+**2. assignLicense**
+- **Purpose**: Assigns a license type to the request
+- **Structure**: { "assignLicense": { "licenseCode": "LIC1" } }
+- **Natural Language**: "assign license", "route to license", "assign to license"
 - **Examples**:
-  - "reassign to DEPT2" → { "reassign": { "departmentCode": "DEPT2" } }
-  - "transfer to clinical review" → { "reassign": { "departmentCode": "CLINICAL_REVIEW" } }
+  - "assign to LIC1" → { "assignLicense": { "licenseCode": "LIC1" } }
+  - "assign RN license" → { "assignLicense": { "licenseCode": "RN" } }
 
-**3. generateLetters**
-- **Purpose**: Generates one or more notification letters
-- **Structure**: { "generateLetters": [{ "letterName": "Letter Template Name" }] }
-- **Natural Language**: "generate letter", "send letter", "create notification"
+**3. departmentRouting**
+- **Purpose**: Routes the request to a different department
+- **Structure**: { "departmentRouting": { "departmentCode": "DEPT2" } }
+- **Natural Language**: "route to department", "send to department", "department routing"
 - **Examples**:
-  - "generate Master Ordering Outpatient letter" →
-    { "generateLetters": [{ "letterName": "Master Ordering Outpatient" }] }
-  - "send approval and denial letters" →
-    { "generateLetters": [{ "letterName": "Approval Letter" }, { "letterName": "Denial Letter" }] }
+  - "route to DEPT2" → { "departmentRouting": { "departmentCode": "DEPT2" } }
+  - "send to clinical review" → { "departmentRouting": { "departmentCode": "CLINICAL_REVIEW" } }
 
 **4. close**
 - **Purpose**: Closes the request with a specific disposition code
@@ -519,22 +517,41 @@ Actions define what should happen when a rule's criteria match. Rules can have z
   - "close with DISP1" → { "close": { "dispositionCode": "DISP1" } }
   - "auto-close as approved" → { "close": { "dispositionCode": "AUTO_APPROVED" } }
 
+**5. generateLetters**
+- **Purpose**: Generates one or more notification letters
+- **Structure**: { "generateLetters": [{ "letterName": "Letter Template Name" }] }
+- **Natural Language**: "generate letter", "send letter", "create notification"
+- **Examples**:
+  - "generate Master Ordering Outpatient letter" →
+    { "generateLetters": [{ "letterName": "Master Ordering Outpatient" }] }
+  - "send approval and denial letters" →
+    { "generateLetters": [{ "letterName": "Approval Letter" }, { "letterName": "Denial Letter" }] }
+
+**6. hints**
+- **Purpose**: Adds a hint/message to display to the user
+- **Structure**: { "hints": { "message": "Review medical necessity" } }
+- **Natural Language**: "add hint", "show message", "display hint"
+- **Examples**:
+  - "add hint to review medical necessity" → { "hints": { "message": "Review medical necessity" } }
+  - "show message about prior auth" → { "hints": { "message": "Prior auth required" } }
+
 ### Multiple Actions Example
 Rules can have multiple actions that all execute when the rule matches:
 {
   "actions": {
-    "reassign": { "departmentCode": "DEPT2" },
-    "generateLetters": [{ "letterName": "Master Ordering Outpatient" }]
+    "departmentRouting": { "departmentCode": "DEPT2" },
+    "generateLetters": [{ "letterName": "Master Ordering Outpatient" }],
+    "hints": { "message": "Review medical necessity documentation" }
   }
 }
 
 ### Interpreting Action Phrases
-- "assign to X" → assignSkill
-- "reassign to X" or "move to X" → reassign
-- "generate X letter" or "send X" → generateLetters
+- "assign to X skill" → assignSkill
+- "assign X license" → assignLicense
+- "route to X department" or "send to X department" → departmentRouting
 - "close with X" or "disposition X" → close
-- "route to X skill" → assignSkill
-- "transfer to X department" → reassign
+- "generate X letter" or "send X letter" → generateLetters
+- "add hint" or "show message" → hints
 
 ### Complete Rule with Actions Example
 "Outpatient with Service 44950 should be assigned to SKILL1"
@@ -819,9 +836,11 @@ ALWAYS return valid JSON in this exact format:
   "weight": 100,  // numeric priority, required
   "actions": {  // optional - include if actions are specified
     "assignSkill": { "skillCode": "SKILL1" },
-    "reassign": { "departmentCode": "DEPT2" },
+    "assignLicense": { "licenseCode": "LIC1" },
+    "departmentRouting": { "departmentCode": "DEPT2" },
+    "close": { "dispositionCode": "DISP1" },
     "generateLetters": [{ "letterName": "Letter Name" }],
-    "close": { "dispositionCode": "DISP1" }
+    "hints": { "message": "Review medical necessity" }
   }
 }
 

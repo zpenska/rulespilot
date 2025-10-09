@@ -1,10 +1,14 @@
 import { useState, useEffect } from 'react'
-import { Search, Plus, Download, Trash2, ArrowRight } from 'lucide-react'
+import { Search, Plus, Download, Trash2, Power, PowerOff, Copy, Eye } from 'lucide-react'
 import { Rule } from '../types/rules'
 import {
   deleteRule,
+  updateRule,
+  bulkUpdateStatus,
   bulkDeleteRules,
+  cloneRule,
   exportAllRulesToJSON,
+  exportActiveRulesToJSON,
   subscribeToRules,
 } from '../services/rulesService'
 
@@ -23,19 +27,28 @@ export default function RulesTable({ onEditRule, onCreateRule }: RulesTableProps
   const [activeTab, setActiveTab] = useState<TabFilter>('all')
   const [loading, setLoading] = useState(true)
 
+  // Subscribe to rules changes
   useEffect(() => {
     const unsubscribe = subscribeToRules((updatedRules) => {
       setRules(updatedRules)
       setLoading(false)
     })
+
     return () => unsubscribe()
   }, [])
 
+  // Filter rules based on active tab and search
   useEffect(() => {
     let filtered = rules
-    if (activeTab === 'active') filtered = filtered.filter((r) => r.status === 'active')
-    else if (activeTab === 'inactive') filtered = filtered.filter((r) => r.status === 'inactive')
 
+    // Filter by tab
+    if (activeTab === 'active') {
+      filtered = filtered.filter((r) => r.status === 'active')
+    } else if (activeTab === 'inactive') {
+      filtered = filtered.filter((r) => r.status === 'inactive')
+    }
+
+    // Filter by search
     if (searchTerm) {
       const term = searchTerm.toLowerCase()
       filtered = filtered.filter(
@@ -45,19 +58,32 @@ export default function RulesTable({ onEditRule, onCreateRule }: RulesTableProps
           r.category?.toLowerCase().includes(term)
       )
     }
+
     setFilteredRules(filtered)
   }, [rules, activeTab, searchTerm])
 
   const handleSelectAll = () => {
-    setSelectedRules(
-      selectedRules.size === filteredRules.length ? new Set() : new Set(filteredRules.map((r) => r.id))
-    )
+    if (selectedRules.size === filteredRules.length) {
+      setSelectedRules(new Set())
+    } else {
+      setSelectedRules(new Set(filteredRules.map((r) => r.id)))
+    }
   }
 
   const handleSelectRule = (ruleId: string) => {
     const newSelected = new Set(selectedRules)
-    newSelected.has(ruleId) ? newSelected.delete(ruleId) : newSelected.add(ruleId)
+    if (newSelected.has(ruleId)) {
+      newSelected.delete(ruleId)
+    } else {
+      newSelected.add(ruleId)
+    }
     setSelectedRules(newSelected)
+  }
+
+  const handleToggleStatus = async (rule: Rule) => {
+    await updateRule(rule.id, {
+      status: rule.status === 'active' ? 'inactive' : 'active',
+    })
   }
 
   const handleDelete = async (ruleId: string) => {
@@ -66,8 +92,23 @@ export default function RulesTable({ onEditRule, onCreateRule }: RulesTableProps
     }
   }
 
+  const handleClone = async (rule: Rule) => {
+    const cloned = await cloneRule(rule.id)
+    onEditRule(cloned)
+  }
+
+  const handleBulkActivate = async () => {
+    await bulkUpdateStatus(Array.from(selectedRules), 'active')
+    setSelectedRules(new Set())
+  }
+
+  const handleBulkDeactivate = async () => {
+    await bulkUpdateStatus(Array.from(selectedRules), 'inactive')
+    setSelectedRules(new Set())
+  }
+
   const handleBulkDelete = async () => {
-    if (confirm(`Delete ${selectedRules.size} selected rules?`)) {
+    if (confirm(`Are you sure you want to delete ${selectedRules.size} rules?`)) {
       await bulkDeleteRules(Array.from(selectedRules))
       setSelectedRules(new Set())
     }
@@ -75,29 +116,50 @@ export default function RulesTable({ onEditRule, onCreateRule }: RulesTableProps
 
   const handleExportAll = async () => {
     const data = await exportAllRulesToJSON()
-    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' })
+    downloadJSON(data, 'all-rules.json')
+  }
+
+  const handleExportActive = async () => {
+    const data = await exportActiveRulesToJSON()
+    downloadJSON(data, 'active-rules.json')
+  }
+
+  const handleViewJSON = (rule: Rule) => {
+    const json = {
+      ruleDesc: rule.ruleDesc,
+      standardFieldCriteria: rule.standardFieldCriteria,
+      customFieldCriteria: rule.customFieldCriteria,
+      weight: rule.weight,
+    }
+    alert(JSON.stringify(json, null, 2))
+  }
+
+  const downloadJSON = (data: any, filename: string) => {
+    const blob = new Blob([JSON.stringify(data, null, 2)], {
+      type: 'application/json',
+    })
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
     a.href = url
-    a.download = 'all-rules.json'
+    a.download = filename
+    document.body.appendChild(a)
     a.click()
+    document.body.removeChild(a)
+    URL.revokeObjectURL(url)
   }
 
   const activeCount = rules.filter((r) => r.status === 'active').length
   const inactiveCount = rules.filter((r) => r.status === 'inactive').length
 
   return (
-    <div className="flex-1 flex flex-col bg-gray-50 min-h-0">
+    <div className="h-full flex flex-col bg-white">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-6 py-4">
+      <div className="border-b border-gray-200 px-6 py-4">
         <div className="flex items-center justify-between mb-4">
-          <div>
-            <h2 className="text-xl font-semibold text-gray-900">Rules</h2>
-            <p className="text-sm text-gray-500 mt-1">Manage authorization rules</p>
-          </div>
+          <h1 className="text-2xl font-semibold text-gray-900">Rules</h1>
           <button
             onClick={onCreateRule}
-            className="inline-flex items-center px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700"
           >
             <Plus className="w-4 h-4 mr-2" />
             New Rule
@@ -106,86 +168,114 @@ export default function RulesTable({ onEditRule, onCreateRule }: RulesTableProps
 
         {/* Tabs and Search */}
         <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-1">
+          <div className="flex space-x-4">
             <button
               onClick={() => setActiveTab('all')}
-              className={`px-3 py-2 text-sm font-medium rounded-md ${
+              className={`px-4 py-2 text-sm font-medium rounded-md ${
                 activeTab === 'all'
-                  ? 'bg-indigo-50 text-indigo-700'
-                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+                  ? 'bg-indigo-100 text-indigo-700'
+                  : 'text-gray-500 hover:text-gray-700'
               }`}
             >
               All <span className="ml-1 text-xs">({rules.length})</span>
             </button>
             <button
               onClick={() => setActiveTab('active')}
-              className={`px-3 py-2 text-sm font-medium rounded-md ${
+              className={`px-4 py-2 text-sm font-medium rounded-md ${
                 activeTab === 'active'
-                  ? 'bg-indigo-50 text-indigo-700'
-                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+                  ? 'bg-indigo-100 text-indigo-700'
+                  : 'text-gray-500 hover:text-gray-700'
               }`}
             >
               Active <span className="ml-1 text-xs">({activeCount})</span>
             </button>
             <button
               onClick={() => setActiveTab('inactive')}
-              className={`px-3 py-2 text-sm font-medium rounded-md ${
+              className={`px-4 py-2 text-sm font-medium rounded-md ${
                 activeTab === 'inactive'
-                  ? 'bg-indigo-50 text-indigo-700'
-                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+                  ? 'bg-indigo-100 text-indigo-700'
+                  : 'text-gray-500 hover:text-gray-700'
               }`}
             >
               Inactive <span className="ml-1 text-xs">({inactiveCount})</span>
             </button>
           </div>
 
-          <div className="flex items-center space-x-3">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-              <input
-                type="text"
-                placeholder="Search by code, name..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 pr-4 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent w-64"
-              />
-            </div>
-            {selectedRules.size > 0 && (
-              <div className="flex items-center space-x-2">
-                <span className="text-sm text-gray-600">{selectedRules.size} selected</span>
-                <button
-                  onClick={handleBulkDelete}
-                  className="p-2 text-red-600 hover:bg-red-50 rounded-md"
-                >
-                  <Trash2 className="w-4 h-4" />
-                </button>
-              </div>
-            )}
-            <button
-              onClick={handleExportAll}
-              className="p-2 text-gray-600 hover:bg-gray-100 rounded-md"
-            >
-              <Download className="w-4 h-4" />
-            </button>
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <input
+              type="text"
+              placeholder="Search by Code, Name..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10 pr-4 py-2 border border-gray-300 rounded-md text-sm focus:ring-indigo-500 focus:border-indigo-500"
+            />
           </div>
         </div>
+
+        {/* Bulk Actions */}
+        {selectedRules.size > 0 && (
+          <div className="mt-4 flex items-center space-x-2">
+            <span className="text-sm text-gray-500">
+              {selectedRules.size} selected
+            </span>
+            <button
+              onClick={handleBulkActivate}
+              className="inline-flex items-center px-3 py-1 border border-gray-300 rounded-md text-sm text-gray-700 hover:bg-gray-50"
+            >
+              <Power className="w-3 h-3 mr-1" />
+              Activate
+            </button>
+            <button
+              onClick={handleBulkDeactivate}
+              className="inline-flex items-center px-3 py-1 border border-gray-300 rounded-md text-sm text-gray-700 hover:bg-gray-50"
+            >
+              <PowerOff className="w-3 h-3 mr-1" />
+              Deactivate
+            </button>
+            <button
+              onClick={handleBulkDelete}
+              className="inline-flex items-center px-3 py-1 border border-gray-300 rounded-md text-sm text-red-600 hover:bg-red-50"
+            >
+              <Trash2 className="w-3 h-3 mr-1" />
+              Delete
+            </button>
+            <div className="flex-1" />
+            <button
+              onClick={handleExportAll}
+              className="inline-flex items-center px-3 py-1 border border-gray-300 rounded-md text-sm text-gray-700 hover:bg-gray-50"
+            >
+              <Download className="w-3 h-3 mr-1" />
+              Export All
+            </button>
+            <button
+              onClick={handleExportActive}
+              className="inline-flex items-center px-3 py-1 border border-gray-300 rounded-md text-sm text-gray-700 hover:bg-gray-50"
+            >
+              <Download className="w-3 h-3 mr-1" />
+              Export Active
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Table */}
       <div className="flex-1 overflow-auto">
         {loading ? (
           <div className="flex items-center justify-center h-64">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
+            <div className="text-gray-500">Loading rules...</div>
           </div>
         ) : filteredRules.length === 0 ? (
-          <div className="flex flex-col items-center justify-center h-64">
-            <p className="text-gray-500 mb-4">No rules found</p>
-            <button
-              onClick={onCreateRule}
-              className="text-indigo-600 hover:text-indigo-700 text-sm font-medium"
-            >
-              Create your first rule
-            </button>
+          <div className="flex items-center justify-center h-64">
+            <div className="text-center">
+              <p className="text-gray-500">No rules found</p>
+              <button
+                onClick={onCreateRule}
+                className="mt-4 text-indigo-600 hover:text-indigo-500"
+              >
+                Create your first rule
+              </button>
+            </div>
           </div>
         ) : (
           <table className="min-w-full divide-y divide-gray-200">
@@ -194,7 +284,7 @@ export default function RulesTable({ onEditRule, onCreateRule }: RulesTableProps
                 <th className="px-6 py-3 text-left">
                   <input
                     type="checkbox"
-                    checked={selectedRules.size === filteredRules.length && filteredRules.length > 0}
+                    checked={selectedRules.size === filteredRules.length}
                     onChange={handleSelectAll}
                     className="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
                   />
@@ -206,20 +296,29 @@ export default function RulesTable({ onEditRule, onCreateRule }: RulesTableProps
                   Code
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Name
+                  Description
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Category
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Weight
                 </th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Rule Actions
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Updated
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Actions
                 </th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
               {filteredRules.map((rule) => (
-                <tr key={rule.id} className="hover:bg-gray-50 cursor-pointer" onClick={() => onEditRule(rule)}>
-                  <td className="px-6 py-4" onClick={(e) => e.stopPropagation()}>
+                <tr key={rule.id} className="hover:bg-gray-50">
+                  <td className="px-6 py-4">
                     <input
                       type="checkbox"
                       checked={selectedRules.has(rule.id)}
@@ -228,37 +327,95 @@ export default function RulesTable({ onEditRule, onCreateRule }: RulesTableProps
                     />
                   </td>
                   <td className="px-6 py-4">
-                    <span
-                      className={`inline-flex items-center px-3 py-1 rounded-md text-sm font-medium ${
+                    <button
+                      onClick={() => handleToggleStatus(rule)}
+                      className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
                         rule.status === 'active'
-                          ? 'bg-indigo-50 text-indigo-700'
-                          : 'bg-gray-100 text-gray-700'
+                          ? 'bg-green-100 text-green-800'
+                          : 'bg-gray-100 text-gray-800'
                       }`}
                     >
-                      <span className="mr-1.5">•</span>
                       {rule.status === 'active' ? 'Active' : 'Inactive'}
-                    </span>
+                    </button>
                   </td>
-                  <td className="px-6 py-4 text-sm font-medium text-gray-900">{rule.code}</td>
-                  <td className="px-6 py-4 text-sm text-gray-900">{rule.ruleDesc}</td>
-                  <td className="px-6 py-4 text-sm text-gray-500">{rule.weight || 100}</td>
-                  <td className="px-6 py-4 text-right" onClick={(e) => e.stopPropagation()}>
-                    <div className="flex items-center justify-end space-x-2">
-                      <button
-                        onClick={() => handleDelete(rule.id)}
-                        className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors"
-                        title="Delete"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
-                      <button
-                        onClick={() => onEditRule(rule)}
-                        className="p-1.5 text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 rounded transition-colors"
-                        title="View details"
-                      >
-                        <ArrowRight className="w-4 h-4" />
-                      </button>
-                    </div>
+                  <td className="px-6 py-4 text-sm font-medium text-gray-900">
+                    {rule.code}
+                  </td>
+                  <td className="px-6 py-4 text-sm text-gray-500 max-w-md truncate">
+                    {rule.ruleDesc}
+                  </td>
+                  <td className="px-6 py-4 text-sm text-gray-500">
+                    {rule.category || '-'}
+                  </td>
+                  <td className="px-6 py-4 text-sm text-gray-500">
+                    {rule.weight ?? '-'}
+                  </td>
+                  <td className="px-6 py-4 text-sm text-gray-500">
+                    {rule.actions ? (
+                      <div className="flex flex-wrap gap-1">
+                        {rule.actions.assignSkill && (
+                          <span className="inline-flex px-2 py-0.5 rounded text-xs bg-blue-100 text-blue-800">
+                            Assign Skill
+                          </span>
+                        )}
+                        {rule.actions.assignLicense && (
+                          <span className="inline-flex px-2 py-0.5 rounded text-xs bg-cyan-100 text-cyan-800">
+                            Assign License
+                          </span>
+                        )}
+                        {rule.actions.departmentRouting && (
+                          <span className="inline-flex px-2 py-0.5 rounded text-xs bg-purple-100 text-purple-800">
+                            Department Routing
+                          </span>
+                        )}
+                        {rule.actions.close && (
+                          <span className="inline-flex px-2 py-0.5 rounded text-xs bg-red-100 text-red-800">
+                            Close
+                          </span>
+                        )}
+                        {rule.actions.generateLetters && (
+                          <span className="inline-flex px-2 py-0.5 rounded text-xs bg-green-100 text-green-800">
+                            Generate Letter ({rule.actions.generateLetters.length})
+                          </span>
+                        )}
+                        {rule.actions.hints && (
+                          <span className="inline-flex px-2 py-0.5 rounded text-xs bg-yellow-100 text-yellow-800">
+                            Hints
+                          </span>
+                        )}
+                      </div>
+                    ) : (
+                      '-'
+                    )}
+                  </td>
+                  <td className="px-6 py-4 text-sm text-gray-500">
+                    {new Date(rule.updatedAt).toLocaleDateString()}
+                  </td>
+                  <td className="px-6 py-4 text-sm font-medium space-x-2">
+                    <button
+                      onClick={() => onEditRule(rule)}
+                      className="text-indigo-600 hover:text-indigo-900"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => handleClone(rule)}
+                      className="text-gray-600 hover:text-gray-900"
+                    >
+                      <Copy className="w-4 h-4 inline" />
+                    </button>
+                    <button
+                      onClick={() => handleViewJSON(rule)}
+                      className="text-gray-600 hover:text-gray-900"
+                    >
+                      <Eye className="w-4 h-4 inline" />
+                    </button>
+                    <button
+                      onClick={() => handleDelete(rule.id)}
+                      className="text-red-600 hover:text-red-900"
+                    >
+                      <Trash2 className="w-4 h-4 inline" />
+                    </button>
                   </td>
                 </tr>
               ))}

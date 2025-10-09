@@ -87,7 +87,11 @@ export interface AssignSkillAction {
   skillCode: string
 }
 
-export interface ReassignAction {
+export interface AssignLicenseAction {
+  licenseCode: string
+}
+
+export interface DepartmentRoutingAction {
   departmentCode: string
 }
 
@@ -99,12 +103,18 @@ export interface CloseAction {
   dispositionCode: string
 }
 
+export interface HintsAction {
+  message: string
+}
+
 // Combined actions interface
 export interface RuleActions {
   assignSkill?: AssignSkillAction
-  reassign?: ReassignAction
+  assignLicense?: AssignLicenseAction
+  departmentRouting?: DepartmentRoutingAction
   generateLetters?: GenerateLetterAction[]
   close?: CloseAction
+  hints?: HintsAction
 }
 
 // Main Rule structure - matches exact JSON requirements

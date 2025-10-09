@@ -249,12 +249,22 @@ export const validateActions = (actions?: RuleActions): ValidationError[] => {
     }
   }
 
-  // Validate reassign
-  if (actions.reassign) {
-    if (!actions.reassign.departmentCode || actions.reassign.departmentCode.trim() === '') {
+  // Validate assignLicense
+  if (actions.assignLicense) {
+    if (!actions.assignLicense.licenseCode || actions.assignLicense.licenseCode.trim() === '') {
       errors.push({
-        field: 'actions.reassign.departmentCode',
-        message: 'Department code is required for reassign action',
+        field: 'actions.assignLicense.licenseCode',
+        message: 'License code is required for assignLicense action',
+      })
+    }
+  }
+
+  // Validate departmentRouting
+  if (actions.departmentRouting) {
+    if (!actions.departmentRouting.departmentCode || actions.departmentRouting.departmentCode.trim() === '') {
+      errors.push({
+        field: 'actions.departmentRouting.departmentCode',
+        message: 'Department code is required for departmentRouting action',
       })
     }
   }
@@ -284,6 +294,16 @@ export const validateActions = (actions?: RuleActions): ValidationError[] => {
       errors.push({
         field: 'actions.close.dispositionCode',
         message: 'Disposition code is required for close action',
+      })
+    }
+  }
+
+  // Validate hints
+  if (actions.hints) {
+    if (!actions.hints.message || actions.hints.message.trim() === '') {
+      errors.push({
+        field: 'actions.hints.message',
+        message: 'Message is required for hints action',
       })
     }
   }

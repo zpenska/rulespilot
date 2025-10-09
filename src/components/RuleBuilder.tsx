@@ -354,33 +354,97 @@ export default function RuleBuilder({ rule, onClose, onSave }: RuleBuilderProps)
                   )}
                 </div>
 
-                {/* Reassign */}
+                {/* Assign License */}
                 <div className="flex items-center space-x-3">
                   <input
                     type="checkbox"
-                    checked={!!actions.reassign}
+                    checked={!!actions.assignLicense}
                     onChange={(e) => {
                       if (e.target.checked) {
-                        setActions({ ...actions, reassign: { departmentCode: '' } })
+                        setActions({ ...actions, assignLicense: { licenseCode: '' } })
                       } else {
-                        const { reassign, ...rest } = actions
+                        const { assignLicense, ...rest } = actions
                         setActions(rest)
                       }
                     }}
                     className="rounded border-gray-300"
                   />
-                  <label className="text-sm font-medium text-gray-700">Reassign</label>
-                  {actions.reassign && (
+                  <label className="text-sm font-medium text-gray-700">Assign License</label>
+                  {actions.assignLicense && (
                     <input
                       type="text"
-                      value={actions.reassign.departmentCode}
+                      value={actions.assignLicense.licenseCode}
                       onChange={(e) =>
                         setActions({
                           ...actions,
-                          reassign: { departmentCode: e.target.value },
+                          assignLicense: { licenseCode: e.target.value },
+                        })
+                      }
+                      placeholder="License Code (e.g., LIC1)"
+                      className="flex-1 px-3 py-1 text-sm border border-gray-300 rounded-md"
+                    />
+                  )}
+                </div>
+
+                {/* Department Routing */}
+                <div className="flex items-center space-x-3">
+                  <input
+                    type="checkbox"
+                    checked={!!actions.departmentRouting}
+                    onChange={(e) => {
+                      if (e.target.checked) {
+                        setActions({ ...actions, departmentRouting: { departmentCode: '' } })
+                      } else {
+                        const { departmentRouting, ...rest } = actions
+                        setActions(rest)
+                      }
+                    }}
+                    className="rounded border-gray-300"
+                  />
+                  <label className="text-sm font-medium text-gray-700">Department Routing</label>
+                  {actions.departmentRouting && (
+                    <input
+                      type="text"
+                      value={actions.departmentRouting.departmentCode}
+                      onChange={(e) =>
+                        setActions({
+                          ...actions,
+                          departmentRouting: { departmentCode: e.target.value },
                         })
                       }
                       placeholder="Department Code (e.g., DEPT2)"
+                      className="flex-1 px-3 py-1 text-sm border border-gray-300 rounded-md"
+                    />
+                  )}
+                </div>
+
+                {/* Close */}
+                <div className="flex items-center space-x-3">
+                  <input
+                    type="checkbox"
+                    checked={!!actions.close}
+                    onChange={(e) => {
+                      if (e.target.checked) {
+                        setActions({ ...actions, close: { dispositionCode: '' } })
+                      } else {
+                        const { close, ...rest } = actions
+                        setActions(rest)
+                      }
+                    }}
+                    className="rounded border-gray-300"
+                  />
+                  <label className="text-sm font-medium text-gray-700">Close</label>
+                  {actions.close && (
+                    <input
+                      type="text"
+                      value={actions.close.dispositionCode}
+                      onChange={(e) =>
+                        setActions({
+                          ...actions,
+                          close: { dispositionCode: e.target.value },
+                        })
+                      }
+                      placeholder="Disposition Code (e.g., DISP1)"
                       className="flex-1 px-3 py-1 text-sm border border-gray-300 rounded-md"
                     />
                   )}
@@ -390,7 +454,7 @@ export default function RuleBuilder({ rule, onClose, onSave }: RuleBuilderProps)
                 <div className="border border-gray-200 rounded-md p-3">
                   <div className="flex items-center justify-between mb-2">
                     <label className="text-sm font-medium text-gray-700">
-                      Generate Letters
+                      Generate Letter
                     </label>
                     <button
                       onClick={() =>
@@ -405,7 +469,7 @@ export default function RuleBuilder({ rule, onClose, onSave }: RuleBuilderProps)
                       className="inline-flex items-center px-2 py-1 text-xs bg-indigo-100 hover:bg-indigo-200 text-indigo-700 rounded"
                     >
                       <Plus className="w-3 h-3 mr-1" />
-                      Add Letter
+                      Add Letter Template
                     </button>
                   </div>
                   {actions.generateLetters && actions.generateLetters.length > 0 ? (
@@ -449,34 +513,36 @@ export default function RuleBuilder({ rule, onClose, onSave }: RuleBuilderProps)
                   )}
                 </div>
 
-                {/* Close */}
-                <div className="flex items-center space-x-3">
-                  <input
-                    type="checkbox"
-                    checked={!!actions.close}
-                    onChange={(e) => {
-                      if (e.target.checked) {
-                        setActions({ ...actions, close: { dispositionCode: '' } })
-                      } else {
-                        const { close, ...rest } = actions
-                        setActions(rest)
-                      }
-                    }}
-                    className="rounded border-gray-300"
-                  />
-                  <label className="text-sm font-medium text-gray-700">Close</label>
-                  {actions.close && (
+                {/* Hints */}
+                <div className="border border-gray-200 rounded-md p-3">
+                  <div className="flex items-center space-x-3 mb-2">
                     <input
-                      type="text"
-                      value={actions.close.dispositionCode}
+                      type="checkbox"
+                      checked={!!actions.hints}
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          setActions({ ...actions, hints: { message: '' } })
+                        } else {
+                          const { hints, ...rest } = actions
+                          setActions(rest)
+                        }
+                      }}
+                      className="rounded border-gray-300"
+                    />
+                    <label className="text-sm font-medium text-gray-700">Hints</label>
+                  </div>
+                  {actions.hints && (
+                    <textarea
+                      value={actions.hints.message}
                       onChange={(e) =>
                         setActions({
                           ...actions,
-                          close: { dispositionCode: e.target.value },
+                          hints: { message: e.target.value },
                         })
                       }
-                      placeholder="Disposition Code (e.g., DISP1)"
-                      className="flex-1 px-3 py-1 text-sm border border-gray-300 rounded-md"
+                      placeholder="Enter hint message..."
+                      rows={3}
+                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
                     />
                   )}
                 </div>
