@@ -32,13 +32,13 @@ const generateRuleCode = (): string => {
 /**
  * Remove undefined fields from an object
  */
-const removeUndefinedFields = <T extends Record<string, any>>(obj: T): Partial<T> => {
+const removeUndefinedFields = <T extends Record<string, any>>(obj: T): Record<string, any> => {
   return Object.entries(obj).reduce((acc, [key, value]) => {
     if (value !== undefined) {
       acc[key] = value
     }
     return acc
-  }, {} as Partial<T>)
+  }, {} as Record<string, any>)
 }
 
 /**

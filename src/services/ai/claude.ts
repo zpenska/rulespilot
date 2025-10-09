@@ -1,5 +1,5 @@
 import Anthropic from '@anthropic-ai/sdk'
-import { Rule, StandardFieldCriteria, CustomFieldCriteria } from '../../types/rules'
+import { Rule, StandardFieldCriteria, CustomFieldCriteria, RuleActions } from '../../types/rules'
 import AI_KNOWLEDGE_BASE from '../../config/aiKnowledgeBase'
 
 const anthropic = new Anthropic({
@@ -15,6 +15,7 @@ export interface AIRuleGeneration {
   standardFieldCriteria: StandardFieldCriteria[]
   customFieldCriteria: CustomFieldCriteria[]
   weight?: number
+  actions?: RuleActions
 }
 
 /**
