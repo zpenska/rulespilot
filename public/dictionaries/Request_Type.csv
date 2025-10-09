@@ -1,0 +1,4 @@
+"Request_Type","Request_Type_Description","Active"
+"OUTPATIENT","Outpatient","true"
+"REFERRAL","Referral","true"
+"INPATIENT","Inpatient","true"

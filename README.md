@@ -1,15 +1,39 @@
-# Rules Pilot - AI-Powered Rules Builder
+# Rules Pilot - AI-Powered Healthcare Authorization Rules Engine
 
-A modern, AI-enhanced rules engine built with React, TypeScript, Tailwind CSS 4.0, and Claude AI.
+A modern, intelligent rules builder for healthcare authorization workflows. Built with React, TypeScript, Firebase, and Claude AI (Sonnet 4.0).
 
 ## 🚀 Features
 
-- **Visual Rule Builder** - Drag-and-drop interface for creating complex business rules
-- **AI-Powered Suggestions** - Claude AI helps generate and improve rules
-- **Type-Safe** - Built with TypeScript for robust development
-- **Modern UI** - Tailwind CSS 4.0 with beautiful, responsive components
-- **State Management** - Zustand for simple, powerful state management
-- **Form Validation** - React Hook Form + Zod for type-safe forms
+### 🎯 Core Functionality
+- **Visual Rule Builder** - Intuitive UI for creating complex authorization rules
+- **40+ Standard Fields** - Complete field support across Enrollment, Member, Provider, Request, Review Outcome, Service, and Stage categories
+- **AI-Powered Rule Generation** - Natural language to rule conversion using Claude Sonnet 4.0
+- **Real-time Validation** - Comprehensive validation based on business requirements
+- **JSON Export** - Export rules in the exact format required for your authorization engine
+- **Firebase Integration** - Real-time data synchronization and storage
+
+### 🤖 AI Assistant
+- Generate rules from natural language descriptions
+- Auto-complete and suggestions
+- Rule description improvement
+- Validation error fixing
+- Interactive chat support
+
+### 📊 Rule Management
+- **Table View** - Modern, searchable table matching your UI requirements
+- **Bulk Actions** - Activate/deactivate/delete multiple rules at once
+- **Status Management** - Toggle rules between active and inactive
+- **Weight System** - Priority-based rule execution
+- **Activation Dates** - Schedule rules to activate on specific dates
+- **Search & Filter** - Find rules by code, name, or category
+- **Clone Rules** - Duplicate existing rules for faster creation
+
+### ✅ Validation System
+- Operator-value count validation
+- Data type validation (INTEGER, DATE, STRING, BOOLEAN)
+- Provider role requirement enforcement
+- Date format validation (YYYY-MM-DD)
+- Custom field constraints
 
 ## 📦 Tech Stack
 
@@ -26,18 +50,85 @@ A modern, AI-enhanced rules engine built with React, TypeScript, Tailwind CSS 4.
 - **Lucide React** - Beautiful icons
 - **React DnD** - Drag and drop functionality
 
-## 🛠️ Installation
+## Standard Fields Support
 
-Dependencies are already installed! Just run:
+### Enrollment Fields (IN, NOT_IN)
+- `ENROLLMENT_GROUP_ID`, `ENROLLMENT_LINE_OF_BUSINESS`, `ENROLLMENT_PLAN`
 
+### Member Fields
+- `MEMBER_AGE` (EQUALS, GREATER_THAN_OR_EQUAL_TO, GREATER_THAN, LESS_THAN_OR_EQUAL_TO, LESS_THAN, BETWEEN)
+- `MEMBER_CLIENT`, `MEMBER_STATE` (IN, NOT_IN)
+
+### Provider Fields (all require providerRole)
+- `PROVIDER_ALTERNATE_ID` (IN, NOT_IN) - requires alternateIdType
+- `PROVIDER_NPI`, `PROVIDER_PRIMARY_ADDRESS_POSTAL_CODE`, `PROVIDER_PRIMARY_ADDRESS_STATE`
+- `PROVIDER_PRIMARY_SPECIALTY`, `PROVIDER_SET` (IN, NOT_IN)
+
+### Request Fields
+- `REQUEST_CLASSIFICATION`, `REQUEST_DIAGNOSIS_CODE`, `REQUEST_DISPOSITION` (IN, NOT_IN)
+- `REQUEST_FROM_DATE`, `REQUEST_THROUGH_DATE` (date operators)
+- `REQUEST_HEALTHCARE_TYPE`, `REQUEST_INTAKE_SOURCE`, `REQUEST_ORIGINATING_SYSTEM_SOURCE` (IN, NOT_IN)
+- `REQUEST_PRIMARY_DIAGNOSIS_CODE`, `REQUEST_STATE`, `REQUEST_STATUS` (IN, NOT_IN)
+- `REQUEST_TREATMENT_SETTING`, `REQUEST_TYPE`, `REQUEST_URGENCY` (IN, NOT_IN)
+
+### Review Outcome Fields (IN, NOT_IN)
+- `REVIEW_OUTCOME_LEVEL_OF_CARE`, `REVIEW_OUTCOME_STATUS`, `REVIEW_OUTCOME_STATUS_REASON`
+
+### Service Fields
+- `SERVICE_CODE`, `SERVICE_LEVEL_OF_CARE`, `SERVICE_PLACE_OF_SERVICE` (IN, NOT_IN)
+- `SERVICE_PRIMARY_FLAG`, `SERVICE_REQUESTED_UNITS_UOM`, `SERVICE_REVIEW_TYPE` (IN, NOT_IN)
+- `SERVICE_REQUESTED_UNITS` (numeric operators)
+- `SERVICE_STATE`, `SERVICE_TREATMENT_TYPE` (IN, NOT_IN)
+
+### Stage Fields (IN, NOT_IN)
+- `STAGE_PRIMARY_SERVICE_CODE`, `STAGE_TYPE`
+
+### Custom Fields
+- Member, Enrollment, and Request custom fields (IN, NOT_IN operators only)
+
+## 🛠️ Setup
+
+### 1. Install Dependencies
+```bash
+npm install
+```
+
+### 2. Configure Environment Variables
+Create a `.env` file:
+
+```env
+# Claude AI (Anthropic)
+VITE_ANTHROPIC_API_KEY=your_anthropic_api_key
+
+# Firebase Configuration
+VITE_FIREBASE_API_KEY=your_firebase_api_key
+VITE_FIREBASE_AUTH_DOMAIN=your_project.firebaseapp.com
+VITE_FIREBASE_PROJECT_ID=your_project_id
+VITE_FIREBASE_STORAGE_BUCKET=your_project.firebasestorage.app
+VITE_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
+VITE_FIREBASE_APP_ID=your_app_id
+VITE_FIREBASE_MEASUREMENT_ID=your_measurement_id
+```
+
+### 3. Set Up Firebase
+1. Create a Firebase project at https://console.firebase.google.com
+2. Enable Firestore Database
+3. Copy your Firebase config to the `.env` file
+4. The app will auto-create these collections:
+   - `dictionaries` - for dictionary data
+   - `rules` - for rules storage
+
+### 4. Get Claude API Key
+1. Sign up at https://console.anthropic.com
+2. Create an API key
+3. Add it to your `.env` file
+
+### 5. Run the Application
 ```bash
 npm run dev
 ```
 
-**Note:** Tailwind CSS 4.0 is currently in alpha. The dev server works perfectly, but production builds may have issues. If you encounter build problems, you can downgrade to Tailwind 3.x:
-```bash
-npm install -D tailwindcss@3 @tailwindcss/vite@3
-```
+The app will be available at `http://localhost:5173`
 
 ## 📁 Project Structure
 
@@ -59,27 +150,104 @@ src/
 └── hooks/             # Custom React hooks (including Firebase sync)
 ```
 
-## 🎯 Getting Started
+## 📖 Usage
 
-1. **Start the development server:**
-   ```bash
-   npm run dev
-   ```
+### Creating a Rule with AI
 
-2. **Build for production:**
-   ```bash
-   npm run build
+1. Click the **AI Assistant** button in the header
+2. Type a natural language description, for example:
    ```
+   Create a rule for members in Pennsylvania with Custom Field MEMCFLD1
+   not valued with LOW and a Servicing Provider with Primary Specialty Orthopedics
+   ```
+3. The AI will generate the rule structure
+4. Review and edit in the Rule Builder
+5. Save the rule
 
-3. **Preview production build:**
-   ```bash
-   npm run preview
-   ```
+### Creating a Rule Manually
 
-4. **Lint code:**
-   ```bash
-   npm run lint
-   ```
+1. Click **New Rule** button
+2. Fill in the rule information:
+   - Description (required)
+   - Weight (for priority)
+   - Activation Date
+   - Category
+   - Status (Active/Inactive)
+3. Add Standard Field Criteria:
+   - Select field from categorized dropdown
+   - Choose operator
+   - Enter values
+   - For provider fields, select provider role
+4. Add Custom Field Criteria (optional):
+   - Select association (Member/Enrollment/Request)
+   - Enter template ID
+   - Choose operator (IN/NOT_IN)
+   - Enter values
+5. Click **Save Rule**
+
+### Bulk Actions
+
+1. Select multiple rules using checkboxes
+2. Use bulk action buttons:
+   - **Activate** - Set selected rules to active
+   - **Deactivate** - Set selected rules to inactive
+   - **Delete** - Remove selected rules
+   - **Export All** - Download all rules as JSON
+   - **Export Active** - Download only active rules
+
+### JSON Export Format
+
+Rules export in this exact format:
+
+```json
+{
+  "ruleDesc": "Request with Member in Pennsylvania with Servicing Provider Orthopedics",
+  "standardFieldCriteria": [
+    {
+      "field": "MEMBER_STATE",
+      "operator": "IN",
+      "values": ["PA"]
+    },
+    {
+      "field": "PROVIDER_PRIMARY_SPECIALTY",
+      "providerRole": "SERVICING",
+      "operator": "IN",
+      "values": ["ORTHO"]
+    }
+  ],
+  "customFieldCriteria": [
+    {
+      "association": "MEMBER",
+      "templateId": "MEMCFLD1",
+      "operator": "NOT_IN",
+      "values": ["LOW"]
+    }
+  ],
+  "weight": 100
+}
+```
+
+## 🎯 Development
+
+### Start Development Server
+```bash
+npm run dev
+```
+
+### Build for Production
+```bash
+npm run build
+```
+
+### Preview Production Build
+```bash
+npm run preview
+```
+
+### Lint Code
+```bash
+npm run lint
+```
 
 ## 🤖 AI Features
 
@@ -88,78 +256,99 @@ The app integrates Claude AI for:
 - **Rule Improvement** - Get AI suggestions to improve existing rules
 - **Smart Descriptions** - Auto-generate clear rule descriptions
 
-## 🔑 Environment Variables
+## Operators
 
-Your API keys are already configured in `.env`:
+### String Operators
+- `IN` - Value matches any of the specified values
+- `NOT_IN` - Value does not match any of the specified values
 
-**Claude AI:**
-- `VITE_ANTHROPIC_API_KEY` - Claude AI API key
-- `VITE_ENABLE_CHAT` - Enable AI chat features
+### Numeric Operators (for INTEGER fields)
+- `EQUALS` - Exactly equals the value
+- `GREATER_THAN` - Greater than the value
+- `GREATER_THAN_OR_EQUAL_TO` - Greater than or equal to the value
+- `LESS_THAN` - Less than the value
+- `LESS_THAN_OR_EQUAL_TO` - Less than or equal to the value
+- `BETWEEN` - Between two values (inclusive)
 
-**Firebase:**
-- `VITE_FIREBASE_API_KEY` - Firebase API key
-- `VITE_FIREBASE_AUTH_DOMAIN` - Firebase auth domain
-- `VITE_FIREBASE_PROJECT_ID` - Firebase project ID
-- `VITE_FIREBASE_STORAGE_BUCKET` - Firebase storage bucket
-- `VITE_FIREBASE_MESSAGING_SENDER_ID` - Firebase messaging sender ID
-- `VITE_FIREBASE_APP_ID` - Firebase app ID
-- `VITE_FIREBASE_MEASUREMENT_ID` - Firebase measurement ID
+### Date Operators (for DATE fields)
+- Same as numeric operators, with dates in YYYY-MM-DD format
 
-⚠️ **Security Note:** The current setup uses `dangerouslyAllowBrowser: true` for Claude AI in development. For production, implement a backend API to keep your API key secure.
+## Validation Rules
 
-## 📝 Core Concepts
+1. **Operator-Value Count**:
+   - EQUALS, GREATER_THAN*, LESS_THAN*: exactly 1 value
+   - BETWEEN: exactly 2 values
+   - IN, NOT_IN: at least 1 value
 
-### Rules
-A rule consists of:
-- **Conditions** - When should this rule trigger?
-- **Actions** - What should happen when triggered?
+2. **Data Types**:
+   - INTEGER: Must be valid integers
+   - DATE: Must be YYYY-MM-DD format
+   - BOOLEAN: true/false
 
-### Rule Groups
-Combine multiple rules with AND/OR logic for complex workflows.
+3. **Provider Fields**:
+   - All provider fields MUST have providerRole
+   - PROVIDER_ALTERNATE_ID MUST have alternateIdType
 
-### Operators
-- equals, notEquals
-- contains
-- greaterThan, lessThan
-- greaterThanOrEqual, lessThanOrEqual
+4. **Custom Fields**:
+   - Only IN and NOT_IN operators allowed
+   - Association must be MEMBER, ENROLLMENT, or REQUEST
 
-### Actions
-- setValue - Set a field value
-- sendEmail - Send an email
-- webhook - Call an external API
-- calculate - Perform calculations
-- aiProcess - Process with AI
+## Weight System
 
-## 🎨 UI Components
+Rules can have weights for priority-based execution:
+- Higher weight = higher priority
+- Rules are evaluated in order of weight (descending)
+- Actions from higher weight rules execute first
+- Use weights to control rule precedence
 
-Pre-built components ready to use:
-- `Button` - Primary, secondary, outline, ghost, danger variants
-- `Card` - Card, CardHeader, CardContent
+## Dictionary Management
 
-## 🔥 Firebase Setup
+Dictionaries are loaded from CSV files in `/public/dictionaries/` and synced to Firebase.
 
-Before you start, set up Firebase:
-1. Go to [Firebase Console](https://console.firebase.google.com/)
-2. Select project `rulesp`
-3. Enable **Firestore Database** (start in test mode)
-4. Enable **Email/Password Authentication**
+### CSV Format
+```csv
+Code,Description,Active
+VALUE1,Description 1,true
+VALUE2,Description 2,true
+```
 
-See [FIREBASE.md](./FIREBASE.md) for complete setup instructions.
+## iFrame Support
 
-## 📚 Next Steps
+The application is designed to be embedded in larger applications:
 
-Now you can start building:
-1. **Set up Firebase** (see above and FIREBASE.md)
-2. Create your rules builder UI components
-3. Implement the rule execution engine
-4. Add more AI-powered features
-5. Build the drag-and-drop interface
-6. Rules automatically save to Firestore!
+```html
+<iframe
+  src="http://your-rules-app-url"
+  style="width: 100%; height: 100vh; border: none;"
+></iframe>
+```
 
-## 🔧 Development Tools
+## Architecture
 
-- **ESLint** - Code linting
-- **Prettier** - Code formatting
-- **TypeScript** - Type checking
+### Key Components
+- `RulesTable` - Main table view with search, filters, and bulk actions
+- `RuleBuilder` - Modal for creating/editing rules
+- `AIAssistant` - Natural language rule generation
+- `StandardCriteriaEditor` - Edit standard field criteria
+- `CustomCriteriaEditor` - Edit custom field criteria
 
-Happy building! 🚀
+### Services
+- `rulesService` - CRUD operations for rules
+- `dictionaryService` - Dictionary loading and caching
+- `validationService` - Rule validation logic
+- `claude` - AI integration
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Submit a pull request
+
+## License
+
+MIT
+
+---
+
+Built with ❤️ using React, TypeScript, and Claude AI

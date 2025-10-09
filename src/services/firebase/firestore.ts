@@ -29,13 +29,16 @@ const timestampToDate = (timestamp: any): Date => {
 // Convert Rule data from Firestore
 const convertFirestoreRule = (id: string, data: DocumentData): Rule => ({
   id,
-  name: data.name,
-  description: data.description,
-  conditions: data.conditions,
-  actions: data.actions,
-  enabled: data.enabled,
-  createdAt: timestampToDate(data.createdAt),
-  updatedAt: timestampToDate(data.updatedAt),
+  code: data.code,
+  ruleDesc: data.ruleDesc,
+  standardFieldCriteria: data.standardFieldCriteria || [],
+  customFieldCriteria: data.customFieldCriteria || [],
+  weight: data.weight,
+  activationDate: data.activationDate,
+  status: data.status || 'inactive',
+  category: data.category,
+  createdAt: timestampToDate(data.createdAt).toISOString(),
+  updatedAt: timestampToDate(data.updatedAt).toISOString(),
 })
 
 // Rules CRUD operations

@@ -1,53 +1,41 @@
 import Anthropic from '@anthropic-ai/sdk'
+import { Rule, StandardFieldCriteria, CustomFieldCriteria } from '../../types/rules'
+import AI_KNOWLEDGE_BASE from '../../config/aiKnowledgeBase'
 
 const anthropic = new Anthropic({
   apiKey: import.meta.env.VITE_ANTHROPIC_API_KEY,
   dangerouslyAllowBrowser: true, // Only for development - use a backend in production
 })
 
-export interface AIRuleSuggestion {
-  ruleName: string
-  description: string
-  conditions: Array<{
-    field: string
-    operator: string
-    value: string
-  }>
-  actions: Array<{
-    type: string
-    config: Record<string, any>
-  }>
+// Use the comprehensive knowledge base
+const RULES_ENGINE_CONTEXT = AI_KNOWLEDGE_BASE
+
+export interface AIRuleGeneration {
+  ruleDesc: string
+  standardFieldCriteria: StandardFieldCriteria[]
+  customFieldCriteria: CustomFieldCriteria[]
+  weight?: number
 }
 
-export async function generateRuleSuggestion(prompt: string): Promise<AIRuleSuggestion> {
+/**
+ * Generate a rule from natural language description
+ */
+export async function generateRuleFromNaturalLanguage(
+  description: string
+): Promise<AIRuleGeneration> {
   const message = await anthropic.messages.create({
-    model: 'claude-3-5-sonnet-20241022',
-    max_tokens: 1024,
+    model: 'claude-sonnet-4-20250514',
+    max_tokens: 2000,
     messages: [
       {
         role: 'user',
-        content: `You are a rules engine expert. Based on the following user request, generate a rule configuration in JSON format.
+        content: `${RULES_ENGINE_CONTEXT}
 
-User Request: ${prompt}
+Based on this description, generate a rule in the exact JSON format specified above:
 
-Respond ONLY with valid JSON in this format:
-{
-  "ruleName": "descriptive name",
-  "description": "what this rule does",
-  "conditions": [
-    {
-      "field": "field name",
-      "operator": "equals|notEquals|contains|greaterThan|lessThan",
-      "value": "expected value"
-    }
-  ],
-  "actions": [
-    {
-      "type": "setValue|sendEmail|webhook|calculate|aiProcess",
-      "config": {}
-    }
-  ]
-}`,
+"${description}"
+
+Return ONLY valid JSON, no other text.`,
       },
     ],
   })
@@ -55,32 +43,135 @@ Respond ONLY with valid JSON in this format:
   const responseText = message.content[0].type === 'text' ? message.content[0].text : ''
 
   // Extract JSON from markdown code blocks if present
-  const jsonMatch = responseText.match(/```(?:json)?\n?([\s\S]*?)\n?```/) || responseText.match(/\{[\s\S]*\}/)
-  const jsonText = jsonMatch ? (jsonMatch[1] || jsonMatch[0]) : responseText
+  const jsonMatch =
+    responseText.match(/```(?:json)?\n?([\s\S]*?)\n?```/) ||
+    responseText.match(/\{[\s\S]*\}/)
+  const jsonText = jsonMatch ? jsonMatch[1] || jsonMatch[0] : responseText
 
   return JSON.parse(jsonText.trim())
 }
 
-export async function improveRuleDescription(
-  ruleName: string,
-  conditions: any[],
-  actions: any[]
-): Promise<string> {
+/**
+ * Improve rule description
+ */
+export async function improveRuleDescription(rule: Partial<Rule>): Promise<string> {
   const message = await anthropic.messages.create({
-    model: 'claude-3-5-sonnet-20241022',
-    max_tokens: 200,
+    model: 'claude-sonnet-4-20250514',
+    max_tokens: 300,
     messages: [
       {
         role: 'user',
-        content: `Generate a clear, concise description for this rule:
-Rule Name: ${ruleName}
-Conditions: ${JSON.stringify(conditions)}
-Actions: ${JSON.stringify(actions)}
+        content: `Generate a clear, concise description for this healthcare authorization rule:
 
+Standard Criteria: ${JSON.stringify(rule.standardFieldCriteria, null, 2)}
+Custom Criteria: ${JSON.stringify(rule.customFieldCriteria, null, 2)}
+
+The description should explain what conditions trigger this rule in plain English.
 Respond with only the description, no extra text.`,
       },
     ],
   })
 
   return message.content[0].type === 'text' ? message.content[0].text : ''
+}
+
+/**
+ * Validate and fix a rule
+ */
+export async function validateAndFixRule(
+  rule: Partial<Rule>,
+  errors: string[]
+): Promise<AIRuleGeneration> {
+  const message = await anthropic.messages.create({
+    model: 'claude-sonnet-4-20250514',
+    max_tokens: 2000,
+    messages: [
+      {
+        role: 'user',
+        content: `${RULES_ENGINE_CONTEXT}
+
+This rule has validation errors. Fix them and return a corrected version:
+
+Current Rule:
+${JSON.stringify(rule, null, 2)}
+
+Errors:
+${errors.join('\n')}
+
+Return ONLY the corrected rule in valid JSON format.`,
+      },
+    ],
+  })
+
+  const responseText = message.content[0].type === 'text' ? message.content[0].text : ''
+
+  const jsonMatch =
+    responseText.match(/```(?:json)?\n?([\s\S]*?)\n?```/) ||
+    responseText.match(/\{[\s\S]*\}/)
+  const jsonText = jsonMatch ? jsonMatch[1] || jsonMatch[0] : responseText
+
+  return JSON.parse(jsonText.trim())
+}
+
+/**
+ * Get rule suggestions based on context
+ */
+export async function getRuleSuggestions(context: string): Promise<string[]> {
+  const message = await anthropic.messages.create({
+    model: 'claude-sonnet-4-20250514',
+    max_tokens: 1000,
+    messages: [
+      {
+        role: 'user',
+        content: `${RULES_ENGINE_CONTEXT}
+
+Based on this context: "${context}"
+
+Suggest 3-5 common healthcare authorization rules that might be useful.
+Return only a JSON array of rule description strings, no other text.
+
+Example: ["Rule for members in Pennsylvania", "Rule for inpatient requests"]`,
+      },
+    ],
+  })
+
+  const responseText = message.content[0].type === 'text' ? message.content[0].text : ''
+
+  const jsonMatch =
+    responseText.match(/```(?:json)?\n?([\s\S]*?)\n?```/) ||
+    responseText.match(/\[[\s\S]*\]/)
+  const jsonText = jsonMatch ? jsonMatch[1] || jsonMatch[0] : responseText
+
+  return JSON.parse(jsonText.trim())
+}
+
+/**
+ * Chat with AI assistant about rules
+ */
+export async function chatWithAI(
+  message: string,
+  conversationHistory: Array<{ role: 'user' | 'assistant'; content: string }>
+): Promise<string> {
+  const response = await anthropic.messages.create({
+    model: 'claude-sonnet-4-20250514',
+    max_tokens: 1500,
+    messages: [
+      {
+        role: 'user',
+        content: `${RULES_ENGINE_CONTEXT}
+
+You are an AI assistant helping users build healthcare authorization rules. Answer questions, provide guidance, and help troubleshoot issues.`,
+      },
+      ...conversationHistory.map((msg) => ({
+        role: msg.role,
+        content: msg.content,
+      })),
+      {
+        role: 'user',
+        content: message,
+      },
+    ] as any,
+  })
+
+  return response.content[0].type === 'text' ? response.content[0].text : ''
 }

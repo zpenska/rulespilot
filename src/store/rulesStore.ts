@@ -33,7 +33,7 @@ export const useRulesStore = create<RulesState>((set) => ({
   updateRule: (id, updates) =>
     set((state) => ({
       rules: state.rules.map((rule) =>
-        rule.id === id ? { ...rule, ...updates, updatedAt: new Date() } : rule
+        rule.id === id ? { ...rule, ...updates, updatedAt: new Date().toISOString() } : rule
       ),
     })),
 

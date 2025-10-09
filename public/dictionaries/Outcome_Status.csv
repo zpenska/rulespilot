@@ -1,0 +1,6 @@
+"Outcome_Status","Outcome_Status_Description","Active"
+"APPROVE","Approve","true"
+"PEND","Pend","true"
+"DENY","Deny","true"
+"VOID","Void","true"
+"NONE","None","true"

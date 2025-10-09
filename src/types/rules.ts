@@ -82,6 +82,31 @@ export interface CustomFieldCriteria {
   values: string[]
 }
 
+// Action types for workflow automation
+export interface AssignSkillAction {
+  skillCode: string
+}
+
+export interface ReassignAction {
+  departmentCode: string
+}
+
+export interface GenerateLetterAction {
+  letterName: string
+}
+
+export interface CloseAction {
+  dispositionCode: string
+}
+
+// Combined actions interface
+export interface RuleActions {
+  assignSkill?: AssignSkillAction
+  reassign?: ReassignAction
+  generateLetters?: GenerateLetterAction[]
+  close?: CloseAction
+}
+
 // Main Rule structure - matches exact JSON requirements
 export interface Rule {
   id: string
@@ -93,6 +118,7 @@ export interface Rule {
   activationDate?: string  // YYYY-MM-DD format
   status: 'active' | 'inactive'
   category?: string
+  actions?: RuleActions
   createdAt: string
   updatedAt: string
 }
@@ -101,8 +127,16 @@ export interface Rule {
 export interface RuleExport {
   ruleDesc: string
   standardFieldCriteria: StandardFieldCriteria[]
-  customFieldCriteria: CustomFieldCriteria[]
-  weight?: number
+  customFieldCriteria?: CustomFieldCriteria[]
+  isActive: boolean
+  weight: number
+  actions?: RuleActions
+}
+
+// AUTO_WORKFLOW_RULES export format
+export interface AutoWorkflowRulesExport {
+  type: 'AUTO_WORKFLOW_RULES'
+  rules: RuleExport[]
 }
 
 // Field category for UI grouping
@@ -147,4 +181,12 @@ export interface Dictionary {
 export interface ValidationError {
   field: string
   message: string
+}
+
+// Legacy RuleGroup type (not used in current implementation)
+export interface RuleGroup {
+  id: string
+  name: string
+  rules: Rule[]
+  operator: 'AND' | 'OR'
 }
