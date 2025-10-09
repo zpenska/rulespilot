@@ -3,9 +3,9 @@ import RulesTable from './components/RulesTable'
 import RuleBuilder from './components/RuleBuilder'
 import AIAssistant from './components/AIAssistant'
 import { Rule } from './types/rules'
-import { initializeDictionaries, refreshDictionaries } from './services/dictionaryService'
+import { initializeDictionaries } from './services/dictionaryService'
 import { isConfigured as isFirebaseConfigured } from './config/firebase'
-import { Sparkles, AlertCircle, Upload } from 'lucide-react'
+import { Sparkles, AlertCircle } from 'lucide-react'
 
 function App() {
   const [showRuleBuilder, setShowRuleBuilder] = useState(false)
@@ -13,7 +13,6 @@ function App() {
   const [editingRule, setEditingRule] = useState<Rule | null>(null)
   const [aiGeneratedRule, setAiGeneratedRule] = useState<Partial<Rule> | null>(null)
   const [initializing, setInitializing] = useState(true)
-  const [uploadingDictionaries, setUploadingDictionaries] = useState(false)
 
   useEffect(() => {
     // Initialize dictionaries on app load
@@ -69,19 +68,6 @@ function App() {
     setShowAIAssistant(false)
   }
 
-  const handleUploadDictionaries = async () => {
-    setUploadingDictionaries(true)
-    try {
-      await refreshDictionaries()
-      alert('✅ Dictionaries uploaded successfully! You can now use dropdown values in the Rule Builder.')
-    } catch (error) {
-      console.error('Error uploading dictionaries:', error)
-      alert('❌ Failed to upload dictionaries. Check console for errors.')
-    } finally {
-      setUploadingDictionaries(false)
-    }
-  }
-
   if (initializing) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -107,26 +93,13 @@ function App() {
                 AI-Powered Healthcare Authorization Rules Engine
               </p>
             </div>
-            <div className="flex items-center space-x-3">
-              {isFirebaseConfigured && (
-                <button
-                  onClick={handleUploadDictionaries}
-                  disabled={uploadingDictionaries}
-                  className="inline-flex items-center px-3 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
-                  title="Upload dictionaries to Firestore for dropdown values"
-                >
-                  <Upload className="w-4 h-4 mr-2" />
-                  {uploadingDictionaries ? 'Uploading...' : 'Upload Dicts'}
-                </button>
-              )}
-              <button
-                onClick={() => setShowAIAssistant(!showAIAssistant)}
-                className="inline-flex items-center px-4 py-2 border border-transparent rounded-md text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-              >
-                <Sparkles className="w-4 h-4 mr-2" />
-                AI Assistant
-              </button>
-            </div>
+            <button
+              onClick={() => setShowAIAssistant(!showAIAssistant)}
+              className="inline-flex items-center px-4 py-2 border border-transparent rounded-md text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            >
+              <Sparkles className="w-4 h-4 mr-2" />
+              AI Assistant
+            </button>
           </div>
         </div>
       </header>
