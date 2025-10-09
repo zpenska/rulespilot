@@ -93,6 +93,12 @@ export default function RuleBuilder({ rule, onClose, onSave }: RuleBuilderProps)
   }
 
   const handleSave = async () => {
+    // Clean up actions - remove empty generateLetters arrays
+    const cleanedActions = { ...actions }
+    if (cleanedActions.generateLetters && cleanedActions.generateLetters.length === 0) {
+      delete cleanedActions.generateLetters
+    }
+
     const ruleData = {
       ruleDesc,
       standardFieldCriteria: standardCriteria,
@@ -101,7 +107,7 @@ export default function RuleBuilder({ rule, onClose, onSave }: RuleBuilderProps)
       activationDate,
       status,
       category,
-      actions: Object.keys(actions).length > 0 ? actions : undefined,
+      actions: Object.keys(cleanedActions).length > 0 ? cleanedActions : undefined,
     }
 
     const validationErrors = validateRule(ruleData)
@@ -383,43 +389,26 @@ export default function RuleBuilder({ rule, onClose, onSave }: RuleBuilderProps)
                 {/* Generate Letters */}
                 <div className="border border-gray-200 rounded-md p-3">
                   <div className="flex items-center justify-between mb-2">
-                    <div className="flex items-center space-x-3">
-                      <input
-                        type="checkbox"
-                        checked={!!actions.generateLetters}
-                        onChange={(e) => {
-                          if (e.target.checked) {
-                            setActions({ ...actions, generateLetters: [] })
-                          } else {
-                            const { generateLetters, ...rest } = actions
-                            setActions(rest)
-                          }
-                        }}
-                        className="rounded border-gray-300"
-                      />
-                      <label className="text-sm font-medium text-gray-700">
-                        Generate Letters
-                      </label>
-                    </div>
-                    {actions.generateLetters && (
-                      <button
-                        onClick={() =>
-                          setActions({
-                            ...actions,
-                            generateLetters: [
-                              ...(actions.generateLetters || []),
-                              { letterName: '' },
-                            ],
-                          })
-                        }
-                        className="inline-flex items-center px-2 py-1 text-xs bg-gray-100 hover:bg-gray-200 rounded"
-                      >
-                        <Plus className="w-3 h-3 mr-1" />
-                        Add Letter
-                      </button>
-                    )}
+                    <label className="text-sm font-medium text-gray-700">
+                      Generate Letters
+                    </label>
+                    <button
+                      onClick={() =>
+                        setActions({
+                          ...actions,
+                          generateLetters: [
+                            ...(actions.generateLetters || []),
+                            { letterName: '' },
+                          ],
+                        })
+                      }
+                      className="inline-flex items-center px-2 py-1 text-xs bg-indigo-100 hover:bg-indigo-200 text-indigo-700 rounded"
+                    >
+                      <Plus className="w-3 h-3 mr-1" />
+                      Add Letter
+                    </button>
                   </div>
-                  {actions.generateLetters && (
+                  {actions.generateLetters && actions.generateLetters.length > 0 ? (
                     <div className="space-y-2">
                       {actions.generateLetters.map((letter, index) => (
                         <div key={index} className="flex items-center space-x-2">
@@ -439,10 +428,12 @@ export default function RuleBuilder({ rule, onClose, onSave }: RuleBuilderProps)
                               const updated = (actions.generateLetters || []).filter(
                                 (_, i) => i !== index
                               )
-                              setActions({
-                                ...actions,
-                                generateLetters: updated.length > 0 ? updated : undefined,
-                              })
+                              if (updated.length === 0) {
+                                const { generateLetters, ...rest } = actions
+                                setActions(rest)
+                              } else {
+                                setActions({ ...actions, generateLetters: updated })
+                              }
                             }}
                             className="p-1 text-red-600 hover:text-red-800"
                           >
@@ -451,6 +442,10 @@ export default function RuleBuilder({ rule, onClose, onSave }: RuleBuilderProps)
                         </div>
                       ))}
                     </div>
+                  ) : (
+                    <p className="text-sm text-gray-500 text-center py-2">
+                      No letters added yet
+                    </p>
                   )}
                 </div>
 
