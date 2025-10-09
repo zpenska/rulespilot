@@ -232,10 +232,10 @@ export default function RulesTable({ onEditRule, onCreateRule }: RulesTableProps
                   </td>
                   <td className="px-6 py-4">
                     <span
-                      className={`inline-flex items-center text-sm font-medium ${
+                      className={`inline-flex items-center px-3 py-1 rounded-md text-sm font-medium ${
                         rule.status === 'active'
-                          ? 'text-teal-600'
-                          : 'text-gray-500'
+                          ? 'bg-indigo-50 text-indigo-700'
+                          : 'bg-gray-100 text-gray-700'
                       }`}
                     >
                       <span className="mr-1.5">•</span>
