@@ -112,7 +112,7 @@ export default function RulesTable({ onEditRule, onCreateRule }: RulesTableProps
           </div>
           <button
             onClick={onCreateRule}
-            className="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            className="inline-flex items-center px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
           >
             <Plus className="w-4 h-4 mr-2" />
             New Rule
@@ -126,7 +126,7 @@ export default function RulesTable({ onEditRule, onCreateRule }: RulesTableProps
               onClick={() => setActiveTab('all')}
               className={`px-3 py-2 text-sm font-medium rounded-md ${
                 activeTab === 'all'
-                  ? 'bg-blue-50 text-blue-700'
+                  ? 'bg-indigo-50 text-indigo-700'
                   : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
               }`}
             >
@@ -136,7 +136,7 @@ export default function RulesTable({ onEditRule, onCreateRule }: RulesTableProps
               onClick={() => setActiveTab('active')}
               className={`px-3 py-2 text-sm font-medium rounded-md ${
                 activeTab === 'active'
-                  ? 'bg-blue-50 text-blue-700'
+                  ? 'bg-indigo-50 text-indigo-700'
                   : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
               }`}
             >
@@ -146,7 +146,7 @@ export default function RulesTable({ onEditRule, onCreateRule }: RulesTableProps
               onClick={() => setActiveTab('inactive')}
               className={`px-3 py-2 text-sm font-medium rounded-md ${
                 activeTab === 'inactive'
-                  ? 'bg-blue-50 text-blue-700'
+                  ? 'bg-indigo-50 text-indigo-700'
                   : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
               }`}
             >
@@ -162,7 +162,7 @@ export default function RulesTable({ onEditRule, onCreateRule }: RulesTableProps
                 placeholder="Search by code, name..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 pr-4 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent w-64"
+                className="pl-10 pr-4 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent w-64"
               />
             </div>
             {selectedRules.size > 0 && (
@@ -190,14 +190,14 @@ export default function RulesTable({ onEditRule, onCreateRule }: RulesTableProps
       <div className="flex-1 overflow-auto">
         {loading ? (
           <div className="flex items-center justify-center h-64">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
           </div>
         ) : filteredRules.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-64">
             <p className="text-gray-500 mb-4">No rules found</p>
             <button
               onClick={onCreateRule}
-              className="text-blue-600 hover:text-blue-700 text-sm font-medium"
+              className="text-indigo-600 hover:text-indigo-700 text-sm font-medium"
             >
               Create your first rule
             </button>
@@ -211,7 +211,7 @@ export default function RulesTable({ onEditRule, onCreateRule }: RulesTableProps
                     type="checkbox"
                     checked={selectedRules.size === filteredRules.length && filteredRules.length > 0}
                     onChange={handleSelectAll}
-                    className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                    className="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
                   />
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -242,14 +242,14 @@ export default function RulesTable({ onEditRule, onCreateRule }: RulesTableProps
                       type="checkbox"
                       checked={selectedRules.has(rule.id)}
                       onChange={() => handleSelectRule(rule.id)}
-                      className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                      className="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
                     />
                   </td>
                   <td className="px-6 py-4">
                     <span
                       className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${
                         rule.status === 'active'
-                          ? 'bg-green-100 text-green-800'
+                          ? 'bg-teal-100 text-teal-800'
                           : 'bg-gray-100 text-gray-800'
                       }`}
                     >
