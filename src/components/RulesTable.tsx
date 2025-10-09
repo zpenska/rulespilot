@@ -209,9 +209,6 @@ export default function RulesTable({ onEditRule, onCreateRule }: RulesTableProps
                   Name
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Category
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Weight
                 </th>
                 <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -244,7 +241,6 @@ export default function RulesTable({ onEditRule, onCreateRule }: RulesTableProps
                   </td>
                   <td className="px-6 py-4 text-sm font-medium text-gray-900">{rule.code}</td>
                   <td className="px-6 py-4 text-sm text-gray-900">{rule.ruleDesc}</td>
-                  <td className="px-6 py-4 text-sm text-gray-500">{rule.category || '—'}</td>
                   <td className="px-6 py-4 text-sm text-gray-500">{rule.weight || 100}</td>
                   <td className="px-6 py-4 text-right" onClick={(e) => e.stopPropagation()}>
                     <div className="flex items-center justify-end space-x-2">
