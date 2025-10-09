@@ -5,7 +5,7 @@ import AIAssistant from './components/AIAssistant'
 import { Rule } from './types/rules'
 import { initializeDictionaries } from './services/dictionaryService'
 import { isConfigured as isFirebaseConfigured } from './config/firebase'
-import { Sparkles, AlertCircle } from 'lucide-react'
+import { Sparkles, AlertCircle, Settings } from 'lucide-react'
 
 function App() {
   const [showRuleBuilder, setShowRuleBuilder] = useState(false)
@@ -93,13 +93,22 @@ function App() {
                 AI-Powered Healthcare Authorization Rules Engine
               </p>
             </div>
-            <button
-              onClick={() => setShowAIAssistant(!showAIAssistant)}
-              className="inline-flex items-center px-4 py-2 border border-transparent rounded-md text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-            >
-              <Sparkles className="w-4 h-4 mr-2" />
-              AI Assistant
-            </button>
+            <div className="flex items-center space-x-4">
+              <button
+                onClick={() => {/* TODO: Add settings modal */}}
+                className="inline-flex items-center text-sm font-medium text-indigo-600 hover:text-indigo-700"
+              >
+                <Settings className="w-4 h-4 mr-1.5" />
+                Rules Settings
+              </button>
+              <button
+                onClick={() => setShowAIAssistant(!showAIAssistant)}
+                className="inline-flex items-center px-4 py-2 border border-transparent rounded-md text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              >
+                <Sparkles className="w-4 h-4 mr-2" />
+                AI Assistant
+              </button>
+            </div>
           </div>
         </div>
       </header>

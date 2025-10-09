@@ -1,11 +1,9 @@
 import { useState, useEffect } from 'react'
-import { Search, Plus, Download, Trash2, MoreVertical } from 'lucide-react'
+import { Search, Plus, Download, Trash2, ArrowRight } from 'lucide-react'
 import { Rule } from '../types/rules'
 import {
   deleteRule,
-  updateRule,
   bulkDeleteRules,
-  cloneRule,
   exportAllRulesToJSON,
   subscribeToRules,
 } from '../services/rulesService'
@@ -24,7 +22,6 @@ export default function RulesTable({ onEditRule, onCreateRule }: RulesTableProps
   const [searchTerm, setSearchTerm] = useState('')
   const [activeTab, setActiveTab] = useState<TabFilter>('all')
   const [loading, setLoading] = useState(true)
-  const [actionMenuOpen, setActionMenuOpen] = useState<string | null>(null)
 
   useEffect(() => {
     const unsubscribe = subscribeToRules((updatedRules) => {
@@ -63,22 +60,10 @@ export default function RulesTable({ onEditRule, onCreateRule }: RulesTableProps
     setSelectedRules(newSelected)
   }
 
-  const handleToggleStatus = async (rule: Rule) => {
-    await updateRule(rule.id, { status: rule.status === 'active' ? 'inactive' : 'active' })
-    setActionMenuOpen(null)
-  }
-
   const handleDelete = async (ruleId: string) => {
     if (confirm('Are you sure you want to delete this rule?')) {
       await deleteRule(ruleId)
-      setActionMenuOpen(null)
     }
-  }
-
-  const handleClone = async (rule: Rule) => {
-    const cloned = await cloneRule(rule.id)
-    onEditRule(cloned)
-    setActionMenuOpen(null)
   }
 
   const handleBulkDelete = async () => {
@@ -247,12 +232,13 @@ export default function RulesTable({ onEditRule, onCreateRule }: RulesTableProps
                   </td>
                   <td className="px-6 py-4">
                     <span
-                      className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${
+                      className={`inline-flex items-center text-sm font-medium ${
                         rule.status === 'active'
-                          ? 'bg-teal-100 text-teal-800'
-                          : 'bg-gray-100 text-gray-800'
+                          ? 'text-teal-600'
+                          : 'text-gray-500'
                       }`}
                     >
+                      <span className="mr-1.5">•</span>
                       {rule.status === 'active' ? 'Active' : 'Inactive'}
                     </span>
                   </td>
@@ -260,42 +246,22 @@ export default function RulesTable({ onEditRule, onCreateRule }: RulesTableProps
                   <td className="px-6 py-4 text-sm text-gray-900">{rule.ruleDesc}</td>
                   <td className="px-6 py-4 text-sm text-gray-500">{rule.category || '—'}</td>
                   <td className="px-6 py-4 text-sm text-gray-500">{rule.weight || 100}</td>
-                  <td className="px-6 py-4 text-right text-sm font-medium" onClick={(e) => e.stopPropagation()}>
-                    <div className="relative inline-block">
+                  <td className="px-6 py-4 text-right" onClick={(e) => e.stopPropagation()}>
+                    <div className="flex items-center justify-end space-x-2">
                       <button
-                        onClick={() => setActionMenuOpen(actionMenuOpen === rule.id ? null : rule.id)}
-                        className="p-1 hover:bg-gray-100 rounded"
+                        onClick={() => handleDelete(rule.id)}
+                        className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors"
+                        title="Delete"
                       >
-                        <MoreVertical className="w-4 h-4 text-gray-500" />
+                        <Trash2 className="w-4 h-4" />
                       </button>
-                      {actionMenuOpen === rule.id && (
-                        <div className="absolute right-0 mt-1 w-48 bg-white rounded-md shadow-lg border border-gray-200 z-10">
-                          <button
-                            onClick={() => onEditRule(rule)}
-                            className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                          >
-                            Edit
-                          </button>
-                          <button
-                            onClick={() => handleClone(rule)}
-                            className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                          >
-                            Clone
-                          </button>
-                          <button
-                            onClick={() => handleToggleStatus(rule)}
-                            className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                          >
-                            {rule.status === 'active' ? 'Deactivate' : 'Activate'}
-                          </button>
-                          <button
-                            onClick={() => handleDelete(rule.id)}
-                            className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50"
-                          >
-                            Delete
-                          </button>
-                        </div>
-                      )}
+                      <button
+                        onClick={() => onEditRule(rule)}
+                        className="p-1.5 text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 rounded transition-colors"
+                        title="View details"
+                      >
+                        <ArrowRight className="w-4 h-4" />
+                      </button>
                     </div>
                   </td>
                 </tr>
