@@ -15,15 +15,24 @@ function App() {
 
   useEffect(() => {
     // Initialize dictionaries on app load
+    const initTimeout = setTimeout(() => {
+      console.error('Dictionary initialization timeout')
+      setInitializing(false)
+    }, 10000) // 10 second timeout
+
     initializeDictionaries()
       .then(() => {
         console.log('Dictionaries initialized')
+        clearTimeout(initTimeout)
         setInitializing(false)
       })
       .catch((err) => {
         console.error('Error initializing dictionaries:', err)
+        clearTimeout(initTimeout)
         setInitializing(false)
       })
+
+    return () => clearTimeout(initTimeout)
   }, [])
 
   const handleCreateRule = () => {

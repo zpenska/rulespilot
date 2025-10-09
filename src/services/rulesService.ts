@@ -33,6 +33,10 @@ const generateRuleCode = (): string => {
  * Create a new rule
  */
 export const createRule = async (rule: Omit<Rule, 'id' | 'createdAt' | 'updatedAt'>): Promise<Rule> => {
+  if (!db) {
+    throw new Error('Firebase is not configured. Please add Firebase environment variables.')
+  }
+
   const id = nanoid()
   const now = new Date().toISOString()
 
@@ -68,6 +72,11 @@ export const getRule = async (id: string): Promise<Rule | null> => {
  * Get all rules
  */
 export const getAllRules = async (): Promise<Rule[]> => {
+  if (!db) {
+    console.warn('Firebase not configured, returning empty rules array')
+    return []
+  }
+
   const rulesRef = collection(db, RULES_COLLECTION)
   const q = query(rulesRef, orderBy('updatedAt', 'desc'))
   const snapshot = await getDocs(q)

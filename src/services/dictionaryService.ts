@@ -46,6 +46,11 @@ class DictionaryService {
    * Load dictionaries from Firebase
    */
   private async loadFromFirebase(): Promise<boolean> {
+    if (!db) {
+      console.warn('Firebase not configured, skipping Firebase load')
+      return false
+    }
+
     try {
       const dictRef = collection(db, DICTIONARIES_COLLECTION)
       const snapshot = await getDocs(dictRef)
