@@ -1,3 +1,6 @@
+// Rule type categories
+export type RuleType = 'workflow' | 'skills' | 'tat'
+
 // Operator types based on business requirements
 export type StandardOperator =
   | 'IN'
@@ -88,7 +91,7 @@ export interface AssignSkillAction {
 }
 
 export interface AssignLicenseAction {
-  licenseCode: string
+  licenseCodes: string[]
 }
 
 export interface DepartmentRoutingAction {
@@ -117,10 +120,31 @@ export interface RuleActions {
   hints?: HintsAction
 }
 
+// TAT (Turnaround Time) specific types
+export type SourceDateTimeField =
+  | 'NOTIFICATION_DATE_TIME'
+  | 'REQUEST_DATE_TIME'
+  | 'RECEIPT_DATE_TIME'
+  | 'RECEIVED_DATE_TIME'
+
+export type UnitsOfMeasure = 'HOURS' | 'CALENDAR_DAYS' | 'BUSINESS_DAYS'
+
+// TAT Rule Parameters - for calculating due date/time
+export interface TATParameters {
+  sourceDateTimeField: SourceDateTimeField
+  units: number
+  unitsOfMeasure: UnitsOfMeasure
+  dueTime?: string | null  // HH:MM format (e.g., "17:00")
+  holidayDates?: string[]  // YYYYMMDD format (e.g., ["20251225", "20260101"])
+  holidayOffset?: number | null  // Days to offset for holidays
+  clinicalsRequestedResponseThresholdHours?: number | null  // Hours threshold for provider response
+}
+
 // Main Rule structure - matches exact JSON requirements
 export interface Rule {
   id: string
   code?: string  // For table display
+  ruleType: RuleType  // Type of rule: rules, skills, or tat
   ruleDesc: string
   standardFieldCriteria: StandardFieldCriteria[]
   customFieldCriteria: CustomFieldCriteria[]
@@ -128,12 +152,13 @@ export interface Rule {
   activationDate?: string  // YYYY-MM-DD format
   status: 'active' | 'inactive'
   category?: string
-  actions?: RuleActions
+  actions?: RuleActions  // Only for workflow rules (rules/skills)
+  tatParameters?: TATParameters  // Only for TAT rules
   createdAt: string
   updatedAt: string
 }
 
-// For JSON export (without UI metadata)
+// For JSON export (without UI metadata) - Workflow Rules
 export interface RuleExport {
   ruleDesc: string
   standardFieldCriteria: StandardFieldCriteria[]
@@ -143,10 +168,45 @@ export interface RuleExport {
   actions?: RuleActions
 }
 
+// TAT-specific criteria types (simplified - no operator field)
+export interface TATStandardFieldCriteria {
+  field: StandardFieldName
+  values: string[]
+  providerRole?: ProviderRole  // Required for provider fields
+  alternateIdType?: string      // Required for PROVIDER_ALTERNATE_ID
+}
+
+export interface TATCustomFieldCriteria {
+  values: string[]
+  association: CustomFieldAssociation
+  templateId: string
+}
+
+// For JSON export (without UI metadata) - TAT Rules
+export interface TATRuleExport {
+  sourceDateTimeField: SourceDateTimeField
+  holidayDates?: string[]
+  clinicalsRequestedResponseThresholdHours?: number | null
+  ruleDesc: string
+  customFieldCriteria?: TATCustomFieldCriteria[] | null
+  isActive: boolean
+  weight: number
+  unitsOfMeasure: UnitsOfMeasure
+  standardFieldCriteria: TATStandardFieldCriteria[]
+  units: number
+  holidayOffset?: number | null
+  dueTime?: string | null
+}
+
 // AUTO_WORKFLOW_RULES export format
 export interface AutoWorkflowRulesExport {
   type: 'AUTO_WORKFLOW_RULES'
   rules: RuleExport[]
+}
+
+// DUE_DATE_RULES export format (for TAT rules)
+export interface DueDateRulesExport {
+  rules: TATRuleExport[]
 }
 
 // Field category for UI grouping

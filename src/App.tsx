@@ -2,17 +2,24 @@ import { useState, useEffect } from 'react'
 import RulesTable from './components/RulesTable'
 import RuleBuilder from './components/RuleBuilder'
 import AIAssistant from './components/AIAssistant'
-import { Rule } from './types/rules'
+import { Rule, RuleType } from './types/rules'
 import { initializeDictionaries } from './services/dictionaryService'
 import { isConfigured as isFirebaseConfigured } from './config/firebase'
+import { useRulesStore } from './store/rulesStore'
 import { AlertCircle } from 'lucide-react'
 
 function App() {
+  const currentRuleType = useRulesStore((state) => state.currentRuleType)
+  const setCurrentRuleType = useRulesStore((state) => state.setCurrentRuleType)
   const [showRuleBuilder, setShowRuleBuilder] = useState(false)
   const [showAIAssistant, setShowAIAssistant] = useState(false)
   const [editingRule, setEditingRule] = useState<Rule | null>(null)
   const [aiGeneratedRule, setAiGeneratedRule] = useState<Partial<Rule> | null>(null)
   const [initializing, setInitializing] = useState(true)
+
+  const handleRuleTypeChange = (ruleType: RuleType) => {
+    setCurrentRuleType(ruleType)
+  }
 
   useEffect(() => {
     // Initialize dictionaries on app load
@@ -109,6 +116,8 @@ function App() {
             onEditRule={handleEditRule}
             onCreateRule={handleCreateRule}
             onToggleAI={() => setShowAIAssistant(!showAIAssistant)}
+            currentRuleType={currentRuleType}
+            onRuleTypeChange={handleRuleTypeChange}
           />
         </div>
       </main>

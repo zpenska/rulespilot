@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { X, Plus, Trash2, Save } from 'lucide-react'
+import { X, Plus, Trash2, Save, Layout, Code2 } from 'lucide-react'
 import {
   Rule,
   StandardFieldCriteria,
@@ -10,6 +10,9 @@ import {
   ProviderRole,
   CustomFieldAssociation,
   RuleActions,
+  TATParameters,
+  SourceDateTimeField,
+  UnitsOfMeasure,
 } from '../types/rules'
 import {
   FIELD_DEFINITIONS,
@@ -17,9 +20,17 @@ import {
   PROVIDER_ROLES,
   CUSTOM_FIELD_ASSOCIATIONS,
 } from '../config/fieldDefinitions'
+import {
+  SOURCE_DATE_TIME_FIELDS,
+  UNITS_OF_MEASURE,
+  TAT_FIELD_LABELS,
+  TAT_FIELD_DESCRIPTIONS,
+} from '../config/tatConfig'
 import { validateRule } from '../services/validationService'
 import { createRule, updateRule } from '../services/rulesService'
 import { getDictionaryOptions } from '../services/dictionaryService'
+import { useRulesStore } from '../store/rulesStore'
+import RuleFlowBuilder from './RuleFlowBuilder'
 
 interface RuleBuilderProps {
   rule?: Rule | null
@@ -28,6 +39,7 @@ interface RuleBuilderProps {
 }
 
 export default function RuleBuilder({ rule, onClose, onSave }: RuleBuilderProps) {
+  const [viewMode, setViewMode] = useState<'form' | 'visual'>('form')
   const [ruleDesc, setRuleDesc] = useState(rule?.ruleDesc || '')
   const [weight, setWeight] = useState<number | undefined>(rule?.weight)
   const [activationDate, setActivationDate] = useState(rule?.activationDate || '')
@@ -41,6 +53,19 @@ export default function RuleBuilder({ rule, onClose, onSave }: RuleBuilderProps)
   const [actions, setActions] = useState<RuleActions>(rule?.actions || {})
   const [errors, setErrors] = useState<string[]>([])
   const [saving, setSaving] = useState(false)
+  const currentRuleType = useRulesStore((state) => state.currentRuleType)
+
+  // TAT-specific state
+  const [tatParameters, setTatParameters] = useState<TATParameters>({
+    sourceDateTimeField: rule?.tatParameters?.sourceDateTimeField || 'NOTIFICATION_DATE_TIME',
+    units: rule?.tatParameters?.units || 72,
+    unitsOfMeasure: rule?.tatParameters?.unitsOfMeasure || 'HOURS',
+    dueTime: rule?.tatParameters?.dueTime || null,
+    holidayDates: rule?.tatParameters?.holidayDates || [],
+    holidayOffset: rule?.tatParameters?.holidayOffset || null,
+    clinicalsRequestedResponseThresholdHours: rule?.tatParameters?.clinicalsRequestedResponseThresholdHours || null,
+  })
+  const [holidayDateInput, setHolidayDateInput] = useState('')
 
   const handleAddStandardCriteria = () => {
     setStandardCriteria([
@@ -92,20 +117,30 @@ export default function RuleBuilder({ rule, onClose, onSave }: RuleBuilderProps)
   }
 
   const handleSave = async () => {
-    // Clean up actions - remove empty generateLetters arrays
-    const cleanedActions = { ...actions }
-    if (cleanedActions.generateLetters && cleanedActions.generateLetters.length === 0) {
-      delete cleanedActions.generateLetters
-    }
+    const ruleType = rule?.ruleType || currentRuleType
 
-    const ruleData = {
+    // Prepare rule data based on type
+    let ruleData: any = {
       ruleDesc,
+      ruleType,
       standardFieldCriteria: standardCriteria,
       customFieldCriteria: customCriteria,
       weight,
       activationDate,
       status,
-      actions: Object.keys(cleanedActions).length > 0 ? cleanedActions : undefined,
+    }
+
+    // Add type-specific fields
+    if (ruleType === 'tat') {
+      // TAT rules need tatParameters
+      ruleData.tatParameters = tatParameters
+    } else {
+      // Workflow rules (rules/skills) need actions
+      const cleanedActions = { ...actions }
+      if (cleanedActions.generateLetters && cleanedActions.generateLetters.length === 0) {
+        delete cleanedActions.generateLetters
+      }
+      ruleData.actions = Object.keys(cleanedActions).length > 0 ? cleanedActions : undefined
     }
 
     const validationErrors = validateRule(ruleData)
@@ -136,218 +171,477 @@ export default function RuleBuilder({ rule, onClose, onSave }: RuleBuilderProps)
   }
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto">
-      <div className="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
-        <div className="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75" onClick={onClose} />
+    <div className="fixed inset-0 z-50 bg-bg-light flex flex-col overflow-hidden">
+      {/* Header */}
+      <div className="bg-white px-6 py-4 border-b border-gray-200 flex items-center justify-between">
+        <h3 className="text-lg font-medium text-gray-900">
+          {rule ? 'Edit Rule' : 'Create New Rule'}
+        </h3>
 
-        <div className="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-6xl sm:w-full">
-          {/* Header */}
-          <div className="bg-white px-6 py-4 border-b border-gray-200">
-            <div className="flex items-center justify-between">
-              <h3 className="text-lg font-medium text-gray-900">
-                {rule ? 'Edit Rule' : 'Create New Rule'}
-              </h3>
-              <button
-                onClick={onClose}
-                className="text-gray-400 hover:text-gray-500"
-              >
-                <X className="w-5 h-5" />
-              </button>
+        {/* View Mode Toggle */}
+        <div className="flex items-center gap-2">
+          <div className="inline-flex rounded-lg border border-gray-200 p-1">
+            <button
+              onClick={() => setViewMode('form')}
+              className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
+                viewMode === 'form'
+                  ? 'bg-primary text-white'
+                  : 'text-gray-700 hover:bg-gray-100'
+              }`}
+            >
+              <Code2 className="w-4 h-4" />
+              Form Builder
+            </button>
+            <button
+              onClick={() => setViewMode('visual')}
+              className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
+                viewMode === 'visual'
+                  ? 'bg-primary text-white'
+                  : 'text-gray-700 hover:bg-gray-100'
+              }`}
+            >
+              <Layout className="w-4 h-4" />
+              Visual Builder
+            </button>
+          </div>
+
+          <button
+            onClick={onClose}
+            className="text-gray-400 hover:text-gray-500"
+          >
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+      </div>
+
+      {/* Content Area */}
+      {viewMode === 'visual' ? (
+        <div className="flex-1 overflow-hidden">
+          <RuleFlowBuilder
+            rule={{
+              ruleDesc,
+              ruleType: currentRuleType,
+              standardFieldCriteria: standardCriteria,
+              customFieldCriteria: customCriteria,
+              actions: currentRuleType === 'tat' ? undefined : actions,
+              tatParameters: currentRuleType === 'tat' ? tatParameters : undefined,
+            }}
+          />
+        </div>
+      ) : (
+        <div className="flex-1 overflow-y-auto bg-bg-light">
+          <div className="max-w-6xl mx-auto px-6 py-6">
+          {/* Errors */}
+          {errors.length > 0 && (
+            <div className="mb-4 bg-red-50 border-2 border-red-200 rounded-xl p-4 shadow-sm">
+              <h4 className="text-sm font-medium text-red-800 mb-2">
+                Validation Errors:
+              </h4>
+              <ul className="list-disc list-inside text-sm text-red-700">
+                {errors.map((error, i) => (
+                  <li key={i}>{error}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {/* Rule Basic Info */}
+          <div className="bg-white rounded-xl shadow-sm border border-table-border p-6 mb-4">
+            <h4 className="text-base font-semibold text-gray-900 mb-6 pb-3 border-b border-gray-200">
+              Rule Information
+            </h4>
+            <div className="grid grid-cols-2 gap-6">
+              <div className="col-span-2">
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Rule Description *
+                </label>
+                <textarea
+                  value={ruleDesc}
+                  onChange={(e) => setRuleDesc(e.target.value)}
+                  rows={2}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-primary focus:border-primary"
+                  placeholder="Describe what this rule does..."
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Weight (Priority)
+                </label>
+                <input
+                  type="number"
+                  value={weight || ''}
+                  onChange={(e) =>
+                    setWeight(e.target.value ? parseInt(e.target.value) : undefined)
+                  }
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-primary focus:border-primary"
+                  placeholder="Higher weight = higher priority"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Activation Date
+                </label>
+                <input
+                  type="date"
+                  value={activationDate}
+                  onChange={(e) => setActivationDate(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-primary focus:border-primary"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Status
+                </label>
+                <select
+                  value={status}
+                  onChange={(e) => setStatus(e.target.value as 'active' | 'inactive')}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-primary focus:border-primary"
+                >
+                  <option value="active">Active</option>
+                  <option value="inactive">Inactive</option>
+                </select>
+              </div>
             </div>
           </div>
 
-          {/* Body */}
-          <div className="bg-gray-50 px-6 py-6 max-h-[70vh] overflow-y-auto">
-            {/* Errors */}
-            {errors.length > 0 && (
-              <div className="mb-4 bg-red-50 border border-red-200 rounded-md p-4">
-                <h4 className="text-sm font-medium text-red-800 mb-2">
-                  Validation Errors:
-                </h4>
-                <ul className="list-disc list-inside text-sm text-red-700">
-                  {errors.map((error, i) => (
-                    <li key={i}>{error}</li>
-                  ))}
-                </ul>
+          {/* Standard Field Criteria */}
+          <div className="bg-white rounded-xl shadow-sm border border-table-border p-6 mb-4">
+            <div className="flex items-center justify-between mb-6 pb-3 border-b border-gray-200">
+              <h4 className="text-base font-semibold text-gray-900">
+                Standard Field Criteria
+              </h4>
+              <button
+                onClick={handleAddStandardCriteria}
+                className="inline-flex items-center px-3 py-1.5 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
+              >
+                <Plus className="w-4 h-4 mr-1.5" />
+                Add Criteria
+              </button>
+            </div>
+
+            {standardCriteria.length === 0 ? (
+              <p className="text-sm text-gray-500 text-center py-4">
+                No standard criteria added yet
+              </p>
+            ) : (
+              <div className="space-y-3">
+                {standardCriteria.map((criteria, index) => (
+                  <StandardCriteriaEditor
+                    key={index}
+                    criteria={criteria}
+                    onChange={(updates) =>
+                      handleUpdateStandardCriteria(index, updates)
+                    }
+                    onRemove={() => handleRemoveStandardCriteria(index)}
+                  />
+                ))}
               </div>
             )}
+          </div>
 
-            {/* Rule Basic Info */}
-            <div className="bg-white rounded-lg shadow-sm p-4 mb-4">
-              <h4 className="text-sm font-medium text-gray-900 mb-4">
-                Rule Information
+          {/* Custom Field Criteria */}
+          <div className="bg-white rounded-xl shadow-sm border border-table-border p-6 mb-4">
+            <div className="flex items-center justify-between mb-6 pb-3 border-b border-gray-200">
+              <h4 className="text-base font-semibold text-gray-900">
+                Custom Field Criteria
               </h4>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Rule Description *
-                  </label>
-                  <textarea
-                    value={ruleDesc}
-                    onChange={(e) => setRuleDesc(e.target.value)}
-                    rows={2}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-primary focus:border-primary"
-                    placeholder="Describe what this rule does..."
+              <button
+                onClick={handleAddCustomCriteria}
+                className="inline-flex items-center px-3 py-1.5 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
+              >
+                <Plus className="w-4 h-4 mr-1.5" />
+                Add Custom Criteria
+              </button>
+            </div>
+
+            {customCriteria.length === 0 ? (
+              <p className="text-sm text-gray-500 text-center py-4">
+                No custom criteria added yet
+              </p>
+            ) : (
+              <div className="space-y-3">
+                {customCriteria.map((criteria, index) => (
+                  <CustomCriteriaEditor
+                    key={index}
+                    criteria={criteria}
+                    onChange={(updates) =>
+                      handleUpdateCustomCriteria(index, updates)
+                    }
+                    onRemove={() => handleRemoveCustomCriteria(index)}
                   />
-                </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Actions or TAT Parameters based on rule type */}
+          {currentRuleType === 'tat' ? (
+            /* TAT Parameters */
+            <div className="bg-white rounded-xl shadow-sm border border-table-border p-6">
+              <h4 className="text-base font-semibold text-gray-900 mb-6 pb-3 border-b border-gray-200">
+                TAT Calculation Parameters
+              </h4>
+
+              <div className="space-y-6">
+                {/* Source Date/Time Field */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Weight (Priority)
+                    {TAT_FIELD_LABELS.sourceDateTimeField} *
                   </label>
-                  <input
-                    type="number"
-                    value={weight || ''}
+                  <p className="text-xs text-gray-500 mb-2">{TAT_FIELD_DESCRIPTIONS.sourceDateTimeField}</p>
+                  <select
+                    value={tatParameters.sourceDateTimeField}
                     onChange={(e) =>
-                      setWeight(e.target.value ? parseInt(e.target.value) : undefined)
+                      setTatParameters({
+                        ...tatParameters,
+                        sourceDateTimeField: e.target.value as SourceDateTimeField,
+                      })
                     }
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-primary focus:border-primary"
-                    placeholder="Higher weight = higher priority"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Activation Date
-                  </label>
-                  <input
-                    type="date"
-                    value={activationDate}
-                    onChange={(e) => setActivationDate(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-primary focus:border-primary"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Status
-                  </label>
-                  <select
-                    value={status}
-                    onChange={(e) => setStatus(e.target.value as 'active' | 'inactive')}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-primary focus:border-primary"
                   >
-                    <option value="active">Active</option>
-                    <option value="inactive">Inactive</option>
+                    {SOURCE_DATE_TIME_FIELDS.map((field) => (
+                      <option key={field.code} value={field.code}>
+                        {field.description}
+                      </option>
+                    ))}
                   </select>
                 </div>
-              </div>
-            </div>
 
-            {/* Standard Field Criteria */}
-            <div className="bg-white rounded-lg shadow-sm p-4 mb-4">
-              <div className="flex items-center justify-between mb-4">
-                <h4 className="text-sm font-medium text-gray-900">
-                  Standard Field Criteria
-                </h4>
-                <button
-                  onClick={handleAddStandardCriteria}
-                  className="inline-flex items-center px-3 py-1 border border-gray-300 rounded-md text-sm text-gray-700 hover:bg-gray-50"
-                >
-                  <Plus className="w-3 h-3 mr-1" />
-                  Add Criteria
-                </button>
-              </div>
-
-              {standardCriteria.length === 0 ? (
-                <p className="text-sm text-gray-500 text-center py-4">
-                  No standard criteria added yet
-                </p>
-              ) : (
-                <div className="space-y-3">
-                  {standardCriteria.map((criteria, index) => (
-                    <StandardCriteriaEditor
-                      key={index}
-                      criteria={criteria}
-                      onChange={(updates) =>
-                        handleUpdateStandardCriteria(index, updates)
-                      }
-                      onRemove={() => handleRemoveStandardCriteria(index)}
-                    />
-                  ))}
-                </div>
-              )}
-            </div>
-
-            {/* Custom Field Criteria */}
-            <div className="bg-white rounded-lg shadow-sm p-4 mb-4">
-              <div className="flex items-center justify-between mb-4">
-                <h4 className="text-sm font-medium text-gray-900">
-                  Custom Field Criteria
-                </h4>
-                <button
-                  onClick={handleAddCustomCriteria}
-                  className="inline-flex items-center px-3 py-1 border border-gray-300 rounded-md text-sm text-gray-700 hover:bg-gray-50"
-                >
-                  <Plus className="w-3 h-3 mr-1" />
-                  Add Custom Criteria
-                </button>
-              </div>
-
-              {customCriteria.length === 0 ? (
-                <p className="text-sm text-gray-500 text-center py-4">
-                  No custom criteria added yet
-                </p>
-              ) : (
-                <div className="space-y-3">
-                  {customCriteria.map((criteria, index) => (
-                    <CustomCriteriaEditor
-                      key={index}
-                      criteria={criteria}
-                      onChange={(updates) =>
-                        handleUpdateCustomCriteria(index, updates)
-                      }
-                      onRemove={() => handleRemoveCustomCriteria(index)}
-                    />
-                  ))}
-                </div>
-              )}
-            </div>
-
-            {/* Actions */}
-            <div className="bg-white rounded-lg shadow-sm p-4">
-              <h4 className="text-sm font-medium text-gray-900 mb-4">
-                Actions (Optional)
-              </h4>
-
-              <div className="space-y-4">
-                {/* Assign Skill */}
-                <div className="flex items-center space-x-3">
-                  <input
-                    type="checkbox"
-                    checked={!!actions.assignSkill}
-                    onChange={(e) => {
-                      if (e.target.checked) {
-                        setActions({ ...actions, assignSkill: { skillCode: '' } })
-                      } else {
-                        const { assignSkill, ...rest } = actions
-                        setActions(rest)
-                      }
-                    }}
-                    className="rounded border-gray-300"
-                  />
-                  <label className="text-sm font-medium text-gray-700">Assign Skill</label>
-                  {actions.assignSkill && (
+                {/* Units and Units of Measure */}
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      {TAT_FIELD_LABELS.units} *
+                    </label>
+                    <p className="text-xs text-gray-500 mb-2">{TAT_FIELD_DESCRIPTIONS.units}</p>
                     <input
-                      type="text"
-                      value={actions.assignSkill.skillCode}
+                      type="number"
+                      value={tatParameters.units}
                       onChange={(e) =>
-                        setActions({
-                          ...actions,
-                          assignSkill: { skillCode: e.target.value },
+                        setTatParameters({
+                          ...tatParameters,
+                          units: parseInt(e.target.value) || 0,
                         })
                       }
-                      placeholder="Skill Code (e.g., SKILL1)"
-                      className="flex-1 px-3 py-1 text-sm border border-gray-300 rounded-md"
+                      min="1"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-primary focus:border-primary"
                     />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      {TAT_FIELD_LABELS.unitsOfMeasure} *
+                    </label>
+                    <p className="text-xs text-gray-500 mb-2">{TAT_FIELD_DESCRIPTIONS.unitsOfMeasure}</p>
+                    <select
+                      value={tatParameters.unitsOfMeasure}
+                      onChange={(e) =>
+                        setTatParameters({
+                          ...tatParameters,
+                          unitsOfMeasure: e.target.value as UnitsOfMeasure,
+                        })
+                      }
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-primary focus:border-primary"
+                    >
+                      {UNITS_OF_MEASURE.map((uom) => (
+                        <option key={uom.code} value={uom.code}>
+                          {uom.description}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+
+                {/* Due Time */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    {TAT_FIELD_LABELS.dueTime}
+                  </label>
+                  <p className="text-xs text-gray-500 mb-2">{TAT_FIELD_DESCRIPTIONS.dueTime}</p>
+                  <input
+                    type="time"
+                    value={tatParameters.dueTime || ''}
+                    onChange={(e) =>
+                      setTatParameters({
+                        ...tatParameters,
+                        dueTime: e.target.value || null,
+                      })
+                    }
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-primary focus:border-primary"
+                  />
+                </div>
+
+                {/* Holiday Dates */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    {TAT_FIELD_LABELS.holidayDates}
+                  </label>
+                  <p className="text-xs text-gray-500 mb-2">{TAT_FIELD_DESCRIPTIONS.holidayDates}</p>
+                  <div className="flex gap-2 mb-2">
+                    <input
+                      type="date"
+                      value={holidayDateInput}
+                      onChange={(e) => setHolidayDateInput(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' && holidayDateInput) {
+                          const formatted = holidayDateInput.replace(/-/g, '')
+                          if (formatted.length === 8) {
+                            setTatParameters({
+                              ...tatParameters,
+                              holidayDates: [
+                                ...(tatParameters.holidayDates || []),
+                                formatted,
+                              ],
+                            })
+                            setHolidayDateInput('')
+                          }
+                        }
+                      }}
+                      className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:ring-primary focus:border-primary"
+                    />
+                    <button
+                      onClick={() => {
+                        if (holidayDateInput) {
+                          const formatted = holidayDateInput.replace(/-/g, '')
+                          if (formatted.length === 8) {
+                            setTatParameters({
+                              ...tatParameters,
+                              holidayDates: [
+                                ...(tatParameters.holidayDates || []),
+                                formatted,
+                              ],
+                            })
+                            setHolidayDateInput('')
+                          }
+                        }
+                      }}
+                      className="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary-hover"
+                    >
+                      <Plus className="w-4 h-4" />
+                    </button>
+                  </div>
+                  {tatParameters.holidayDates && tatParameters.holidayDates.length > 0 && (
+                    <div className="flex flex-wrap gap-2">
+                      {tatParameters.holidayDates.map((date, index) => (
+                        <div
+                          key={index}
+                          className="inline-flex items-center bg-gray-100 rounded px-2 py-1 text-sm"
+                        >
+                          <span>
+                            {date.slice(0, 4)}-{date.slice(4, 6)}-{date.slice(6, 8)}
+                          </span>
+                          <button
+                            onClick={() => {
+                              setTatParameters({
+                                ...tatParameters,
+                                holidayDates: tatParameters.holidayDates?.filter((_, i) => i !== index),
+                              })
+                            }}
+                            className="ml-2 text-red-600 hover:text-red-800"
+                          >
+                            <X className="w-3 h-3" />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
                   )}
                 </div>
 
-                {/* Assign License */}
+                {/* Holiday Offset */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    {TAT_FIELD_LABELS.holidayOffset}
+                  </label>
+                  <p className="text-xs text-gray-500 mb-2">{TAT_FIELD_DESCRIPTIONS.holidayOffset}</p>
+                  <input
+                    type="number"
+                    value={tatParameters.holidayOffset || ''}
+                    onChange={(e) =>
+                      setTatParameters({
+                        ...tatParameters,
+                        holidayOffset: e.target.value ? parseInt(e.target.value) : null,
+                      })
+                    }
+                    min="0"
+                    placeholder="Leave empty for no offset"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-primary focus:border-primary"
+                  />
+                </div>
+
+                {/* Clinicals Response Threshold */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    {TAT_FIELD_LABELS.clinicalsRequestedResponseThresholdHours}
+                  </label>
+                  <p className="text-xs text-gray-500 mb-2">
+                    {TAT_FIELD_DESCRIPTIONS.clinicalsRequestedResponseThresholdHours}
+                  </p>
+                  <input
+                    type="number"
+                    value={tatParameters.clinicalsRequestedResponseThresholdHours || ''}
+                    onChange={(e) =>
+                      setTatParameters({
+                        ...tatParameters,
+                        clinicalsRequestedResponseThresholdHours: e.target.value
+                          ? parseInt(e.target.value)
+                          : null,
+                      })
+                    }
+                    min="0"
+                    placeholder="Leave empty if not applicable"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-primary focus:border-primary"
+                  />
+                </div>
+              </div>
+            </div>
+          ) : (
+            /* Actions */
+            <div className="bg-white rounded-xl shadow-sm border border-table-border p-6">
+              <h4 className="text-base font-semibold text-gray-900 mb-6 pb-3 border-b border-gray-200">
+                Actions (Optional)
+              </h4>
+
+            <div className="space-y-4">
+              {/* Assign Skill */}
+              <div className="flex items-center space-x-3">
+                <input
+                  type="checkbox"
+                  checked={!!actions.assignSkill}
+                  onChange={(e) => {
+                    if (e.target.checked) {
+                      setActions({ ...actions, assignSkill: { skillCode: '' } })
+                    } else {
+                      const { assignSkill, ...rest } = actions
+                      setActions(rest)
+                    }
+                  }}
+                  className="rounded border-gray-300"
+                />
+                <label className="text-sm font-medium text-gray-700">Assign Skill</label>
+                {actions.assignSkill && (
+                  <input
+                    type="text"
+                    value={actions.assignSkill.skillCode}
+                    onChange={(e) =>
+                      setActions({
+                        ...actions,
+                        assignSkill: { skillCode: e.target.value },
+                      })
+                    }
+                    placeholder="Skill Code (e.g., SKILL1)"
+                    className="flex-1 px-3 py-1 text-sm border border-gray-300 rounded-md"
+                  />
+                )}
+              </div>
+
+              {/* Assign Licenses */}
+              <div className="flex flex-col space-y-2">
                 <div className="flex items-center space-x-3">
                   <input
                     type="checkbox"
                     checked={!!actions.assignLicense}
                     onChange={(e) => {
                       if (e.target.checked) {
-                        setActions({ ...actions, assignLicense: { licenseCode: '' } })
+                        setActions({ ...actions, assignLicense: { licenseCodes: [] } })
                       } else {
                         const { assignLicense, ...rest } = actions
                         setActions(rest)
@@ -355,221 +649,258 @@ export default function RuleBuilder({ rule, onClose, onSave }: RuleBuilderProps)
                     }}
                     className="rounded border-gray-300"
                   />
-                  <label className="text-sm font-medium text-gray-700">Assign License</label>
-                  {actions.assignLicense && (
-                    <input
-                      type="text"
-                      value={actions.assignLicense.licenseCode}
-                      onChange={(e) =>
-                        setActions({
-                          ...actions,
-                          assignLicense: { licenseCode: e.target.value },
-                        })
-                      }
-                      placeholder="License Code (e.g., LIC1)"
-                      className="flex-1 px-3 py-1 text-sm border border-gray-300 rounded-md"
-                    />
-                  )}
+                  <label className="text-sm font-medium text-gray-700">Assign Licenses</label>
                 </div>
-
-                {/* Department Routing */}
-                <div className="flex items-center space-x-3">
-                  <input
-                    type="checkbox"
-                    checked={!!actions.departmentRouting}
-                    onChange={(e) => {
-                      if (e.target.checked) {
-                        setActions({ ...actions, departmentRouting: { departmentCode: '' } })
-                      } else {
-                        const { departmentRouting, ...rest } = actions
-                        setActions(rest)
-                      }
-                    }}
-                    className="rounded border-gray-300"
-                  />
-                  <label className="text-sm font-medium text-gray-700">Department Routing</label>
-                  {actions.departmentRouting && (
-                    <input
-                      type="text"
-                      value={actions.departmentRouting.departmentCode}
-                      onChange={(e) =>
-                        setActions({
-                          ...actions,
-                          departmentRouting: { departmentCode: e.target.value },
-                        })
-                      }
-                      placeholder="Department Code (e.g., DEPT2)"
-                      className="flex-1 px-3 py-1 text-sm border border-gray-300 rounded-md"
-                    />
-                  )}
-                </div>
-
-                {/* Close */}
-                <div className="flex items-center space-x-3">
-                  <input
-                    type="checkbox"
-                    checked={!!actions.close}
-                    onChange={(e) => {
-                      if (e.target.checked) {
-                        setActions({ ...actions, close: { dispositionCode: '' } })
-                      } else {
-                        const { close, ...rest } = actions
-                        setActions(rest)
-                      }
-                    }}
-                    className="rounded border-gray-300"
-                  />
-                  <label className="text-sm font-medium text-gray-700">Close/Discharge Request</label>
-                  {actions.close && (
-                    <input
-                      type="text"
-                      value={actions.close.dispositionCode}
-                      onChange={(e) =>
-                        setActions({
-                          ...actions,
-                          close: { dispositionCode: e.target.value },
-                        })
-                      }
-                      placeholder="Disposition Code (e.g., DISP1)"
-                      className="flex-1 px-3 py-1 text-sm border border-gray-300 rounded-md"
-                    />
-                  )}
-                </div>
-
-                {/* Generate Letters */}
-                <div className="space-y-2">
-                  <div className="flex items-center space-x-3">
-                    <input
-                      type="checkbox"
-                      checked={!!actions.generateLetters && actions.generateLetters.length > 0}
-                      onChange={(e) => {
-                        if (!e.target.checked) {
-                          const { generateLetters, ...rest } = actions
-                          setActions(rest)
-                        } else {
-                          setActions({
-                            ...actions,
-                            generateLetters: [{ letterName: '' }],
-                          })
-                        }
-                      }}
-                      className="rounded border-gray-300 text-primary focus:ring-primary"
-                    />
-                    <label className="text-sm font-medium text-gray-700">
-                      Generate Letter
-                    </label>
-                  </div>
-                  {actions.generateLetters && actions.generateLetters.length > 0 && (
-                    <>
-                      <div className="flex items-center justify-between pl-6">
-                        <button
-                          onClick={() =>
+                {actions.assignLicense && (
+                  <div className="ml-8 space-y-2">
+                    {(actions.assignLicense.licenseCodes || []).map((license, index) => (
+                      <div key={index} className="flex items-center space-x-2">
+                        <input
+                          type="text"
+                          value={license}
+                          onChange={(e) => {
+                            const newLicenses = [...(actions.assignLicense?.licenseCodes || [])]
+                            newLicenses[index] = e.target.value
                             setActions({
                               ...actions,
-                              generateLetters: [
-                                ...(actions.generateLetters || []),
-                                { letterName: '' },
-                              ],
+                              assignLicense: { licenseCodes: newLicenses },
                             })
-                          }
-                          className="inline-flex items-center px-2 py-1 text-xs bg-primary-light hover:bg-primary text-primary hover:text-white rounded"
+                          }}
+                          placeholder="License Code (e.g., RN, LPC)"
+                          className="flex-1 px-3 py-1 text-sm border border-gray-300 rounded-md"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const newLicenses = (actions.assignLicense?.licenseCodes || []).filter((_, i) => i !== index)
+                            setActions({
+                              ...actions,
+                              assignLicense: { licenseCodes: newLicenses },
+                            })
+                          }}
+                          className="px-2 py-1 text-sm text-red-600 hover:bg-red-50 rounded"
                         >
-                          <Plus className="w-3 h-3 mr-1" />
-                          Add Letter Template
+                          Remove
                         </button>
                       </div>
-                      <div className="space-y-2 pl-6">
-                        {actions.generateLetters.map((letter, index) => (
-                          <div key={index} className="flex items-center space-x-2">
-                            <input
-                              type="text"
-                              value={letter.letterName}
-                              onChange={(e) => {
-                                const updated = [...(actions.generateLetters || [])]
-                                updated[index] = { letterName: e.target.value }
-                                setActions({ ...actions, generateLetters: updated })
-                              }}
-                              placeholder="Letter Name (e.g., Master Ordering Outpatient)"
-                              className="flex-1 px-3 py-1 text-sm border border-gray-300 rounded-md"
-                            />
-                            <button
-                              onClick={() => {
-                                const updated = (actions.generateLetters || []).filter(
-                                  (_, i) => i !== index
-                                )
-                                if (updated.length === 0) {
-                                  const { generateLetters, ...rest } = actions
-                                  setActions(rest)
-                                } else {
-                                  setActions({ ...actions, generateLetters: updated })
-                                }
-                              }}
-                              className="p-1 text-red-600 hover:text-red-800"
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </button>
-                          </div>
-                        ))}
-                      </div>
-                    </>
-                  )}
-                </div>
-
-                {/* Hints */}
-                <div className="space-y-2">
-                  <div className="flex items-center space-x-3">
-                    <input
-                      type="checkbox"
-                      checked={!!actions.hints}
-                      onChange={(e) => {
-                        if (e.target.checked) {
-                          setActions({ ...actions, hints: { message: '' } })
-                        } else {
-                          const { hints, ...rest } = actions
-                          setActions(rest)
-                        }
-                      }}
-                      className="rounded border-gray-300"
-                    />
-                    <label className="text-sm font-medium text-gray-700">Hints</label>
-                  </div>
-                  {actions.hints && (
-                    <textarea
-                      value={actions.hints.message}
-                      onChange={(e) =>
+                    ))}
+                    <button
+                      type="button"
+                      onClick={() => {
                         setActions({
                           ...actions,
-                          hints: { message: e.target.value },
+                          assignLicense: {
+                            licenseCodes: [...(actions.assignLicense?.licenseCodes || []), '']
+                          },
+                        })
+                      }}
+                      className="px-3 py-1 text-sm text-primary hover:bg-primary-light rounded"
+                    >
+                      + Add License
+                    </button>
+                  </div>
+                )}
+              </div>
+
+              {/* Department Routing */}
+              <div className="flex items-center space-x-3">
+                <input
+                  type="checkbox"
+                  checked={!!actions.departmentRouting}
+                  onChange={(e) => {
+                    if (e.target.checked) {
+                      setActions({ ...actions, departmentRouting: { departmentCode: '' } })
+                    } else {
+                      const { departmentRouting, ...rest } = actions
+                      setActions(rest)
+                    }
+                  }}
+                  className="rounded border-gray-300"
+                />
+                <label className="text-sm font-medium text-gray-700">Department Routing</label>
+                {actions.departmentRouting && (
+                  <input
+                    type="text"
+                    value={actions.departmentRouting.departmentCode}
+                    onChange={(e) =>
+                      setActions({
+                        ...actions,
+                        departmentRouting: { departmentCode: e.target.value },
+                      })
+                    }
+                    placeholder="Department Code (e.g., DEPT2)"
+                    className="flex-1 px-3 py-1 text-sm border border-gray-300 rounded-md"
+                  />
+                )}
+              </div>
+
+              {/* Close */}
+              <div className="flex items-center space-x-3">
+                <input
+                  type="checkbox"
+                  checked={!!actions.close}
+                  onChange={(e) => {
+                    if (e.target.checked) {
+                      setActions({ ...actions, close: { dispositionCode: '' } })
+                    } else {
+                      const { close, ...rest } = actions
+                      setActions(rest)
+                    }
+                  }}
+                  className="rounded border-gray-300"
+                />
+                <label className="text-sm font-medium text-gray-700">Close/Discharge Request</label>
+                {actions.close && (
+                  <input
+                    type="text"
+                    value={actions.close.dispositionCode}
+                    onChange={(e) =>
+                      setActions({
+                        ...actions,
+                        close: { dispositionCode: e.target.value },
+                      })
+                    }
+                    placeholder="Disposition Code (e.g., DISP1)"
+                    className="flex-1 px-3 py-1 text-sm border border-gray-300 rounded-md"
+                  />
+                )}
+              </div>
+
+              {/* Generate Letters */}
+              <div className="space-y-2">
+                <div className="flex items-center space-x-3">
+                  <input
+                    type="checkbox"
+                    checked={!!actions.generateLetters && actions.generateLetters.length > 0}
+                    onChange={(e) => {
+                      if (!e.target.checked) {
+                        const { generateLetters, ...rest } = actions
+                        setActions(rest)
+                      } else {
+                        setActions({
+                          ...actions,
+                          generateLetters: [{ letterName: '' }],
                         })
                       }
-                      placeholder="Enter hint message..."
-                      rows={3}
-                      className="w-full ml-6 px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-primary focus:border-primary"
-                    />
-                  )}
+                    }}
+                    className="rounded border-gray-300 text-primary focus:ring-primary"
+                  />
+                  <label className="text-sm font-medium text-gray-700">
+                    Generate Letter
+                  </label>
                 </div>
+                {actions.generateLetters && actions.generateLetters.length > 0 && (
+                  <>
+                    <div className="flex items-center justify-between pl-6">
+                      <button
+                        onClick={() =>
+                          setActions({
+                            ...actions,
+                            generateLetters: [
+                              ...(actions.generateLetters || []),
+                              { letterName: '' },
+                            ],
+                          })
+                        }
+                        className="inline-flex items-center px-2 py-1 text-xs bg-primary-light hover:bg-primary text-primary hover:text-white rounded"
+                      >
+                        <Plus className="w-3 h-3 mr-1" />
+                        Add Letter Template
+                      </button>
+                    </div>
+                    <div className="space-y-2 pl-6">
+                      {actions.generateLetters.map((letter, index) => (
+                        <div key={index} className="flex items-center space-x-2">
+                          <input
+                            type="text"
+                            value={letter.letterName}
+                            onChange={(e) => {
+                              const updated = [...(actions.generateLetters || [])]
+                              updated[index] = { letterName: e.target.value }
+                              setActions({ ...actions, generateLetters: updated })
+                            }}
+                            placeholder="Letter Name (e.g., Master Ordering Outpatient)"
+                            className="flex-1 px-3 py-1 text-sm border border-gray-300 rounded-md"
+                          />
+                          <button
+                            onClick={() => {
+                              const updated = (actions.generateLetters || []).filter(
+                                (_, i) => i !== index
+                              )
+                              if (updated.length === 0) {
+                                const { generateLetters, ...rest } = actions
+                                setActions(rest)
+                              } else {
+                                setActions({ ...actions, generateLetters: updated })
+                              }
+                            }}
+                            className="p-1 text-red-600 hover:text-red-800"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </>
+                )}
+              </div>
+
+              {/* Hints */}
+              <div className="space-y-2">
+                <div className="flex items-center space-x-3">
+                  <input
+                    type="checkbox"
+                    checked={!!actions.hints}
+                    onChange={(e) => {
+                      if (e.target.checked) {
+                        setActions({ ...actions, hints: { message: '' } })
+                      } else {
+                        const { hints, ...rest } = actions
+                        setActions(rest)
+                      }
+                    }}
+                    className="rounded border-gray-300"
+                  />
+                  <label className="text-sm font-medium text-gray-700">Hints</label>
+                </div>
+                {actions.hints && (
+                  <textarea
+                    value={actions.hints.message}
+                    onChange={(e) =>
+                      setActions({
+                        ...actions,
+                        hints: { message: e.target.value },
+                      })
+                    }
+                    placeholder="Enter hint message..."
+                    rows={3}
+                    className="w-full ml-6 px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-primary focus:border-primary"
+                  />
+                )}
               </div>
             </div>
           </div>
-
-          {/* Footer */}
-          <div className="bg-gray-50 px-6 py-4 border-t border-gray-200 flex items-center justify-between">
-            <button
-              onClick={onClose}
-              className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
-            >
-              Cancel
-            </button>
-            <button
-              onClick={handleSave}
-              disabled={saving}
-              className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary hover:bg-primary-hover disabled:opacity-50"
-            >
-              <Save className="w-4 h-4 mr-2" />
-              {saving ? 'Saving...' : 'Save Rule'}
-            </button>
-          </div>
+          )}
         </div>
+        </div>
+      )}
+
+      {/* Footer */}
+      <div className="bg-gray-50 px-6 py-4 border-t border-gray-200 flex items-center justify-between">
+        <button
+          onClick={onClose}
+          className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
+        >
+          Cancel
+        </button>
+        <button
+          onClick={handleSave}
+          disabled={saving}
+          className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary hover:bg-primary-hover disabled:opacity-50"
+        >
+          <Save className="w-4 h-4 mr-2" />
+          {saving ? 'Saving...' : 'Save Rule'}
+        </button>
       </div>
     </div>
   )

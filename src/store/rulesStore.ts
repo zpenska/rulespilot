@@ -1,16 +1,18 @@
 import { create } from 'zustand'
-import type { Rule, RuleGroup } from '../types/rules'
+import type { Rule, RuleGroup, RuleType } from '../types/rules'
 
 interface RulesState {
   rules: Rule[]
   ruleGroups: RuleGroup[]
   selectedRuleId: string | null
+  currentRuleType: RuleType
   setRules: (rules: Rule[]) => void
   setRuleGroups: (groups: RuleGroup[]) => void
   addRule: (rule: Rule) => void
   updateRule: (id: string, updates: Partial<Rule>) => void
   deleteRule: (id: string) => void
   selectRule: (id: string | null) => void
+  setCurrentRuleType: (ruleType: RuleType) => void
   addRuleGroup: (group: RuleGroup) => void
   updateRuleGroup: (id: string, updates: Partial<RuleGroup>) => void
   deleteRuleGroup: (id: string) => void
@@ -20,6 +22,7 @@ export const useRulesStore = create<RulesState>((set) => ({
   rules: [],
   ruleGroups: [],
   selectedRuleId: null,
+  currentRuleType: 'workflow',
 
   setRules: (rules) => set({ rules }),
 
@@ -46,6 +49,11 @@ export const useRulesStore = create<RulesState>((set) => ({
   selectRule: (id) =>
     set(() => ({
       selectedRuleId: id,
+    })),
+
+  setCurrentRuleType: (ruleType) =>
+    set(() => ({
+      currentRuleType: ruleType,
     })),
 
   addRuleGroup: (group) =>

@@ -1,14 +1,28 @@
 import Anthropic from '@anthropic-ai/sdk'
-import { Rule, StandardFieldCriteria, CustomFieldCriteria, RuleActions } from '../../types/rules'
+import { Rule, StandardFieldCriteria, CustomFieldCriteria, RuleActions, RuleType, TATParameters } from '../../types/rules'
 import AI_KNOWLEDGE_BASE from '../../config/aiKnowledgeBase'
+import AI_KNOWLEDGE_WORKFLOW from '../../config/aiKnowledgeWorkflow'
+import AI_KNOWLEDGE_SKILLS from '../../config/aiKnowledgeSkills'
+import AI_KNOWLEDGE_TAT from '../../config/aiKnowledgeTAT'
 
 const anthropic = new Anthropic({
   apiKey: import.meta.env.VITE_ANTHROPIC_API_KEY,
   dangerouslyAllowBrowser: true, // Only for development - use a backend in production
 })
 
-// Use the comprehensive knowledge base
-const RULES_ENGINE_CONTEXT = AI_KNOWLEDGE_BASE
+// Get context-aware knowledge base based on rule type
+function getKnowledgeBase(ruleType: RuleType): string {
+  switch (ruleType) {
+    case 'workflow':
+      return AI_KNOWLEDGE_WORKFLOW + '\n\n' + AI_KNOWLEDGE_BASE // Include base + workflow-specific
+    case 'skills':
+      return AI_KNOWLEDGE_SKILLS + '\n\n' + AI_KNOWLEDGE_BASE // Include base + skills-specific
+    case 'tat':
+      return AI_KNOWLEDGE_TAT // TAT-specific only (different structure)
+    default:
+      return AI_KNOWLEDGE_BASE
+  }
+}
 
 export interface AIRuleGeneration {
   ruleDesc: string
@@ -16,23 +30,27 @@ export interface AIRuleGeneration {
   customFieldCriteria: CustomFieldCriteria[]
   weight?: number
   actions?: RuleActions
+  tatParameters?: TATParameters
 }
 
 /**
  * Generate a rule from natural language description
  */
 export async function generateRuleFromNaturalLanguage(
-  description: string
+  description: string,
+  ruleType: RuleType = 'workflow'
 ): Promise<AIRuleGeneration> {
+  const knowledgeBase = getKnowledgeBase(ruleType)
+
   const message = await anthropic.messages.create({
     model: 'claude-sonnet-4-20250514',
     max_tokens: 2000,
     messages: [
       {
         role: 'user',
-        content: `${RULES_ENGINE_CONTEXT}
+        content: `${knowledgeBase}
 
-Based on this description, generate a rule in the exact JSON format specified above:
+Based on this description, generate a ${ruleType} rule in the exact JSON format specified above:
 
 "${description}"
 

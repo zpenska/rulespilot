@@ -12,7 +12,7 @@ import {
   writeBatch,
 } from 'firebase/firestore'
 import { db } from '../config/firebase'
-import { Rule, RuleExport, AutoWorkflowRulesExport } from '../types/rules'
+import { Rule, RuleExport, AutoWorkflowRulesExport, RuleType, TATRuleExport, DueDateRulesExport, StandardOperator, CustomOperator } from '../types/rules'
 import { nanoid } from 'nanoid'
 
 const RULES_COLLECTION = 'rules'
@@ -80,13 +80,26 @@ export const getRule = async (id: string): Promise<Rule | null> => {
     return null
   }
 
-  return docSnap.data() as Rule
+  const data = docSnap.data() as Rule
+  return {
+    ...data,
+    ruleType: normalizeRuleType(data.ruleType)
+  }
 }
 
 /**
- * Get all rules
+ * Normalize rule type - map legacy 'rules' to 'workflow'
  */
-export const getAllRules = async (): Promise<Rule[]> => {
+function normalizeRuleType(ruleType: string | undefined): RuleType {
+  if (ruleType === 'rules') return 'workflow'  // Map legacy 'rules' to 'workflow'
+  if (!ruleType) return 'workflow'  // Default undefined/null to 'workflow'
+  return ruleType as RuleType
+}
+
+/**
+ * Get all rules (optionally filtered by rule type)
+ */
+export const getAllRules = async (ruleType?: RuleType): Promise<Rule[]> => {
   if (!db) {
     console.warn('Firebase not configured, returning empty rules array')
     return []
@@ -96,23 +109,53 @@ export const getAllRules = async (): Promise<Rule[]> => {
   const q = query(rulesRef, orderBy('updatedAt', 'desc'))
   const snapshot = await getDocs(q)
 
-  return snapshot.docs.map((doc) => doc.data() as Rule)
+  // Map rules and normalize legacy 'rules' -> 'workflow'
+  let rules = snapshot.docs.map((doc) => {
+    const data = doc.data() as Rule
+    return {
+      ...data,
+      ruleType: normalizeRuleType(data.ruleType)
+    }
+  })
+
+  // Filter by ruleType if specified
+  if (ruleType) {
+    rules = rules.filter((rule) => rule.ruleType === ruleType)
+  }
+
+  return rules
 }
 
 /**
- * Get active rules
+ * Get active rules (optionally filtered by rule type)
  */
-export const getActiveRules = async (): Promise<Rule[]> => {
+export const getActiveRules = async (ruleType?: RuleType): Promise<Rule[]> => {
   const rulesRef = collection(db, RULES_COLLECTION)
+
   const q = query(
     rulesRef,
     where('status', '==', 'active'),
     orderBy('weight', 'desc'),
     orderBy('updatedAt', 'desc')
   )
+
   const snapshot = await getDocs(q)
 
-  return snapshot.docs.map((doc) => doc.data() as Rule)
+  // Map rules and normalize legacy 'rules' -> 'workflow'
+  let rules = snapshot.docs.map((doc) => {
+    const data = doc.data() as Rule
+    return {
+      ...data,
+      ruleType: normalizeRuleType(data.ruleType)
+    }
+  })
+
+  // Filter by ruleType if specified
+  if (ruleType) {
+    rules = rules.filter((rule) => rule.ruleType === ruleType)
+  }
+
+  return rules
 }
 
 /**
@@ -208,10 +251,67 @@ export const bulkDeleteRules = async (ruleIds: string[]): Promise<void> => {
 }
 
 /**
- * Export rule to JSON format (without UI metadata)
+ * Export TAT rule to JSON format (without UI metadata)
+ * TAT rules have a different structure focused on due date calculation
+ * Note: TAT rules do NOT include operator field - it's implicitly "IN"
+ */
+export const exportTATRuleToJSON = (rule: Rule): TATRuleExport => {
+  // Format standardFieldCriteria for TAT rules (no operator field)
+  const standardFieldCriteria = rule.standardFieldCriteria.map((criteria) => {
+    const ordered: any = {
+      field: criteria.field,
+    }
+
+    // Add providerRole if present (must come before values)
+    if (criteria.providerRole) {
+      ordered.providerRole = criteria.providerRole
+    }
+
+    // Add alternateIdType if present (must come before values)
+    if (criteria.alternateIdType) {
+      ordered.alternateIdType = criteria.alternateIdType
+    }
+
+    // Add values last
+    ordered.values = criteria.values
+
+    return ordered
+  })
+
+  // Format customFieldCriteria for TAT rules (no operator, specific field order)
+  const customFieldCriteria = rule.customFieldCriteria?.map((criteria) => ({
+    values: criteria.values,
+    association: criteria.association,
+    templateId: criteria.templateId,
+  }))
+
+  if (!rule.tatParameters) {
+    throw new Error('TAT rule must have tatParameters defined')
+  }
+
+  const exported: TATRuleExport = {
+    sourceDateTimeField: rule.tatParameters.sourceDateTimeField,
+    holidayDates: rule.tatParameters.holidayDates,
+    clinicalsRequestedResponseThresholdHours: rule.tatParameters.clinicalsRequestedResponseThresholdHours ?? null,
+    ruleDesc: rule.ruleDesc,
+    customFieldCriteria: customFieldCriteria && customFieldCriteria.length > 0 ? customFieldCriteria : null,
+    isActive: rule.status === 'active',
+    weight: rule.weight ?? 100,
+    unitsOfMeasure: rule.tatParameters.unitsOfMeasure,
+    standardFieldCriteria,
+    units: rule.tatParameters.units,
+    holidayOffset: rule.tatParameters.holidayOffset ?? null,
+    dueTime: rule.tatParameters.dueTime ?? null,
+  }
+
+  return exported
+}
+
+/**
+ * Export workflow rule to JSON format (without UI metadata)
  * Ensures correct field ordering for JSON output
  */
-export const exportRuleToJSON = (rule: Rule): RuleExport => {
+export const exportWorkflowRuleToJSON = (rule: Rule): RuleExport => {
   // Reorder standardFieldCriteria to match required JSON format
   const standardFieldCriteria = rule.standardFieldCriteria.map((criteria) => {
     const ordered: any = {
@@ -264,6 +364,17 @@ export const exportRuleToJSON = (rule: Rule): RuleExport => {
 }
 
 /**
+ * Export rule to JSON format (without UI metadata)
+ * Routes to appropriate export function based on rule type
+ */
+export const exportRuleToJSON = (rule: Rule): RuleExport | TATRuleExport => {
+  if (rule.ruleType === 'tat') {
+    return exportTATRuleToJSON(rule)
+  }
+  return exportWorkflowRuleToJSON(rule)
+}
+
+/**
  * Export all rules to JSON
  */
 export const exportAllRulesToJSON = async (): Promise<RuleExport[]> => {
@@ -285,16 +396,33 @@ export const exportActiveRulesToJSON = async (): Promise<RuleExport[]> => {
 export const exportAsAutoWorkflowRules = async (
   rules?: Rule[]
 ): Promise<AutoWorkflowRulesExport> => {
-  const rulesToExport = rules || (await getActiveRules())
+  const rulesToExport = rules || (await getActiveRules('workflow'))
+  // Filter to only workflow rules
+  const workflowRules = rulesToExport.filter(r => r.ruleType === 'workflow' || r.ruleType === 'skills')
 
   return {
     type: 'AUTO_WORKFLOW_RULES',
-    rules: rulesToExport.map(exportRuleToJSON),
+    rules: workflowRules.map(exportWorkflowRuleToJSON),
   }
 }
 
 /**
- * Import rules from JSON
+ * Export TAT rules in DUE_DATE_RULES format
+ */
+export const exportAsDueDateRules = async (
+  rules?: Rule[]
+): Promise<DueDateRulesExport> => {
+  const rulesToExport = rules || (await getActiveRules('tat'))
+  // Filter to only TAT rules
+  const tatRules = rulesToExport.filter(r => r.ruleType === 'tat')
+
+  return {
+    rules: tatRules.map(exportTATRuleToJSON),
+  }
+}
+
+/**
+ * Import workflow rules from JSON
  */
 export const importRulesFromJSON = async (jsonData: RuleExport[]): Promise<Rule[]> => {
   const importedRules: Rule[] = []
@@ -303,6 +431,7 @@ export const importRulesFromJSON = async (jsonData: RuleExport[]): Promise<Rule[
     try {
       // Convert RuleExport to Rule format
       const ruleToCreate: Partial<Rule> = {
+        ruleType: 'workflow',
         ruleDesc: ruleData.ruleDesc,
         standardFieldCriteria: ruleData.standardFieldCriteria || [],
         customFieldCriteria: ruleData.customFieldCriteria || [],
@@ -321,6 +450,69 @@ export const importRulesFromJSON = async (jsonData: RuleExport[]): Promise<Rule[
   }
 
   return importedRules
+}
+
+/**
+ * Import TAT rules from JSON
+ * Note: TAT rules don't have operator field in JSON - we add it as "IN" during import
+ */
+export const importTATRulesFromJSON = async (jsonData: TATRuleExport[]): Promise<Rule[]> => {
+  const importedRules: Rule[] = []
+
+  for (const ruleData of jsonData) {
+    try {
+      // Convert TAT standardFieldCriteria to internal format (add operator)
+      const standardFieldCriteria = ruleData.standardFieldCriteria.map((criteria) => ({
+        ...criteria,
+        operator: 'IN' as StandardOperator, // TAT rules implicitly use IN operator
+      }))
+
+      // Convert TAT customFieldCriteria to internal format (add operator)
+      const customFieldCriteria = ruleData.customFieldCriteria?.map((criteria) => ({
+        association: criteria.association,
+        templateId: criteria.templateId,
+        operator: 'IN' as CustomOperator, // TAT rules implicitly use IN operator
+        values: criteria.values,
+      }))
+
+      // Convert TATRuleExport to Rule format
+      const ruleToCreate: Partial<Rule> = {
+        ruleType: 'tat',
+        ruleDesc: ruleData.ruleDesc,
+        standardFieldCriteria,
+        customFieldCriteria: customFieldCriteria || [],
+        weight: ruleData.weight,
+        status: ruleData.isActive ? 'active' : 'inactive',
+        tatParameters: {
+          sourceDateTimeField: ruleData.sourceDateTimeField,
+          units: ruleData.units,
+          unitsOfMeasure: ruleData.unitsOfMeasure,
+          dueTime: ruleData.dueTime,
+          holidayDates: ruleData.holidayDates,
+          holidayOffset: ruleData.holidayOffset,
+          clinicalsRequestedResponseThresholdHours: ruleData.clinicalsRequestedResponseThresholdHours,
+        },
+      }
+
+      // Create the rule
+      const createdRule = await createRule(ruleToCreate as Rule)
+      importedRules.push(createdRule)
+    } catch (error) {
+      console.error('Error importing TAT rule:', ruleData.ruleDesc, error)
+      // Continue with other rules even if one fails
+    }
+  }
+
+  return importedRules
+}
+
+/**
+ * Import rules from DUE_DATE_RULES format
+ */
+export const importDueDateRules = async (
+  data: DueDateRulesExport
+): Promise<Rule[]> => {
+  return importTATRulesFromJSON(data.rules)
 }
 
 /**
@@ -343,7 +535,8 @@ export const searchRules = async (searchTerm: string): Promise<Rule[]> => {
  */
 export const subscribeToRules = (
   callback: (rules: Rule[]) => void,
-  statusFilter?: 'active' | 'inactive'
+  statusFilter?: 'active' | 'inactive',
+  ruleTypeFilter?: RuleType
 ): (() => void) => {
   if (!db) {
     console.warn('Firebase not configured, returning empty rules')
@@ -353,16 +546,31 @@ export const subscribeToRules = (
 
   const rulesRef = collection(db, RULES_COLLECTION)
 
-  let q = query(rulesRef, orderBy('updatedAt', 'desc'))
-
+  // Build query without ruleType filter - we'll filter in memory
+  let q
   if (statusFilter) {
     q = query(rulesRef, where('status', '==', statusFilter), orderBy('updatedAt', 'desc'))
+  } else {
+    q = query(rulesRef, orderBy('updatedAt', 'desc'))
   }
 
   return onSnapshot(
     q,
     (snapshot) => {
-      const rules = snapshot.docs.map((doc) => doc.data() as Rule)
+      // Map rules and normalize legacy 'rules' -> 'workflow'
+      let rules = snapshot.docs.map((doc) => {
+        const data = doc.data() as Rule
+        return {
+          ...data,
+          ruleType: normalizeRuleType(data.ruleType)
+        }
+      })
+
+      // Filter by ruleType if specified
+      if (ruleTypeFilter) {
+        rules = rules.filter((rule) => rule.ruleType === ruleTypeFilter)
+      }
+
       callback(rules)
     },
     (error) => {

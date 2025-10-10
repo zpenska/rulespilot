@@ -17,7 +17,8 @@ import { FIELD_DEFINITIONS } from '../config/fieldDefinitions'
  * Validate a standard field criteria
  */
 export const validateStandardCriteria = (
-  criteria: StandardFieldCriteria
+  criteria: StandardFieldCriteria,
+  isTATRule: boolean = false
 ): ValidationError[] => {
   const errors: ValidationError[] = []
   const fieldDef = FIELD_DEFINITIONS[criteria.field]
@@ -30,16 +31,23 @@ export const validateStandardCriteria = (
     return errors
   }
 
-  // Validate operator is allowed for this field
-  if (!fieldDef.allowedOperators.includes(criteria.operator)) {
-    errors.push({
-      field: criteria.field,
-      message: `Operator ${criteria.operator} is not allowed for ${criteria.field}`,
-    })
+  // For TAT rules, operator is implicitly "IN" and not stored in the criteria
+  // Skip operator validation for TAT rules
+  if (!isTATRule) {
+    // Validate operator is allowed for this field
+    if (!fieldDef.allowedOperators.includes(criteria.operator)) {
+      errors.push({
+        field: criteria.field,
+        message: `Operator ${criteria.operator} is not allowed for ${criteria.field}`,
+      })
+    }
   }
 
+  // For TAT rules, assume "IN" operator for validation
+  const operatorForValidation = isTATRule ? 'IN' : criteria.operator
+
   // Validate value count based on operator
-  const valueCountError = validateValueCount(criteria.operator, criteria.values)
+  const valueCountError = validateValueCount(operatorForValidation, criteria.values)
   if (valueCountError) {
     errors.push({
       field: criteria.field,
@@ -51,7 +59,7 @@ export const validateStandardCriteria = (
   const dataTypeErrors = validateDataType(
     fieldDef.dataType,
     criteria.values,
-    criteria.operator
+    operatorForValidation
   )
   errors.push(...dataTypeErrors.map((msg) => ({ field: criteria.field, message: msg })))
 
@@ -78,16 +86,21 @@ export const validateStandardCriteria = (
  * Validate custom field criteria
  */
 export const validateCustomCriteria = (
-  criteria: CustomFieldCriteria
+  criteria: CustomFieldCriteria,
+  isTATRule: boolean = false
 ): ValidationError[] => {
   const errors: ValidationError[] = []
 
-  // Custom fields only support IN and NOT_IN
-  if (criteria.operator !== 'IN' && criteria.operator !== 'NOT_IN') {
-    errors.push({
-      field: criteria.templateId,
-      message: 'Custom fields only support IN and NOT_IN operators',
-    })
+  // For TAT rules, operator is implicitly "IN" and not stored in the criteria
+  // Skip operator validation for TAT rules
+  if (!isTATRule) {
+    // Custom fields only support IN and NOT_IN
+    if (criteria.operator !== 'IN' && criteria.operator !== 'NOT_IN') {
+      errors.push({
+        field: criteria.templateId,
+        message: 'Custom fields only support IN and NOT_IN operators',
+      })
+    }
   }
 
   // Must have at least one value
@@ -339,9 +352,11 @@ export const validateRule = (rule: Partial<Rule>): ValidationError[] => {
   }
 
   // Validate standard field criteria
+  // For TAT rules, skip operator validation (operator is implicitly "IN")
+  const isTATRule = !!rule.tatParameters
   if (rule.standardFieldCriteria) {
     rule.standardFieldCriteria.forEach((criteria) => {
-      const criteriaErrors = validateStandardCriteria(criteria)
+      const criteriaErrors = validateStandardCriteria(criteria, isTATRule)
       errors.push(...criteriaErrors)
     })
   }
@@ -349,7 +364,7 @@ export const validateRule = (rule: Partial<Rule>): ValidationError[] => {
   // Validate custom field criteria
   if (rule.customFieldCriteria) {
     rule.customFieldCriteria.forEach((criteria) => {
-      const criteriaErrors = validateCustomCriteria(criteria)
+      const criteriaErrors = validateCustomCriteria(criteria, isTATRule)
       errors.push(
         ...criteriaErrors.map((err) => ({
           ...err,

@@ -1,7 +1,8 @@
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { Sparkles, Send, X, Loader } from 'lucide-react'
 import { generateRuleFromNaturalLanguage } from '../services/ai/claude'
-import { Rule } from '../types/rules'
+import { Rule, RuleType } from '../types/rules'
+import { useRulesStore } from '../store/rulesStore'
 
 interface AIAssistantProps {
   onRuleGenerated: (rule: Partial<Rule>) => void
@@ -12,11 +13,33 @@ export default function AIAssistant({ onRuleGenerated, onClose }: AIAssistantPro
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
-  const [suggestions] = useState([
-    'Request with Member in Pennsylvania that has Custom Field MEMCFLD1 not valued with LOW and a Servicing Provider with Primary Specialty Orthopedics',
-    'Emergency urgent requests for members in New Jersey should assign to skill code EMERG001',
-    'Inpatient requests for Medicare members over 65 should reassign to department AUTH001 and generate letter Master Ordering Inpatient',
-  ])
+  const currentRuleType = useRulesStore((state) => state.currentRuleType)
+
+  // Context-aware suggestions based on rule type
+  const suggestions = useMemo(() => {
+    switch (currentRuleType) {
+      case 'workflow':
+        return [
+          'Route all outpatient requests to the outpatient review department',
+          'Behavioral health with prior denials to clinical review and generate appeal letter',
+          'Emergency inpatient admissions route to UR, generate tracking letter, and add monitoring hint',
+        ]
+      case 'skills':
+        return [
+          'Assign cardiology skill to requests with cardiac diagnoses',
+          'Pediatric requests require RN and PEDS licenses',
+          'High-value surgical cases to surgical review with MD license',
+        ]
+      case 'tat':
+        return [
+          'Commercial members need authorization decisions within 72 hours from notification',
+          'Urgent requests require 24-hour turnaround with 4-hour clinical threshold',
+          'Medicare Advantage members get 14 business days ending at 5PM',
+        ]
+      default:
+        return []
+    }
+  }, [currentRuleType])
 
   const handleGenerate = async () => {
     if (!input.trim()) return
@@ -25,13 +48,14 @@ export default function AIAssistant({ onRuleGenerated, onClose }: AIAssistantPro
     setError('')
 
     try {
-      const generated = await generateRuleFromNaturalLanguage(input)
+      const generated = await generateRuleFromNaturalLanguage(input, currentRuleType)
       onRuleGenerated({
         ruleDesc: generated.ruleDesc,
         standardFieldCriteria: generated.standardFieldCriteria,
         customFieldCriteria: generated.customFieldCriteria,
         weight: generated.weight,
-        actions: generated.actions,
+        actions: currentRuleType === 'tat' ? undefined : generated.actions,
+        tatParameters: currentRuleType === 'tat' ? generated.tatParameters : undefined,
         status: 'inactive',
       })
       setInput('')
