@@ -483,10 +483,10 @@ export default function RulesTable({ onEditRule, onCreateRule, onToggleAI, curre
                     </div>
                   </div>
                 ) : (
-                  <table className="min-w-full divide-y divide-table-border">
+                  <table className="min-w-full divide-y divide-table-border table-fixed">
                     <thead className="bg-bg-light sticky top-0">
                       <tr>
-                        <th className="px-4 py-2 text-left">
+                        <th className="w-12 px-4 py-2 text-left">
                           <input
                             type="checkbox"
                             checked={selectedRules.size === filteredRules.length}
@@ -494,25 +494,25 @@ export default function RulesTable({ onEditRule, onCreateRule, onToggleAI, curre
                             className="rounded border-gray-300 text-primary focus:ring-primary"
                           />
                         </th>
-                        <th className="px-4 py-2 text-left text-sm font-medium text-table-header">
+                        <th className="w-24 px-4 py-2 text-left text-sm font-medium text-table-header">
                           Status
                         </th>
-                        <th className="px-4 py-2 text-left text-sm font-medium text-table-header">
+                        <th className="w-32 px-4 py-2 text-left text-sm font-medium text-table-header">
                           Code
                         </th>
                         <th className="px-4 py-2 text-left text-sm font-medium text-table-header">
                           Description
                         </th>
-                        <th className="px-4 py-2 text-left text-sm font-medium text-table-header">
+                        <th className="w-20 px-4 py-2 text-left text-sm font-medium text-table-header">
                           Weight
                         </th>
-                        <th className="px-4 py-2 text-left text-sm font-medium text-table-header">
+                        <th className="w-64 px-4 py-2 text-left text-sm font-medium text-table-header">
                           Rule Actions
                         </th>
-                        <th className="px-4 py-2 text-left text-sm font-medium text-table-header">
+                        <th className="w-32 px-4 py-2 text-left text-sm font-medium text-table-header">
                           Updated
                         </th>
-                        <th className="px-4 py-2 text-left text-sm font-medium text-table-header">
+                        <th className="w-20 px-4 py-2 text-left text-sm font-medium text-table-header">
                           Actions
                         </th>
                       </tr>
