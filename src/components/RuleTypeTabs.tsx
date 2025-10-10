@@ -7,7 +7,7 @@ interface RuleTypeTabsProps {
 
 export default function RuleTypeTabs({ currentTab, onTabChange }: RuleTypeTabsProps) {
   const tabs: { value: RuleType; label: string }[] = [
-    { value: 'rules', label: 'Rules' },
+    { value: 'workflow', label: 'Workflow' },
     { value: 'skills', label: 'Skills' },
     { value: 'tat', label: 'TAT' },
   ]

@@ -6,12 +6,11 @@ import { FIELD_DEFINITIONS } from '../../config/fieldDefinitions'
 import { getActiveDictionary } from '../../services/dictionaryService'
 import { DictionaryItem } from '../../types/rules'
 
-function ConditionNode({ data, id }: NodeProps) {
+function ConditionNode({ data }: NodeProps) {
   const { criteria, type } = data as unknown as ConditionNodeData
   const [isEditingOperator, setIsEditingOperator] = useState(false)
   const [isEditingValues, setIsEditingValues] = useState(false)
   const [dictionaryOptions, setDictionaryOptions] = useState<DictionaryItem[]>([])
-  const [loadingDictionary, setLoadingDictionary] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
 
   // Load dictionary options for the field
@@ -22,14 +21,11 @@ function ConditionNode({ data, id }: NodeProps) {
         const fieldDef = FIELD_DEFINITIONS[fieldName as keyof typeof FIELD_DEFINITIONS]
 
         if (fieldDef?.dictionaryKey) {
-          setLoadingDictionary(true)
           try {
             const items = await getActiveDictionary(fieldDef.dictionaryKey)
             setDictionaryOptions(items)
           } catch (error) {
             console.error('Error loading dictionary:', error)
-          } finally {
-            setLoadingDictionary(false)
           }
         } else {
           setDictionaryOptions([])

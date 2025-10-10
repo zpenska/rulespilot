@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { Search, Plus, Download, Upload, Trash2, Power, PowerOff, Copy, Eye, MoreVertical, Settings, Sparkles } from 'lucide-react'
 import { Rule, RuleType } from '../types/rules'
-import { useRulesStore } from '../store/rulesStore'
 import {
   deleteRule,
   updateRule,

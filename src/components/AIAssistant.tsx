@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react'
 import { Sparkles, Send, X, Loader } from 'lucide-react'
 import { generateRuleFromNaturalLanguage } from '../services/ai/claude'
-import { Rule, RuleType } from '../types/rules'
+import { Rule } from '../types/rules'
 import { useRulesStore } from '../store/rulesStore'
 
 interface AIAssistantProps {

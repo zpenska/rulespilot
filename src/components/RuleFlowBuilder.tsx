@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useRef, DragEvent, useState } from 'react'
+import { useCallback, useMemo, useRef, DragEvent } from 'react'
 import {
   ReactFlow,
   Background,
@@ -11,12 +11,11 @@ import {
   Edge,
   useReactFlow,
   ReactFlowProvider,
+  ConnectionLineType,
 } from '@xyflow/react'
 import '@xyflow/react/dist/style.css'
-import { ChevronDown, ChevronRight } from 'lucide-react'
 import { Rule } from '../types/rules'
 import { ruleToNodes } from '../utils/ruleFlowConverter'
-import { FIELD_DEFINITIONS, FIELD_CATEGORIES } from '../config/fieldDefinitions'
 import ConditionNode from './flow/ConditionNode'
 import LogicNode from './flow/LogicNode'
 import ActionNode from './flow/ActionNode'
@@ -139,7 +138,7 @@ function RuleFlowBuilderInner({ rule, onNodesChange }: RuleFlowBuilderProps) {
             animated: true,
             style: { stroke: '#5c4bd3', strokeWidth: 2 },
           }}
-          connectionLineType="default"
+          connectionLineType={ConnectionLineType.SmoothStep}
           defaultViewport={{ x: 0, y: 0, zoom: 0.75 }}
           fitView
           fitViewOptions={{ padding: 0.3, maxZoom: 0.75 }}
