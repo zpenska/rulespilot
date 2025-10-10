@@ -25,7 +25,7 @@ export default function NodePalette({ onDragStart }: NodePaletteProps) {
   const fieldsByCategory = Object.entries(FIELD_DEFINITIONS).reduce(
     (acc, [fieldName, def]) => {
       if (!acc[def.category]) acc[def.category] = []
-      acc[def.category].push({ name: fieldName, ...def })
+      acc[def.category].push({ ...def, name: fieldName })
       return acc
     },
     {} as Record<string, any[]>
