@@ -601,6 +601,9 @@ export default function RuleBuilder({ rule, onClose, onSave }: RuleBuilderProps)
               </h4>
 
             <div className="space-y-4">
+              {/* Skills-only actions */}
+              {currentRuleType === 'skills' && (
+                <>
               {/* Assign Skill */}
               <div className="flex items-center space-x-3">
                 <input
@@ -701,7 +704,12 @@ export default function RuleBuilder({ rule, onClose, onSave }: RuleBuilderProps)
                   </div>
                 )}
               </div>
+                </>
+              )}
 
+              {/* Workflow-only actions */}
+              {currentRuleType === 'workflow' && (
+                <>
               {/* Department Routing */}
               <div className="flex items-center space-x-3">
                 <input
@@ -878,6 +886,8 @@ export default function RuleBuilder({ rule, onClose, onSave }: RuleBuilderProps)
                   />
                 )}
               </div>
+                </>
+              )}
             </div>
           </div>
           )}
