@@ -483,10 +483,20 @@ export default function RulesTable({ onEditRule, onCreateRule, onToggleAI, curre
                     </div>
                   </div>
                 ) : (
-                  <table className="min-w-full divide-y divide-table-border table-fixed">
+                  <table className="w-full divide-y divide-table-border" style={{ tableLayout: 'fixed' }}>
+                    <colgroup>
+                      <col style={{ width: '3%' }} />
+                      <col style={{ width: '8%' }} />
+                      <col style={{ width: '12%' }} />
+                      <col style={{ width: '30%' }} />
+                      <col style={{ width: '6%' }} />
+                      <col style={{ width: '20%' }} />
+                      <col style={{ width: '10%' }} />
+                      <col style={{ width: '5%' }} />
+                    </colgroup>
                     <thead className="bg-bg-light sticky top-0">
                       <tr>
-                        <th className="w-12 px-4 py-2 text-left">
+                        <th className="px-4 py-2 text-left">
                           <input
                             type="checkbox"
                             checked={selectedRules.size === filteredRules.length}
@@ -494,25 +504,25 @@ export default function RulesTable({ onEditRule, onCreateRule, onToggleAI, curre
                             className="rounded border-gray-300 text-primary focus:ring-primary"
                           />
                         </th>
-                        <th className="w-24 px-4 py-2 text-left text-sm font-medium text-table-header">
+                        <th className="px-4 py-2 text-left text-sm font-medium text-table-header">
                           Status
                         </th>
-                        <th className="w-32 px-4 py-2 text-left text-sm font-medium text-table-header">
+                        <th className="px-4 py-2 text-left text-sm font-medium text-table-header">
                           Code
                         </th>
                         <th className="px-4 py-2 text-left text-sm font-medium text-table-header">
                           Description
                         </th>
-                        <th className="w-20 px-4 py-2 text-left text-sm font-medium text-table-header">
+                        <th className="px-4 py-2 text-left text-sm font-medium text-table-header">
                           Weight
                         </th>
-                        <th className="w-64 px-4 py-2 text-left text-sm font-medium text-table-header">
+                        <th className="px-4 py-2 text-left text-sm font-medium text-table-header">
                           Rule Actions
                         </th>
-                        <th className="w-32 px-4 py-2 text-left text-sm font-medium text-table-header">
+                        <th className="px-4 py-2 text-left text-sm font-medium text-table-header">
                           Updated
                         </th>
-                        <th className="w-20 px-4 py-2 text-left text-sm font-medium text-table-header">
+                        <th className="px-4 py-2 text-left text-sm font-medium text-table-header">
                           Actions
                         </th>
                       </tr>
