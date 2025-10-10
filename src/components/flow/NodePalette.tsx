@@ -23,9 +23,9 @@ export default function NodePalette({ onDragStart }: NodePaletteProps) {
 
   // Group fields by category for condition nodes
   const fieldsByCategory = Object.entries(FIELD_DEFINITIONS).reduce(
-    (acc, [fieldName, def]) => {
+    (acc, [, def]) => {
       if (!acc[def.category]) acc[def.category] = []
-      acc[def.category].push({ ...def, name: fieldName })
+      acc[def.category].push(def)
       return acc
     },
     {} as Record<string, any[]>
