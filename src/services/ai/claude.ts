@@ -107,7 +107,7 @@ export async function validateAndFixRule(
     messages: [
       {
         role: 'user',
-        content: `${RULES_ENGINE_CONTEXT}
+        content: `${AI_KNOWLEDGE_BASE}
 
 This rule has validation errors. Fix them and return a corrected version:
 
@@ -142,7 +142,7 @@ export async function getRuleSuggestions(context: string): Promise<string[]> {
     messages: [
       {
         role: 'user',
-        content: `${RULES_ENGINE_CONTEXT}
+        content: `${AI_KNOWLEDGE_BASE}
 
 Based on this context: "${context}"
 
@@ -177,7 +177,7 @@ export async function chatWithAI(
     messages: [
       {
         role: 'user',
-        content: `${RULES_ENGINE_CONTEXT}
+        content: `${AI_KNOWLEDGE_BASE}
 
 You are an AI assistant helping users build healthcare authorization rules. Answer questions, provide guidance, and help troubleshoot issues.`,
       },

@@ -264,10 +264,10 @@ export const validateActions = (actions?: RuleActions): ValidationError[] => {
 
   // Validate assignLicense
   if (actions.assignLicense) {
-    if (!actions.assignLicense.licenseCode || actions.assignLicense.licenseCode.trim() === '') {
+    if (!actions.assignLicense.licenseCodes || actions.assignLicense.licenseCodes.length === 0) {
       errors.push({
-        field: 'actions.assignLicense.licenseCode',
-        message: 'License code is required for assignLicense action',
+        field: 'actions.assignLicense.licenseCodes',
+        message: 'At least one license code is required for assignLicense action',
       })
     }
   }

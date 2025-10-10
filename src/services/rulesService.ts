@@ -377,7 +377,7 @@ export const exportRuleToJSON = (rule: Rule): RuleExport | TATRuleExport => {
 /**
  * Export all rules to JSON
  */
-export const exportAllRulesToJSON = async (): Promise<RuleExport[]> => {
+export const exportAllRulesToJSON = async (): Promise<(RuleExport | TATRuleExport)[]> => {
   const rules = await getAllRules()
   return rules.map(exportRuleToJSON)
 }
@@ -385,7 +385,7 @@ export const exportAllRulesToJSON = async (): Promise<RuleExport[]> => {
 /**
  * Export active rules to JSON
  */
-export const exportActiveRulesToJSON = async (): Promise<RuleExport[]> => {
+export const exportActiveRulesToJSON = async (): Promise<(RuleExport | TATRuleExport)[]> => {
   const rules = await getActiveRules()
   return rules.map(exportRuleToJSON)
 }
