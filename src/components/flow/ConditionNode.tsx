@@ -49,7 +49,13 @@ function ConditionNode({ data }: NodeProps) {
       }
     }
 
-    document.addEventListener('mousedown', handleClickOutside)
+    if (isEditingValues && dictionaryOptions.length > 0) {
+      // Use timeout to avoid immediate closure
+      setTimeout(() => {
+        document.addEventListener('mousedown', handleClickOutside)
+      }, 0)
+    }
+
     return () => {
       document.removeEventListener('mousedown', handleClickOutside)
     }
@@ -138,11 +144,21 @@ function ConditionNode({ data }: NodeProps) {
             <div className="relative flex-1" ref={dropdownRef}>
               {isEditingValues ? (
                 dictionaryOptions.length > 0 ? (
-                  <div className="absolute z-50 mt-1 w-72 bg-white border border-primary rounded shadow-lg max-h-60 overflow-y-auto">
-                    <div className="sticky top-0 bg-gray-50 px-2 py-1 border-b border-gray-200">
+                  <div
+                    className="absolute z-50 mt-1 w-72 bg-white border border-primary rounded shadow-lg max-h-60 overflow-y-auto"
+                    onMouseDown={(e) => e.stopPropagation()}
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <div className="sticky top-0 bg-gray-50 px-2 py-1 border-b border-gray-200 flex items-center justify-between">
                       <div className="text-xs font-medium text-gray-700">
-                        Select values (click outside to close)
+                        Select values
                       </div>
+                      <button
+                        onClick={() => setIsEditingValues(false)}
+                        className="text-xs text-gray-500 hover:text-gray-700 font-medium"
+                      >
+                        Close
+                      </button>
                     </div>
                     {dictionaryOptions.map((item) => (
                       <label

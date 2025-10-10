@@ -485,14 +485,14 @@ export default function RulesTable({ onEditRule, onCreateRule, onToggleAI, curre
                 ) : (
                   <table className="w-full divide-y divide-table-border" style={{ tableLayout: 'fixed' }}>
                     <colgroup>
-                      <col style={{ width: '3%' }} />
-                      <col style={{ width: '8%' }} />
-                      <col style={{ width: '12%' }} />
-                      <col style={{ width: '30%' }} />
-                      <col style={{ width: '6%' }} />
-                      <col style={{ width: '20%' }} />
+                      <col style={{ width: '4%' }} />
+                      <col style={{ width: '9%' }} />
+                      <col style={{ width: '13%' }} />
+                      <col style={{ width: '32%' }} />
+                      <col style={{ width: '7%' }} />
+                      <col style={{ width: '18%' }} />
                       <col style={{ width: '10%' }} />
-                      <col style={{ width: '5%' }} />
+                      <col style={{ width: '7%' }} />
                     </colgroup>
                     <thead className="bg-bg-light sticky top-0">
                       <tr>
