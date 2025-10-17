@@ -64,8 +64,8 @@ function GlobalWorkflowViewerInner({ onClose }: GlobalWorkflowViewerProps) {
     // Apply auto-layout with left-to-right direction
     return getAdaptiveLayoutedElements(merged.nodes, merged.edges, {
       direction: 'LR',
-      rankSep: 200,
-      nodeSep: 120,
+      rankSep: 350,
+      nodeSep: 180,
     })
   }, [rules])
 
