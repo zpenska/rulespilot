@@ -42,7 +42,6 @@ function generateRuleColor(index: number): RuleColor {
 
 interface TriggerGroup {
   triggers: TriggerEvent[]
-  requestTypeFilter: RequestTypeFilter
   rules: { rule: Rule; color: RuleColor }[]
 }
 
@@ -65,13 +64,11 @@ export function mergeWorkflowRules(rules: Rule[]): { nodes: Node[]; edges: Edge[
 
   workflowRules.forEach((rule, index) => {
     const triggers = rule.triggerEvents || []
-    const requestTypeFilter = rule.requestTypeFilter || null
-    const key = `${triggers.sort().join(',')}-${requestTypeFilter || 'any'}`
+    const key = triggers.sort().join(',') || 'no-trigger'
 
     if (!groups.has(key)) {
       groups.set(key, {
         triggers,
-        requestTypeFilter,
         rules: [],
       })
     }
@@ -107,67 +104,83 @@ export function mergeWorkflowRules(rules: Rule[]): { nodes: Node[]; edges: Edge[
       xOffset += HORIZONTAL_SPACING
     }
 
-    // Create shared request type branch node if filter exists
-    if (group.requestTypeFilter) {
-      const branchNodeId = `branch-${group.requestTypeFilter}-${yOffset}`
-      nodes.push({
-        id: branchNodeId,
-        type: 'requestTypeBranchNode',
-        position: { x: xOffset, y: yOffset },
-        data: {
-          requestTypeFilter: group.requestTypeFilter,
-        },
-      })
-
-      // Connect trigger to branch
-      if (lastSharedNodeId) {
-        edges.push({
-          id: `e-${lastSharedNodeId}-${branchNodeId}`,
-          source: lastSharedNodeId,
-          target: branchNodeId,
-          type: 'default',
-        })
-      }
-
-      lastSharedNodeId = branchNodeId
-      xOffset += HORIZONTAL_SPACING
-    }
-
-    // Group rules by their first condition to consolidate duplicates
-    const firstConditionGroups = new Map<string, { rule: Rule; color: RuleColor }[]>()
-
+    // Group rules by request type filter within this trigger group
+    const requestTypeGroups = new Map<string, { rule: Rule; color: RuleColor }[]>()
     group.rules.forEach((ruleData) => {
-      const { rule } = ruleData
-      const allCriteria = [
-        ...(rule.standardFieldCriteria || []).map((c, i) => ({
-          type: 'standard' as const,
-          criteria: c,
-          index: i,
-        })),
-        ...(rule.customFieldCriteria || []).map((c, i) => ({
-          type: 'custom' as const,
-          criteria: c,
-          index: i + (rule.standardFieldCriteria?.length || 0),
-        })),
-      ]
-
-      if (allCriteria.length > 0) {
-        const firstCondition = allCriteria[0]
-        const signature = getConditionSignature(firstCondition.type, firstCondition.criteria)
-        if (!firstConditionGroups.has(signature)) {
-          firstConditionGroups.set(signature, [])
-        }
-        firstConditionGroups.get(signature)!.push(ruleData)
-      } else {
-        // Rules with no conditions - treat as separate group
-        firstConditionGroups.set(`no-condition-${rule.id}`, [ruleData])
+      const filterKey = ruleData.rule.requestTypeFilter || 'none'
+      if (!requestTypeGroups.has(filterKey)) {
+        requestTypeGroups.set(filterKey, [])
       }
+      requestTypeGroups.get(filterKey)!.push(ruleData)
     })
 
-    // Create individual rule paths, consolidating shared first conditions
-    let conditionGroupYOffset = yOffset - ((firstConditionGroups.size - 1) * VERTICAL_RULE_SPACING * 2) / 2
+    // Process each request type group separately
+    let requestTypeYOffset = yOffset - ((requestTypeGroups.size - 1) * VERTICAL_RULE_SPACING * 3) / 2
 
-    firstConditionGroups.forEach((rulesWithSameFirstCondition, signature) => {
+    requestTypeGroups.forEach((rulesWithFilter, filterKey) => {
+      let requestTypeXOffset = xOffset
+      let branchNodeId: string | null = null
+
+      // Create request type branch node if it's not 'none'
+      if (filterKey !== 'none') {
+        branchNodeId = `branch-${filterKey}-${yOffset}-${requestTypeYOffset}`
+        nodes.push({
+          id: branchNodeId,
+          type: 'requestTypeBranchNode',
+          position: { x: requestTypeXOffset, y: requestTypeYOffset },
+          data: {
+            requestTypeFilter: filterKey as RequestTypeFilter,
+          },
+        })
+
+        // Connect trigger to branch
+        if (lastSharedNodeId) {
+          edges.push({
+            id: `e-${lastSharedNodeId}-${branchNodeId}`,
+            source: lastSharedNodeId,
+            target: branchNodeId,
+            type: 'default',
+          })
+        }
+
+        requestTypeXOffset += HORIZONTAL_SPACING
+      }
+
+      // Group rules by their first condition within this request type
+      const firstConditionGroups = new Map<string, { rule: Rule; color: RuleColor }[]>()
+
+      rulesWithFilter.forEach((ruleData) => {
+        const { rule } = ruleData
+        const allCriteria = [
+          ...(rule.standardFieldCriteria || []).map((c, i) => ({
+            type: 'standard' as const,
+            criteria: c,
+            index: i,
+          })),
+          ...(rule.customFieldCriteria || []).map((c, i) => ({
+            type: 'custom' as const,
+            criteria: c,
+            index: i + (rule.standardFieldCriteria?.length || 0),
+          })),
+        ]
+
+        if (allCriteria.length > 0) {
+          const firstCondition = allCriteria[0]
+          const signature = getConditionSignature(firstCondition.type, firstCondition.criteria)
+          if (!firstConditionGroups.has(signature)) {
+            firstConditionGroups.set(signature, [])
+          }
+          firstConditionGroups.get(signature)!.push(ruleData)
+        } else {
+          // Rules with no conditions - treat as separate group
+          firstConditionGroups.set(`no-condition-${rule.id}`, [ruleData])
+        }
+      })
+
+      // Create individual rule paths for this request type, consolidating shared first conditions
+      let conditionGroupYOffset = requestTypeYOffset - ((firstConditionGroups.size - 1) * VERTICAL_RULE_SPACING) / 2
+
+      firstConditionGroups.forEach((rulesWithSameFirstCondition, signature) => {
       const firstRule = rulesWithSameFirstCondition[0].rule
       const firstCriteria = [
         ...(firstRule.standardFieldCriteria || []).map((c, i) => ({
@@ -184,46 +197,47 @@ export function mergeWorkflowRules(rules: Rule[]): { nodes: Node[]; edges: Edge[
 
       let sharedFirstConditionId: string | null = null
 
-      // Create shared first condition node if rules have conditions
-      if (firstCriteria.length > 0) {
-        const firstCondition = firstCriteria[0]
-        sharedFirstConditionId = `shared-condition-${signature}`
+        // Create shared first condition node if rules have conditions
+        if (firstCriteria.length > 0) {
+          const firstCondition = firstCriteria[0]
+          sharedFirstConditionId = `shared-condition-${signature}-${filterKey}`
 
-        // Use neutral styling for shared nodes
-        nodes.push({
-          id: sharedFirstConditionId,
-          type: 'conditionNode',
-          position: { x: xOffset, y: conditionGroupYOffset },
-          data: {
-            type: firstCondition.type,
-            criteria: firstCondition.criteria,
-            index: firstCondition.index,
-          },
-          style: {
-            backgroundColor: '#f0f0f5',
-            borderColor: '#9ca3af',
-            borderWidth: 3,
-          },
-        })
-
-        // Connect shared first condition to last workflow node
-        if (lastSharedNodeId) {
-          edges.push({
-            id: `e-${lastSharedNodeId}-${sharedFirstConditionId}`,
-            source: lastSharedNodeId,
-            target: sharedFirstConditionId,
-            type: 'default',
-            style: { stroke: '#6b7280', strokeWidth: 2 },
+          // Use neutral styling for shared nodes
+          nodes.push({
+            id: sharedFirstConditionId,
+            type: 'conditionNode',
+            position: { x: requestTypeXOffset, y: conditionGroupYOffset },
+            data: {
+              type: firstCondition.type,
+              criteria: firstCondition.criteria,
+              index: firstCondition.index,
+            },
+            style: {
+              backgroundColor: '#f0f0f5',
+              borderColor: '#9ca3af',
+              borderWidth: 3,
+            },
           })
+
+          // Connect shared first condition to branch node or trigger
+          const sourceNodeId = branchNodeId || lastSharedNodeId
+          if (sourceNodeId) {
+            edges.push({
+              id: `e-${sourceNodeId}-${sharedFirstConditionId}`,
+              source: sourceNodeId,
+              target: sharedFirstConditionId,
+              type: 'default',
+              style: { stroke: '#6b7280', strokeWidth: 2 },
+            })
+          }
         }
-      }
 
-      // Now create each rule's remaining path
-      let ruleYOffset = conditionGroupYOffset - ((rulesWithSameFirstCondition.length - 1) * VERTICAL_RULE_SPACING) / 2
+        // Now create each rule's remaining path
+        let ruleYOffset = conditionGroupYOffset - ((rulesWithSameFirstCondition.length - 1) * VERTICAL_RULE_SPACING) / 2
 
-      rulesWithSameFirstCondition.forEach(({ rule, color }) => {
-        const rulePrefix = `rule-${rule.id}`
-        let ruleXOffset = xOffset + HORIZONTAL_SPACING
+        rulesWithSameFirstCondition.forEach(({ rule, color }) => {
+          const rulePrefix = `rule-${rule.id}`
+          let ruleXOffset = requestTypeXOffset + HORIZONTAL_SPACING
 
         // Gather all criteria for this rule
         const allCriteria = [
@@ -375,10 +389,13 @@ export function mergeWorkflowRules(rules: Rule[]): { nodes: Node[]; edges: Edge[
           })
         }
 
-        ruleYOffset += VERTICAL_RULE_SPACING
+          ruleYOffset += VERTICAL_RULE_SPACING
+        })
+
+        conditionGroupYOffset += VERTICAL_RULE_SPACING
       })
 
-      conditionGroupYOffset += VERTICAL_RULE_SPACING * 2
+      requestTypeYOffset += VERTICAL_RULE_SPACING * 3
     })
 
     yOffset += VERTICAL_GROUP_SPACING
