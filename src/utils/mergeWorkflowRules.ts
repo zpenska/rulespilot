@@ -1,10 +1,26 @@
 import { Node, Edge } from '@xyflow/react'
-import { Rule, TriggerEvent, RequestTypeFilter } from '../types/rules'
+import { Rule, TriggerEvent, RequestTypeFilter, StandardFieldCriteria, CustomFieldCriteria } from '../types/rules'
 
 interface RuleColor {
   node: string
   edge: string
   label: string
+}
+
+/**
+ * Generate a unique signature for a condition to detect duplicates
+ */
+function getConditionSignature(
+  type: 'standard' | 'custom',
+  criteria: StandardFieldCriteria | CustomFieldCriteria
+): string {
+  if (type === 'standard') {
+    const std = criteria as StandardFieldCriteria
+    return `std:${std.field}:${std.operator}:${JSON.stringify(std.values.sort())}`
+  } else {
+    const cust = criteria as CustomFieldCriteria
+    return `cust:${cust.association}:${cust.templateId}:${cust.operator}:${JSON.stringify(cust.values.sort())}`
+  }
 }
 
 // Generate distinct colors for rule paths
@@ -117,14 +133,11 @@ export function mergeWorkflowRules(rules: Rule[]): { nodes: Node[]; edges: Edge[
       xOffset += HORIZONTAL_SPACING
     }
 
-    // Create individual rule paths branching from shared entry point
-    let ruleYOffset = yOffset - ((group.rules.length - 1) * VERTICAL_RULE_SPACING) / 2
+    // Group rules by their first condition to consolidate duplicates
+    const firstConditionGroups = new Map<string, { rule: Rule; color: RuleColor }[]>()
 
-    group.rules.forEach(({ rule, color }) => {
-      const rulePrefix = `rule-${rule.id}`
-      let ruleXOffset = xOffset
-
-      // Gather all criteria
+    group.rules.forEach((ruleData) => {
+      const { rule } = ruleData
       const allCriteria = [
         ...(rule.standardFieldCriteria || []).map((c, i) => ({
           type: 'standard' as const,
@@ -138,96 +151,147 @@ export function mergeWorkflowRules(rules: Rule[]): { nodes: Node[]; edges: Edge[
         })),
       ]
 
-      // Create condition nodes for this rule
-      allCriteria.forEach((item, index) => {
-        const nodeId = `${rulePrefix}-condition-${index}`
+      if (allCriteria.length > 0) {
+        const firstCondition = allCriteria[0]
+        const signature = getConditionSignature(firstCondition.type, firstCondition.criteria)
+        if (!firstConditionGroups.has(signature)) {
+          firstConditionGroups.set(signature, [])
+        }
+        firstConditionGroups.get(signature)!.push(ruleData)
+      } else {
+        // Rules with no conditions - treat as separate group
+        firstConditionGroups.set(`no-condition-${rule.id}`, [ruleData])
+      }
+    })
+
+    // Create individual rule paths, consolidating shared first conditions
+    let conditionGroupYOffset = yOffset - ((firstConditionGroups.size - 1) * VERTICAL_RULE_SPACING * 2) / 2
+
+    firstConditionGroups.forEach((rulesWithSameFirstCondition, signature) => {
+      const firstRule = rulesWithSameFirstCondition[0].rule
+      const firstCriteria = [
+        ...(firstRule.standardFieldCriteria || []).map((c, i) => ({
+          type: 'standard' as const,
+          criteria: c,
+          index: i,
+        })),
+        ...(firstRule.customFieldCriteria || []).map((c, i) => ({
+          type: 'custom' as const,
+          criteria: c,
+          index: i + (firstRule.standardFieldCriteria?.length || 0),
+        })),
+      ]
+
+      let sharedFirstConditionId: string | null = null
+
+      // Create shared first condition node if rules have conditions
+      if (firstCriteria.length > 0) {
+        const firstCondition = firstCriteria[0]
+        sharedFirstConditionId = `shared-condition-${signature}`
+
+        // Use neutral styling for shared nodes
         nodes.push({
-          id: nodeId,
+          id: sharedFirstConditionId,
           type: 'conditionNode',
-          position: { x: ruleXOffset, y: ruleYOffset },
+          position: { x: xOffset, y: conditionGroupYOffset },
           data: {
-            type: item.type,
-            criteria: item.criteria,
-            index: item.index,
-            ruleColor: color.node,
-            ruleLabelColor: color.label,
+            type: firstCondition.type,
+            criteria: firstCondition.criteria,
+            index: firstCondition.index,
           },
           style: {
-            backgroundColor: color.node,
-            borderColor: color.edge,
-            borderWidth: 2,
+            backgroundColor: '#f0f0f5',
+            borderColor: '#9ca3af',
+            borderWidth: 3,
           },
         })
 
-        // Connect first condition to shared entry point
-        if (index === 0 && lastSharedNodeId) {
+        // Connect shared first condition to last workflow node
+        if (lastSharedNodeId) {
           edges.push({
-            id: `e-${lastSharedNodeId}-${nodeId}`,
+            id: `e-${lastSharedNodeId}-${sharedFirstConditionId}`,
             source: lastSharedNodeId,
-            target: nodeId,
+            target: sharedFirstConditionId,
             type: 'default',
-            style: { stroke: color.edge, strokeWidth: 2 },
+            style: { stroke: '#6b7280', strokeWidth: 2 },
             animated: true,
           })
         }
+      }
 
-        // Add AND logic node between conditions
-        if (index < allCriteria.length - 1) {
-          const logicNodeId = `${rulePrefix}-logic-${index}`
+      // Now create each rule's remaining path
+      let ruleYOffset = conditionGroupYOffset - ((rulesWithSameFirstCondition.length - 1) * VERTICAL_RULE_SPACING) / 2
+
+      rulesWithSameFirstCondition.forEach(({ rule, color }) => {
+        const rulePrefix = `rule-${rule.id}`
+        let ruleXOffset = xOffset + HORIZONTAL_SPACING
+
+        // Gather all criteria for this rule
+        const allCriteria = [
+          ...(rule.standardFieldCriteria || []).map((c, i) => ({
+            type: 'standard' as const,
+            criteria: c,
+            index: i,
+          })),
+          ...(rule.customFieldCriteria || []).map((c, i) => ({
+            type: 'custom' as const,
+            criteria: c,
+            index: i + (rule.standardFieldCriteria?.length || 0),
+          })),
+        ]
+
+        let lastNodeId = sharedFirstConditionId
+
+        // Create remaining condition nodes (skip first one as it's shared)
+        allCriteria.slice(1).forEach((item, index) => {
+          const actualIndex = index + 1
+          const nodeId = `${rulePrefix}-condition-${actualIndex}`
+
+          // Add AND logic node before this condition
+          if (lastNodeId) {
+            const logicNodeId = `${rulePrefix}-logic-${actualIndex - 1}`
+            nodes.push({
+              id: logicNodeId,
+              type: 'logicNode',
+              position: { x: ruleXOffset - 75, y: ruleYOffset },
+              data: {
+                logic: 'AND',
+              },
+              style: {
+                backgroundColor: color.node,
+                borderColor: color.edge,
+              },
+            })
+
+            // Connect previous node to logic
+            edges.push({
+              id: `e-${lastNodeId}-${logicNodeId}`,
+              source: lastNodeId,
+              target: logicNodeId,
+              type: 'default',
+              style: { stroke: color.edge, strokeWidth: 2 },
+            })
+
+            // Connect logic to this condition
+            edges.push({
+              id: `e-${logicNodeId}-${nodeId}`,
+              source: logicNodeId,
+              target: nodeId,
+              type: 'default',
+              style: { stroke: color.edge, strokeWidth: 2 },
+            })
+          }
+
           nodes.push({
-            id: logicNodeId,
-            type: 'logicNode',
-            position: { x: ruleXOffset + 150, y: ruleYOffset },
-            data: {
-              logic: 'AND',
-            },
-            style: {
-              backgroundColor: color.node,
-              borderColor: color.edge,
-            },
-          })
-
-          // Connect condition to logic
-          edges.push({
-            id: `e-${nodeId}-${logicNodeId}`,
-            source: nodeId,
-            target: logicNodeId,
-            type: 'default',
-            style: { stroke: color.edge, strokeWidth: 2 },
-          })
-
-          // Connect logic to next condition
-          edges.push({
-            id: `e-${logicNodeId}-${rulePrefix}-condition-${index + 1}`,
-            source: logicNodeId,
-            target: `${rulePrefix}-condition-${index + 1}`,
-            type: 'default',
-            style: { stroke: color.edge, strokeWidth: 2 },
-          })
-        }
-      })
-
-      ruleXOffset += HORIZONTAL_SPACING + 150
-
-      // Add action nodes for this rule
-      if (rule.actions) {
-        const actionEntries = Object.entries(rule.actions).filter(
-          ([_, value]) => value !== undefined
-        )
-        const lastConditionId =
-          allCriteria.length > 0
-            ? `${rulePrefix}-condition-${allCriteria.length - 1}`
-            : null
-
-        actionEntries.forEach(([actionType, actionData], index) => {
-          const actionNodeId = `${rulePrefix}-action-${index}`
-          nodes.push({
-            id: actionNodeId,
-            type: 'actionNode',
+            id: nodeId,
+            type: 'conditionNode',
             position: { x: ruleXOffset, y: ruleYOffset },
             data: {
-              actionType,
-              actionData,
+              type: item.type,
+              criteria: item.criteria,
+              index: item.index,
+              ruleColor: color.node,
+              ruleLabelColor: color.label,
             },
             style: {
               backgroundColor: color.node,
@@ -236,33 +300,86 @@ export function mergeWorkflowRules(rules: Rule[]): { nodes: Node[]; edges: Edge[
             },
           })
 
-          // Connect first action to last condition
-          if (index === 0 && lastConditionId) {
-            edges.push({
-              id: `e-${lastConditionId}-${actionNodeId}`,
-              source: lastConditionId,
-              target: actionNodeId,
-              type: 'default',
-              style: { stroke: color.edge, strokeWidth: 2 },
-            })
-          }
-
-          // Connect actions sequentially
-          if (index > 0) {
-            edges.push({
-              id: `e-${rulePrefix}-action-${index - 1}-${actionNodeId}`,
-              source: `${rulePrefix}-action-${index - 1}`,
-              target: actionNodeId,
-              type: 'default',
-              style: { stroke: color.edge, strokeWidth: 2 },
-            })
-          }
-
-          ruleXOffset += HORIZONTAL_SPACING
+          lastNodeId = nodeId
+          ruleXOffset += HORIZONTAL_SPACING + 150
         })
-      }
 
-      ruleYOffset += VERTICAL_RULE_SPACING
+        // Add action nodes for this rule
+        if (rule.actions) {
+          const actionEntries = Object.entries(rule.actions).filter(
+            ([_, value]) => value !== undefined
+          )
+
+          actionEntries.forEach(([actionType, actionData], index) => {
+            const actionNodeId = `${rulePrefix}-action-${index}`
+
+            // Add AND logic node before first action if we have conditions
+            if (index === 0 && lastNodeId) {
+              const logicNodeId = `${rulePrefix}-logic-to-actions`
+              nodes.push({
+                id: logicNodeId,
+                type: 'logicNode',
+                position: { x: ruleXOffset - 75, y: ruleYOffset },
+                data: {
+                  logic: 'AND',
+                },
+                style: {
+                  backgroundColor: color.node,
+                  borderColor: color.edge,
+                },
+              })
+
+              edges.push({
+                id: `e-${lastNodeId}-${logicNodeId}`,
+                source: lastNodeId,
+                target: logicNodeId,
+                type: 'default',
+                style: { stroke: color.edge, strokeWidth: 2 },
+              })
+
+              edges.push({
+                id: `e-${logicNodeId}-${actionNodeId}`,
+                source: logicNodeId,
+                target: actionNodeId,
+                type: 'default',
+                style: { stroke: color.edge, strokeWidth: 2 },
+              })
+
+              lastNodeId = actionNodeId
+            } else if (index > 0) {
+              // Connect actions sequentially
+              edges.push({
+                id: `e-${rulePrefix}-action-${index - 1}-${actionNodeId}`,
+                source: `${rulePrefix}-action-${index - 1}`,
+                target: actionNodeId,
+                type: 'default',
+                style: { stroke: color.edge, strokeWidth: 2 },
+              })
+            }
+
+            nodes.push({
+              id: actionNodeId,
+              type: 'actionNode',
+              position: { x: ruleXOffset, y: ruleYOffset },
+              data: {
+                actionType,
+                actionData,
+              },
+              style: {
+                backgroundColor: color.node,
+                borderColor: color.edge,
+                borderWidth: 2,
+              },
+            })
+
+            ruleXOffset += HORIZONTAL_SPACING
+          })
+        }
+
+        ruleYOffset += VERTICAL_RULE_SPACING
+      })
+
+      conditionGroupYOffset += VERTICAL_RULE_SPACING * 2
     })
 
     yOffset += VERTICAL_GROUP_SPACING

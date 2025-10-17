@@ -88,49 +88,37 @@ function GlobalWorkflowViewerInner({ onClose }: GlobalWorkflowViewerProps) {
   }, [])
 
   return (
-    <div className="fixed inset-0 z-50 bg-gray-900 bg-opacity-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-xl shadow-2xl w-full h-full max-w-[98vw] max-h-[98vh] flex flex-col">
-        {/* Header */}
-        <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
-          <div>
-            <h2 className="text-2xl font-bold text-gray-900">Global Workflow View</h2>
-            <p className="text-sm text-gray-600 mt-1">
-              All {summary.totalRules} workflow rules visualized together
-            </p>
+    <div className="fixed inset-0 z-50 bg-white flex flex-col">
+        {/* Compact Header */}
+        <div className="px-3 py-1 border-b border-gray-200 flex items-center justify-between">
+          <div className="flex items-center space-x-4">
+            <h2 className="text-sm font-semibold text-gray-900">Global Workflow View</h2>
+            <div className="flex items-center space-x-3 text-xs text-gray-600">
+              <span className="flex items-center">
+                <Info className="w-3 h-3 text-blue-600 mr-1" />
+                {summary.totalRules} Rules
+              </span>
+              <span>{summary.triggerGroups} Groups</span>
+              <span className="flex items-center">
+                <span className="inline-block w-1.5 h-1.5 bg-blue-600 rounded-full mr-1"></span>
+                {summary.requestTypeGroups.inpatient} IP
+              </span>
+              <span className="flex items-center">
+                <span className="inline-block w-1.5 h-1.5 bg-green-600 rounded-full mr-1"></span>
+                {summary.requestTypeGroups.outpatient} OP
+              </span>
+              <span className="flex items-center">
+                <span className="inline-block w-1.5 h-1.5 bg-amber-600 rounded-full mr-1"></span>
+                {summary.requestTypeGroups.any} Any
+              </span>
+            </div>
           </div>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+            className="p-1 hover:bg-gray-100 rounded transition-colors"
           >
-            <X className="w-6 h-6 text-gray-600" />
+            <X className="w-4 h-4 text-gray-600" />
           </button>
-        </div>
-
-        {/* Summary Stats */}
-        <div className="px-6 py-3 bg-gray-50 border-b border-gray-200 flex items-center space-x-6">
-          <div className="flex items-center space-x-2">
-            <Info className="w-4 h-4 text-blue-600" />
-            <span className="text-sm font-medium text-gray-700">
-              {summary.totalRules} Total Rules
-            </span>
-          </div>
-          <div className="text-sm text-gray-600">
-            {summary.triggerGroups} Trigger Groups
-          </div>
-          <div className="flex items-center space-x-4">
-            <span className="text-sm text-gray-600">
-              <span className="inline-block w-2 h-2 bg-blue-600 rounded-full mr-1"></span>
-              {summary.requestTypeGroups.inpatient} Inpatient
-            </span>
-            <span className="text-sm text-gray-600">
-              <span className="inline-block w-2 h-2 bg-green-600 rounded-full mr-1"></span>
-              {summary.requestTypeGroups.outpatient} Outpatient
-            </span>
-            <span className="text-sm text-gray-600">
-              <span className="inline-block w-2 h-2 bg-amber-600 rounded-full mr-1"></span>
-              {summary.requestTypeGroups.any} Any Type
-            </span>
-          </div>
         </div>
 
         {/* React Flow Canvas */}
@@ -173,33 +161,6 @@ function GlobalWorkflowViewerInner({ onClose }: GlobalWorkflowViewerProps) {
           )}
         </div>
 
-        {/* Footer with Legend */}
-        <div className="px-6 py-3 bg-gray-50 border-t border-gray-200">
-          <div className="flex items-center justify-between">
-            <div className="text-xs text-gray-600">
-              <span className="font-medium">Tip:</span> Each color represents a different rule path. Zoom and pan to explore.
-            </div>
-            <div className="flex items-center space-x-4 text-xs text-gray-600">
-              <div className="flex items-center space-x-1">
-                <div className="w-4 h-4 rounded border-2 border-purple-300 bg-purple-50"></div>
-                <span>Triggers</span>
-              </div>
-              <div className="flex items-center space-x-1">
-                <div className="w-4 h-4 rounded border-2 border-amber-300 bg-amber-50"></div>
-                <span>Request Type</span>
-              </div>
-              <div className="flex items-center space-x-1">
-                <div className="w-4 h-4 rounded border-2 border-blue-300 bg-blue-50"></div>
-                <span>Conditions</span>
-              </div>
-              <div className="flex items-center space-x-1">
-                <div className="w-4 h-4 rounded border-2 border-green-300 bg-green-50"></div>
-                <span>Actions</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
     </div>
   )
 }
