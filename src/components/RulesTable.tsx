@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { Search, Plus, Download, Upload, Trash2, Power, PowerOff, Copy, Eye, MoreVertical, Settings, Sparkles } from 'lucide-react'
+import { Search, Plus, Download, Upload, Trash2, Power, PowerOff, Copy, Eye, MoreVertical, Settings, Sparkles, Workflow, Globe } from 'lucide-react'
 import { Rule, RuleType } from '../types/rules'
 import {
   deleteRule,
@@ -21,11 +21,13 @@ interface RulesTableProps {
   onEditRule: (rule: Rule) => void
   onCreateRule: () => void
   onToggleAI?: () => void
+  onOpenBranchingBuilder?: () => void
+  onOpenGlobalViewer?: () => void
   currentRuleType: RuleType
   onRuleTypeChange: (ruleType: RuleType) => void
 }
 
-export default function RulesTable({ onEditRule, onCreateRule, onToggleAI, currentRuleType, onRuleTypeChange }: RulesTableProps) {
+export default function RulesTable({ onEditRule, onCreateRule, onToggleAI, onOpenBranchingBuilder, onOpenGlobalViewer, currentRuleType, onRuleTypeChange }: RulesTableProps) {
   const [rules, setRules] = useState<Rule[]>([])
   const [filteredRules, setFilteredRules] = useState<Rule[]>([])
   const [selectedRules, setSelectedRules] = useState<Set<string>>(new Set())
@@ -348,6 +350,25 @@ export default function RulesTable({ onEditRule, onCreateRule, onToggleAI, curre
                   className="hidden"
                 />
               </div>
+              {/* Workflow-specific buttons */}
+              {currentRuleType === 'workflow' && onOpenGlobalViewer && (
+                <button
+                  onClick={onOpenGlobalViewer}
+                  className="inline-flex items-center px-3 py-1.5 border border-gray-300 rounded text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
+                >
+                  <Globe className="w-4 h-4 mr-1.5" />
+                  View All Workflows
+                </button>
+              )}
+              {currentRuleType === 'workflow' && onOpenBranchingBuilder && (
+                <button
+                  onClick={onOpenBranchingBuilder}
+                  className="inline-flex items-center px-3 py-1.5 border border-gray-300 rounded text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
+                >
+                  <Workflow className="w-4 h-4 mr-1.5" />
+                  Build Branching Flow
+                </button>
+              )}
               {onToggleAI && (
                 <button
                   onClick={onToggleAI}

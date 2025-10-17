@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react'
 import RulesTable from './components/RulesTable'
 import RuleBuilder from './components/RuleBuilder'
 import AIAssistant from './components/AIAssistant'
+import GlobalWorkflowViewer from './components/GlobalWorkflowViewer'
+import BranchingWorkflowBuilder from './components/BranchingWorkflowBuilder'
 import { Rule, RuleType } from './types/rules'
 import { initializeDictionaries } from './services/dictionaryService'
 import { isConfigured as isFirebaseConfigured } from './config/firebase'
@@ -13,6 +15,8 @@ function App() {
   const setCurrentRuleType = useRulesStore((state) => state.setCurrentRuleType)
   const [showRuleBuilder, setShowRuleBuilder] = useState(false)
   const [showAIAssistant, setShowAIAssistant] = useState(false)
+  const [showGlobalViewer, setShowGlobalViewer] = useState(false)
+  const [showBranchingBuilder, setShowBranchingBuilder] = useState(false)
   const [editingRule, setEditingRule] = useState<Rule | null>(null)
   const [aiGeneratedRule, setAiGeneratedRule] = useState<Partial<Rule> | null>(null)
   const [initializing, setInitializing] = useState(true)
@@ -116,6 +120,8 @@ function App() {
             onEditRule={handleEditRule}
             onCreateRule={handleCreateRule}
             onToggleAI={() => setShowAIAssistant(!showAIAssistant)}
+            onOpenGlobalViewer={() => setShowGlobalViewer(true)}
+            onOpenBranchingBuilder={() => setShowBranchingBuilder(true)}
             currentRuleType={currentRuleType}
             onRuleTypeChange={handleRuleTypeChange}
           />
@@ -144,6 +150,22 @@ function App() {
           rule={aiGeneratedRule ? { ...editingRule, ...aiGeneratedRule } as Rule : editingRule}
           onClose={handleCloseRuleBuilder}
           onSave={handleSaveRule}
+        />
+      )}
+
+      {/* Global Workflow Viewer */}
+      {showGlobalViewer && (
+        <GlobalWorkflowViewer onClose={() => setShowGlobalViewer(false)} />
+      )}
+
+      {/* Branching Workflow Builder */}
+      {showBranchingBuilder && (
+        <BranchingWorkflowBuilder
+          onClose={() => setShowBranchingBuilder(false)}
+          onSave={(nodes, edges) => {
+            console.log('Branching flow saved:', nodes, edges)
+            // Future: Convert branching flow to multiple rules
+          }}
         />
       )}
     </div>
