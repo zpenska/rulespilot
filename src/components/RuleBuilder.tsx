@@ -155,15 +155,17 @@ export default function RuleBuilder({ rule, onClose, onSave }: RuleBuilderProps)
       }
       ruleData.actions = Object.keys(cleanedActions).length > 0 ? cleanedActions : undefined
 
-      // Add workflow-specific fields
-      if (triggerEvents.length > 0) {
-        ruleData.triggerEvents = triggerEvents
-      }
-      if (requestTypeFilter) {
-        ruleData.requestTypeFilter = requestTypeFilter
-      }
-      if (fireOnce) {
-        ruleData.fireOnce = fireOnce
+      // Add workflow-specific fields (only for workflow type, not skills)
+      if (ruleType === 'workflow') {
+        if (triggerEvents.length > 0) {
+          ruleData.triggerEvents = triggerEvents
+        }
+        if (requestTypeFilter) {
+          ruleData.requestTypeFilter = requestTypeFilter
+        }
+        if (fireOnce) {
+          ruleData.fireOnce = fireOnce
+        }
       }
     }
 
