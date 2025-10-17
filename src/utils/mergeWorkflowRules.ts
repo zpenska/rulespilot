@@ -125,8 +125,7 @@ export function mergeWorkflowRules(rules: Rule[]): { nodes: Node[]; edges: Edge[
           id: `e-${lastSharedNodeId}-${branchNodeId}`,
           source: lastSharedNodeId,
           target: branchNodeId,
-          type: 'smoothstep',
-          style: { stroke: '#9ca3af', strokeWidth: 1, opacity: 0.6 },
+          type: 'default',
         })
       }
 
@@ -213,8 +212,9 @@ export function mergeWorkflowRules(rules: Rule[]): { nodes: Node[]; edges: Edge[
             id: `e-${lastSharedNodeId}-${sharedFirstConditionId}`,
             source: lastSharedNodeId,
             target: sharedFirstConditionId,
-            type: 'smoothstep',
-            style: { stroke: '#6b7280', strokeWidth: 1, opacity: 0.6 },
+            type: 'default',
+            style: { stroke: '#6b7280', strokeWidth: 2 },
+            animated: true,
           })
         }
       }
@@ -268,8 +268,8 @@ export function mergeWorkflowRules(rules: Rule[]): { nodes: Node[]; edges: Edge[
               id: `e-${lastNodeId}-${logicNodeId}`,
               source: lastNodeId,
               target: logicNodeId,
-              type: 'smoothstep',
-              style: { stroke: color.edge, strokeWidth: 1, opacity: 0.6 },
+              type: 'default',
+              style: { stroke: color.edge, strokeWidth: 2 },
             })
 
             // Connect logic to this condition
@@ -277,8 +277,8 @@ export function mergeWorkflowRules(rules: Rule[]): { nodes: Node[]; edges: Edge[
               id: `e-${logicNodeId}-${nodeId}`,
               source: logicNodeId,
               target: nodeId,
-              type: 'smoothstep',
-              style: { stroke: color.edge, strokeWidth: 1, opacity: 0.6 },
+              type: 'default',
+              style: { stroke: color.edge, strokeWidth: 2 },
             })
           }
 
@@ -333,16 +333,16 @@ export function mergeWorkflowRules(rules: Rule[]): { nodes: Node[]; edges: Edge[
                 id: `e-${lastNodeId}-${logicNodeId}`,
                 source: lastNodeId,
                 target: logicNodeId,
-                type: 'smoothstep',
-                style: { stroke: color.edge, strokeWidth: 1, opacity: 0.6 },
+                type: 'default',
+                style: { stroke: color.edge, strokeWidth: 2 },
               })
 
               edges.push({
                 id: `e-${logicNodeId}-${actionNodeId}`,
                 source: logicNodeId,
                 target: actionNodeId,
-                type: 'smoothstep',
-                style: { stroke: color.edge, strokeWidth: 1, opacity: 0.6 },
+                type: 'default',
+                style: { stroke: color.edge, strokeWidth: 2 },
               })
 
               lastNodeId = actionNodeId
@@ -352,8 +352,8 @@ export function mergeWorkflowRules(rules: Rule[]): { nodes: Node[]; edges: Edge[
                 id: `e-${rulePrefix}-action-${index - 1}-${actionNodeId}`,
                 source: `${rulePrefix}-action-${index - 1}`,
                 target: actionNodeId,
-                type: 'smoothstep',
-                style: { stroke: color.edge, strokeWidth: 1, opacity: 0.6 },
+                type: 'default',
+                style: { stroke: color.edge, strokeWidth: 2 },
               })
             }
 
