@@ -88,10 +88,11 @@ export function mergeWorkflowRules(rules: Rule[]): { nodes: Node[]; edges: Edge[
   groups.forEach((group) => {
     let xOffset = 0
     let lastSharedNodeId: string | null = null
+    const triggerKey = group.triggers.join('-') || 'no-trigger'
 
     // Create shared trigger node if triggers exist
     if (group.triggers.length > 0) {
-      const triggerNodeId = `trigger-${group.triggers.join('-')}-${yOffset}`
+      const triggerNodeId = `trigger-${triggerKey}-${yOffset}`
       nodes.push({
         id: triggerNodeId,
         type: 'triggerEventNode',
@@ -123,7 +124,7 @@ export function mergeWorkflowRules(rules: Rule[]): { nodes: Node[]; edges: Edge[
 
       // Create request type branch node if it's not 'none'
       if (filterKey !== 'none') {
-        branchNodeId = `branch-${filterKey}-${yOffset}-${requestTypeYOffset}`
+        branchNodeId = `branch-${triggerKey}-${filterKey}-${yOffset}-${requestTypeYOffset}`
         nodes.push({
           id: branchNodeId,
           type: 'requestTypeBranchNode',
@@ -200,7 +201,7 @@ export function mergeWorkflowRules(rules: Rule[]): { nodes: Node[]; edges: Edge[
         // Create shared first condition node if rules have conditions
         if (firstCriteria.length > 0) {
           const firstCondition = firstCriteria[0]
-          sharedFirstConditionId = `shared-condition-${signature}-${filterKey}`
+          sharedFirstConditionId = `shared-condition-${triggerKey}-${filterKey}-${signature}`
 
           // Use neutral styling for shared nodes
           nodes.push({
