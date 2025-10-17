@@ -16,6 +16,7 @@ import {
 import '@xyflow/react/dist/style.css'
 import { Rule } from '../types/rules'
 import { ruleToNodes } from '../utils/ruleFlowConverter'
+import { getAdaptiveLayoutedElements } from '../utils/autoLayout'
 import ConditionNode from './flow/ConditionNode'
 import LogicNode from './flow/LogicNode'
 import ActionNode from './flow/ActionNode'
@@ -30,8 +31,16 @@ interface RuleFlowBuilderProps {
 }
 
 function RuleFlowBuilderInner({ rule, onNodesChange }: RuleFlowBuilderProps) {
-  // Convert rule to nodes
-  const initialFlow = useMemo(() => ruleToNodes(rule), [rule])
+  // Convert rule to nodes and apply auto-layout
+  const initialFlow = useMemo(() => {
+    const flow = ruleToNodes(rule)
+    // Apply left-to-right auto-layout with dagre
+    return getAdaptiveLayoutedElements(flow.nodes, flow.edges, {
+      direction: 'LR',  // Left-to-right
+      rankSep: 150,      // Horizontal spacing between ranks
+      nodeSep: 100,      // Vertical spacing between nodes in same rank
+    })
+  }, [rule])
 
   const [nodes, setNodes, onNodesChangeInternal] = useNodesState(initialFlow.nodes)
   const [edges, setEdges, onEdgesChangeInternal] = useEdgesState(initialFlow.edges)
