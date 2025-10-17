@@ -85,6 +85,19 @@ export interface CustomFieldCriteria {
   values: string[]
 }
 
+// Trigger events - when workflow rules fire
+export type TriggerEvent =
+  | 'CREATE_REQUEST'
+  | 'EDIT_REQUEST'
+  | 'EXTEND_REQUEST'
+  | 'CREATE_SERVICE'
+  | 'EDIT_SERVICE'
+  | 'EXTEND_SERVICE'
+  | 'SAVE_QUESTIONNAIRE'
+
+// Request type filter for workflow rules
+export type RequestTypeFilter = 'INPATIENT' | 'OUTPATIENT' | null
+
 // Action types for workflow automation
 export interface AssignSkillAction {
   skillCode: string
@@ -110,6 +123,22 @@ export interface HintsAction {
   message: string
 }
 
+export interface CreateTaskAction {
+  taskType: string
+  taskReason: string
+  daysUntilDue?: number | null
+  taskOwner?: string | null  // Dept code or user
+  autoClose?: boolean
+}
+
+export interface TransferOwnershipAction {
+  transferTo: string  // Dept or user code
+}
+
+export interface CreateProgramAction {
+  programName: string
+}
+
 // Combined actions interface
 export interface RuleActions {
   assignSkill?: AssignSkillAction
@@ -118,6 +147,9 @@ export interface RuleActions {
   generateLetters?: GenerateLetterAction[]
   close?: CloseAction
   hints?: HintsAction
+  createTask?: CreateTaskAction
+  transferOwnership?: TransferOwnershipAction
+  createProgram?: CreateProgramAction
 }
 
 // TAT (Turnaround Time) specific types
@@ -161,6 +193,9 @@ export interface Rule {
   category?: string
   actions?: RuleActions  // Only for workflow rules (rules/skills)
   tatParameters?: TATParameters  // Only for TAT rules
+  triggerEvents?: TriggerEvent[]  // When this workflow rule fires
+  requestTypeFilter?: RequestTypeFilter  // Inpatient/Outpatient/null filter
+  fireOnce?: boolean  // Fire rule only once per request
   createdAt: string
   updatedAt: string
 }
@@ -173,6 +208,9 @@ export interface RuleExport {
   isActive: boolean
   weight: number
   actions?: RuleActions
+  triggerEvents?: TriggerEvent[]
+  requestTypeFilter?: RequestTypeFilter
+  fireOnce?: boolean
 }
 
 // TAT-specific criteria types (simplified - no operator field)

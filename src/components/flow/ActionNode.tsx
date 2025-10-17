@@ -1,6 +1,6 @@
 import { memo } from 'react'
 import { Handle, Position, NodeProps } from '@xyflow/react'
-import { Zap, Award, Building2, XCircle, Mail, Lightbulb } from 'lucide-react'
+import { Zap, Award, Building2, XCircle, Mail, Lightbulb, CheckSquare, ArrowRightLeft, FolderPlus } from 'lucide-react'
 
 export interface ActionNodeData {
   actionType: string
@@ -42,6 +42,21 @@ function ActionNode({ data }: NodeProps) {
         label: 'Add Hints',
         color: 'bg-yellow-50 text-yellow-700 border-yellow-200',
         icon: Lightbulb,
+      },
+      createTask: {
+        label: 'Create Task',
+        color: 'bg-indigo-50 text-indigo-700 border-indigo-200',
+        icon: CheckSquare,
+      },
+      transferOwnership: {
+        label: 'Transfer Ownership',
+        color: 'bg-cyan-50 text-cyan-700 border-cyan-200',
+        icon: ArrowRightLeft,
+      },
+      createProgram: {
+        label: 'Create Program',
+        color: 'bg-teal-50 text-teal-700 border-teal-200',
+        icon: FolderPlus,
       },
     }
 
@@ -89,6 +104,27 @@ function ActionNode({ data }: NodeProps) {
       const msg = actionData.message || actionData.hint || ''
       if (!msg) return '(click to add message)'
       return msg.substring(0, 30) + (msg.length > 30 ? '...' : '')
+    }
+    if (actionType === 'createTask') {
+      const taskType = actionData.taskType || ''
+      const taskReason = actionData.taskReason || ''
+      const days = actionData.daysUntilDue
+      const owner = actionData.taskOwner
+
+      const parts: string[] = []
+      if (taskType) parts.push(taskType)
+      if (taskReason) parts.push(taskReason)
+      if (days) parts.push(`${days} days`)
+      if (owner) parts.push(owner)
+
+      if (parts.length === 0) return '(click to configure)'
+      return parts.slice(0, 2).join(' • ') + (parts.length > 2 ? '...' : '')
+    }
+    if (actionType === 'transferOwnership') {
+      return actionData.transferTo || '(click to set transfer target)'
+    }
+    if (actionType === 'createProgram') {
+      return actionData.programName || '(click to set program name)'
     }
 
     return '(click to configure)'

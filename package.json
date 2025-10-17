@@ -15,7 +15,9 @@
   "dependencies": {
     "@anthropic-ai/sdk": "^0.65.0",
     "@headlessui/react": "^2.2.9",
+    "@types/dagre": "^0.7.53",
     "@xyflow/react": "^12.8.6",
+    "dagre": "^0.8.5",
     "firebase": "^12.3.0",
     "lucide-react": "^0.545.0",
     "nanoid": "^5.1.6",

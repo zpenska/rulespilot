@@ -364,6 +364,19 @@ export const exportWorkflowRuleToJSON = (rule: Rule): RuleExport => {
     exported.actions = rule.actions
   }
 
+  // Include workflow-specific fields
+  if (rule.triggerEvents && rule.triggerEvents.length > 0) {
+    exported.triggerEvents = rule.triggerEvents
+  }
+
+  if (rule.requestTypeFilter) {
+    exported.requestTypeFilter = rule.requestTypeFilter
+  }
+
+  if (rule.fireOnce !== undefined) {
+    exported.fireOnce = rule.fireOnce
+  }
+
   return exported
 }
 
@@ -456,6 +469,9 @@ export const importRulesFromJSON = async (jsonData: RuleExport[]): Promise<Rule[
         weight: ruleData.weight,
         status: ruleData.isActive ? 'active' : 'inactive',
         actions: ruleData.actions,
+        triggerEvents: ruleData.triggerEvents,
+        requestTypeFilter: ruleData.requestTypeFilter,
+        fireOnce: ruleData.fireOnce,
       }
 
       // Create the rule
