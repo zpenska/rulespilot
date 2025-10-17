@@ -126,8 +126,11 @@ export type SourceDateTimeField =
   | 'REQUEST_DATE_TIME'
   | 'RECEIPT_DATE_TIME'
   | 'RECEIVED_DATE_TIME'
+  | 'STATUS_CHANGE_DATE_TIME'
 
 export type UnitsOfMeasure = 'HOURS' | 'CALENDAR_DAYS' | 'BUSINESS_DAYS'
+
+export type DateOperator = '=' | '<' | '>' | '<=' | '>='
 
 // TAT Rule Parameters - for calculating due date/time
 export interface TATParameters {
@@ -136,8 +139,12 @@ export interface TATParameters {
   unitsOfMeasure: UnitsOfMeasure
   dueTime?: string | null  // HH:MM format (e.g., "17:00")
   holidayDates?: string[]  // YYYYMMDD format (e.g., ["20251225", "20260101"])
+  holidayCategory?: string | null  // Holiday category code (e.g., "SKIPHDAY_CTGY_1")
   holidayOffset?: number | null  // Days to offset for holidays
   clinicalsRequestedResponseThresholdHours?: number | null  // Hours threshold for provider response
+  dateOperator?: DateOperator | null  // Date comparison operator for source date
+  autoExtend?: boolean  // Enable automatic due date extension
+  extendStatusReason?: string | null  // Status reason code that triggers extension
 }
 
 // Main Rule structure - matches exact JSON requirements
@@ -186,6 +193,7 @@ export interface TATCustomFieldCriteria {
 export interface TATRuleExport {
   sourceDateTimeField: SourceDateTimeField
   holidayDates?: string[]
+  holidayCategory?: string | null
   clinicalsRequestedResponseThresholdHours?: number | null
   ruleDesc: string
   customFieldCriteria?: TATCustomFieldCriteria[] | null
@@ -196,6 +204,9 @@ export interface TATRuleExport {
   units: number
   holidayOffset?: number | null
   dueTime?: string | null
+  dateOperator?: DateOperator | null
+  autoExtend?: boolean
+  extendStatusReason?: string | null
 }
 
 // AUTO_WORKFLOW_RULES export format

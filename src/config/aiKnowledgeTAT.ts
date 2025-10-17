@@ -12,15 +12,19 @@ TAT rules calculate when authorization decisions are due based on request charac
 ## TAT Rule Components
 
 **Required Fields:**
-- sourceDateTimeField: Which date to start from (NOTIFICATION_DATE_TIME, REQUEST_DATE_TIME, RECEIPT_DATE_TIME, RECEIVED_DATE_TIME)
+- sourceDateTimeField: Which date to start from (NOTIFICATION_DATE_TIME, REQUEST_DATE_TIME, RECEIPT_DATE_TIME, RECEIVED_DATE_TIME, STATUS_CHANGE_DATE_TIME)
 - units: How many units to add
 - unitsOfMeasure: HOURS, CALENDAR_DAYS, or BUSINESS_DAYS
 
 **Optional Fields:**
 - dueTime: Specific time for due date (e.g., "17:00" for 5PM)
-- holidayDates: Array of holidays in YYYYMMDD format
+- holidayDates: Array of holidays in YYYYMMDD format (e.g., ["20251225"])
+- holidayCategory: Holiday category code for pre-defined holiday sets (e.g., "SKIPHDAY_CTGY_1")
 - holidayOffset: Days to extend if due date falls on holiday
 - clinicalsRequestedResponseThresholdHours: Hours threshold for provider clinical response
+- dateOperator: Date comparison operator (=, <, >, <=, >=) for conditional logic
+- autoExtend: Boolean flag to enable automatic due date extension
+- extendStatusReason: Status reason code that triggers extension (e.g., "45DNOCLIN")
 
 ## Example TAT Rules
 
@@ -212,14 +216,18 @@ Better custom field examples:
 ## Important Notes for TAT Rules
 
 1. **No operator field** - TAT criteria don't include operator (automatically "IN")
-2. **sourceDateTimeField** - When to start counting (notification, request, receipt, received)
+2. **sourceDateTimeField** - When to start counting (notification, request, receipt, received, status_change)
 3. **unitsOfMeasure**:
    - HOURS: Continuous hours including nights/weekends
    - CALENDAR_DAYS: All days including weekends
    - BUSINESS_DAYS: Weekdays only, excludes weekends and holidays
 4. **dueTime**: Set to "17:00" for 5PM deadline, null for calculated time
-5. **holidayDates**: YYYYMMDD format (e.g., "20251225" for Christmas 2025)
-6. **clinicalsRequestedResponseThresholdHours**: How long to wait for provider clinical info before TAT reset
+5. **holidayDates vs holidayCategory**:
+   - holidayDates: Explicit list in YYYYMMDD format (e.g., ["20251225"])
+   - holidayCategory: Reference to pre-defined holiday set (e.g., "SKIPHDAY_CTGY_1")
+6. **dateOperator**: Conditional logic like ">=" for "on or after", "<" for "before"
+7. **autoExtend**: Enables automatic due date extension when specific status is reached
+8. **clinicalsRequestedResponseThresholdHours**: How long to wait for provider clinical info before TAT reset
 
 ## Typical TAT Timeframes
 
@@ -233,13 +241,17 @@ Better custom field examples:
 ## Response Format
 
 Return JSON with:
-- sourceDateTimeField (required)
+- sourceDateTimeField (required: NOTIFICATION_DATE_TIME, REQUEST_DATE_TIME, RECEIPT_DATE_TIME, RECEIVED_DATE_TIME, STATUS_CHANGE_DATE_TIME)
 - units (required, number)
 - unitsOfMeasure (required: HOURS, CALENDAR_DAYS, or BUSINESS_DAYS)
 - dueTime (optional, "HH:MM" format)
 - holidayDates (optional, array of "YYYYMMDD" strings)
+- holidayCategory (optional, string like "SKIPHDAY_CTGY_1")
 - holidayOffset (optional, number of days)
 - clinicalsRequestedResponseThresholdHours (optional, number)
+- dateOperator (optional: =, <, >, <=, >=)
+- autoExtend (optional, boolean - default false)
+- extendStatusReason (optional, string - required if autoExtend is true)
 - ruleDesc
 - standardFieldCriteria (field, values - NO operator)
 - customFieldCriteria (values, association, templateId - NO operator)

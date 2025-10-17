@@ -27,6 +27,10 @@ export const SOURCE_DATE_TIME_FIELDS: Array<{
     code: 'RECEIVED_DATE_TIME',
     description: 'Received Date/Time',
   },
+  {
+    code: 'STATUS_CHANGE_DATE_TIME',
+    description: 'Status Change Date/Time',
+  },
 ]
 
 // Units of Measure Options
@@ -48,6 +52,18 @@ export const UNITS_OF_MEASURE: Array<{
   },
 ]
 
+// Date Operator Options
+export const DATE_OPERATORS: Array<{
+  code: string
+  description: string
+}> = [
+  { code: '=', description: 'Equal to' },
+  { code: '<', description: 'Less than' },
+  { code: '>', description: 'Greater than' },
+  { code: '<=', description: 'Less than or equal to' },
+  { code: '>=', description: 'Greater than or equal to' },
+]
+
 // TAT Field Labels
 export const TAT_FIELD_LABELS = {
   sourceDateTimeField: 'Source Date/Time Field',
@@ -55,8 +71,12 @@ export const TAT_FIELD_LABELS = {
   unitsOfMeasure: 'Units of Measure',
   dueTime: 'Due Time',
   holidayDates: 'Holiday Dates',
+  holidayCategory: 'Holiday Category',
   holidayOffset: 'Holiday Offset (Days)',
   clinicalsRequestedResponseThresholdHours: 'Clinicals Response Threshold (Hours)',
+  dateOperator: 'Date Operator',
+  autoExtend: 'Auto Extend',
+  extendStatusReason: 'Extend Status Reason',
 }
 
 // TAT Field Descriptions
@@ -66,6 +86,10 @@ export const TAT_FIELD_DESCRIPTIONS = {
   unitsOfMeasure: 'Type of units to use for calculation',
   dueTime: 'Specific time for the due date (HH:MM format, e.g., 17:00). Leave empty to use calculated time.',
   holidayDates: 'List of holiday dates in YYYYMMDD format (e.g., 20251225)',
+  holidayCategory: 'Holiday category code for referencing pre-defined holiday sets (e.g., SKIPHDAY_CTGY_1)',
   holidayOffset: 'Number of days to offset if due date falls on a holiday',
   clinicalsRequestedResponseThresholdHours: 'Hours threshold for provider response. If exceeded, TAT clock resets.',
+  dateOperator: 'Date comparison operator for conditional logic on source date (e.g., >= for "on or after")',
+  autoExtend: 'Enable automatic due date extension when specific conditions are met',
+  extendStatusReason: 'Status reason code that triggers the automatic extension (e.g., 45DNOCLIN)',
 }

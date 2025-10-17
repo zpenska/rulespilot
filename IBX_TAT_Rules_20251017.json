@@ -1,0 +1,3095 @@
+{
+  "rules": [
+    {
+      "ruleDesc": "Rule 1: Standard Medicare Outpatient for Medical Drugs (Part B)",
+      "isActive": true,
+      "weight": 51,
+      "units": 72,
+      "unitsOfMeasure": "HOURS",
+      "sourceDateTimeField": "NOTIFICATION_DATE_TIME",
+      "standardFieldCriteria": [
+        {
+          "field": "SERVICE_TREATMENT_TYPE",
+          "values": [
+            "TXTYPE_CTGY_1"
+          ]
+        },
+        {
+          "field": "REQUEST_URGENCY",
+          "values": [
+            "STND"
+          ]
+        },
+        {
+          "field": "SERVICE_REVIEW_TYPE",
+          "values": [
+            "REVIEW_CTGY_1"
+          ]
+        },
+        {
+          "field": "REQUEST_TYPE",
+          "values": [
+            "OUTPATIENT"
+          ]
+        },
+        {
+          "field": "MEMBER_CLIENT",
+          "values": [
+            "CLIENT_CODE_CTGY_5"
+          ]
+        },
+        {
+          "field": "ENROLLMENT_LINE_OF_BUSINESS",
+          "values": [
+            "LOB_CTGY_1"
+          ]
+        }
+      ],
+      "customFieldCriteria": null,
+      "dueTime": null,
+      "holidayDates": [],
+      "holidayCategory": null,
+      "holidayOffset": null,
+      "clinicalsRequestedResponseThresholdHours": null,
+      "dateOperator": null,
+      "autoExtend": false,
+      "extendStatusReason": null
+    },
+    {
+      "ruleDesc": "Rule 2: Expedited Medicare Outpatient for Medical Drugs (Part B)",
+      "isActive": true,
+      "weight": 96,
+      "units": 24,
+      "unitsOfMeasure": "HOURS",
+      "sourceDateTimeField": "NOTIFICATION_DATE_TIME",
+      "standardFieldCriteria": [
+        {
+          "field": "SERVICE_TREATMENT_TYPE",
+          "values": [
+            "TXTYPE_CTGY_1"
+          ]
+        },
+        {
+          "field": "REQUEST_URGENCY",
+          "values": [
+            "EXPD"
+          ]
+        },
+        {
+          "field": "SERVICE_REVIEW_TYPE",
+          "values": [
+            "REVIEW_CTGY_1"
+          ]
+        },
+        {
+          "field": "REQUEST_TYPE",
+          "values": [
+            "OUTPATIENT"
+          ]
+        },
+        {
+          "field": "MEMBER_CLIENT",
+          "values": [
+            "CLIENT_CODE_CTGY_5"
+          ]
+        },
+        {
+          "field": "ENROLLMENT_LINE_OF_BUSINESS",
+          "values": [
+            "LOB_CTGY_1"
+          ]
+        }
+      ],
+      "customFieldCriteria": null,
+      "dueTime": null,
+      "holidayDates": [],
+      "holidayCategory": null,
+      "holidayOffset": null,
+      "clinicalsRequestedResponseThresholdHours": null,
+      "dateOperator": null,
+      "autoExtend": false,
+      "extendStatusReason": null
+    },
+    {
+      "ruleDesc": "Rule 43: CHIP Home Healt Initial Determ/ Extension",
+      "isActive": true,
+      "weight": 66,
+      "units": 2,
+      "unitsOfMeasure": "BUSINESS_DAYS",
+      "sourceDateTimeField": "NOTIFICATION_DATE_TIME",
+      "standardFieldCriteria": [
+        {
+          "field": "SERVICE_TREATMENT_TYPE",
+          "values": [
+            "HMEHLTH"
+          ]
+        },
+        {
+          "field": "REQUEST_URGENCY",
+          "values": [
+            "URGENCY_CTGY_5"
+          ]
+        },
+        {
+          "field": "SERVICE_REVIEW_TYPE",
+          "values": [
+            "PRESERV"
+          ]
+        },
+        {
+          "field": "REQUEST_TYPE",
+          "values": [
+            "OUTPATIENT"
+          ]
+        },
+        {
+          "field": "MEMBER_CLIENT",
+          "values": [
+            "IBC_COMM"
+          ]
+        },
+        {
+          "field": "ENROLLMENT_LINE_OF_BUSINESS",
+          "values": [
+            "02_CHIP_FI"
+          ]
+        },
+        {
+          "field": "REQUEST_TREATMENT_SETTING",
+          "values": [
+            "HOME"
+          ]
+        }
+      ],
+      "customFieldCriteria": null,
+      "dueTime": "23:59",
+      "holidayDates": [],
+      "holidayCategory": null,
+      "holidayOffset": null,
+      "clinicalsRequestedResponseThresholdHours": null,
+      "dateOperator": null,
+      "autoExtend": false,
+      "extendStatusReason": null
+    },
+    {
+      "ruleDesc": "Rule 44: Standard Medicare, initial review",
+      "isActive": true,
+      "weight": 99,
+      "units": 2,
+      "unitsOfMeasure": "BUSINESS_DAYS",
+      "sourceDateTimeField": "NOTIFICATION_DATE_TIME",
+      "standardFieldCriteria": [
+        {
+          "field": "SERVICE_TREATMENT_TYPE",
+          "values": [
+            "TXTYPE_CTGY_2"
+          ]
+        },
+        {
+          "field": "REQUEST_URGENCY",
+          "values": [
+            "STND"
+          ]
+        },
+        {
+          "field": "SERVICE_REVIEW_TYPE",
+          "values": [
+            "REVIEW_CTGY_1"
+          ]
+        },
+        {
+          "field": "MEMBER_CLIENT",
+          "values": [
+            "CLIENT_CODE_CTGY_5"
+          ]
+        },
+        {
+          "field": "ENROLLMENT_LINE_OF_BUSINESS",
+          "values": [
+            "LOB_CTGY_1"
+          ]
+        },
+        {
+          "field": "REVIEW_OUTCOME_STATUS",
+          "values": [
+            "PEND"
+          ]
+        },
+        {
+          "field": "REVIEW_OUTCOME_STATUS_REASON",
+          "values": [
+            "MEDRSR3"
+          ]
+        }
+      ],
+      "customFieldCriteria": null,
+      "dueTime": "23:59",
+      "holidayDates": [],
+      "holidayCategory": null,
+      "holidayOffset": null,
+      "clinicalsRequestedResponseThresholdHours": null,
+      "dateOperator": null,
+      "autoExtend": false,
+      "extendStatusReason": null
+    },
+    {
+      "ruleDesc": "Rule 45: Standard Medicare Inpatient",
+      "isActive": true,
+      "weight": 65,
+      "units": 13,
+      "unitsOfMeasure": "CALENDAR_DAYS",
+      "sourceDateTimeField": "NOTIFICATION_DATE_TIME",
+      "standardFieldCriteria": [
+        {
+          "field": "REQUEST_URGENCY",
+          "values": [
+            "STND"
+          ]
+        },
+        {
+          "field": "SERVICE_REVIEW_TYPE",
+          "values": [
+            "REVIEW_CTGY_1"
+          ]
+        },
+        {
+          "field": "REQUEST_TYPE",
+          "values": [
+            "INPATIENT"
+          ]
+        },
+        {
+          "field": "MEMBER_CLIENT",
+          "values": [
+            "CLIENT_CODE_CTGY_5"
+          ]
+        },
+        {
+          "field": "ENROLLMENT_LINE_OF_BUSINESS",
+          "values": [
+            "LOB_CTGY_1"
+          ]
+        }
+      ],
+      "customFieldCriteria": null,
+      "dueTime": "23:59",
+      "holidayDates": [],
+      "holidayCategory": null,
+      "holidayOffset": null,
+      "clinicalsRequestedResponseThresholdHours": null,
+      "dateOperator": null,
+      "autoExtend": false,
+      "extendStatusReason": null
+    },
+    {
+      "ruleDesc": "Rule 46: PA DOH Non urgent initial Approve",
+      "isActive": false,
+      "weight": 107,
+      "units": 2,
+      "unitsOfMeasure": "BUSINESS_DAYS",
+      "sourceDateTimeField": "NOTIFICATION_DATE_TIME",
+      "standardFieldCriteria": [
+        {
+          "field": "REQUEST_URGENCY",
+          "values": [
+            "MEDRU1"
+          ]
+        },
+        {
+          "field": "SERVICE_REVIEW_TYPE",
+          "values": [
+            "REVIEW_CTGY_1"
+          ]
+        },
+        {
+          "field": "MEMBER_CLIENT",
+          "values": [
+            "IBC_COMM"
+          ]
+        },
+        {
+          "field": "ENROLLMENT_PLAN",
+          "values": [
+            "PLAN_CTGY_1"
+          ]
+        },
+        {
+          "field": "REVIEW_OUTCOME_STATUS",
+          "values": [
+            "APPROVE"
+          ]
+        },
+        {
+          "field": "REVIEW_OUTCOME_STATUS_REASON",
+          "values": [
+            "STATUS_RSN_CTGY_2"
+          ]
+        }
+      ],
+      "customFieldCriteria": null,
+      "dueTime": "23:59",
+      "holidayDates": [],
+      "holidayCategory": null,
+      "holidayOffset": null,
+      "clinicalsRequestedResponseThresholdHours": null,
+      "dateOperator": null,
+      "autoExtend": false,
+      "extendStatusReason": null
+    },
+    {
+      "ruleDesc": "Rule 47: PA DOH Non urgent initial Deny",
+      "isActive": false,
+      "weight": 109,
+      "units": 2,
+      "unitsOfMeasure": "BUSINESS_DAYS",
+      "sourceDateTimeField": "NOTIFICATION_DATE_TIME",
+      "standardFieldCriteria": [
+        {
+          "field": "REQUEST_URGENCY",
+          "values": [
+            "MEDRU1"
+          ]
+        },
+        {
+          "field": "SERVICE_REVIEW_TYPE",
+          "values": [
+            "REVIEW_CTGY_1"
+          ]
+        },
+        {
+          "field": "MEMBER_CLIENT",
+          "values": [
+            "IBC_COMM"
+          ]
+        },
+        {
+          "field": "ENROLLMENT_PLAN",
+          "values": [
+            "PLAN_CTGY_1"
+          ]
+        },
+        {
+          "field": "REVIEW_OUTCOME_STATUS",
+          "values": [
+            "DENY"
+          ]
+        },
+        {
+          "field": "REVIEW_OUTCOME_STATUS_REASON",
+          "values": [
+            "STATUS_RSN_CTGY_3"
+          ]
+        }
+      ],
+      "customFieldCriteria": null,
+      "dueTime": "23:59",
+      "holidayDates": [],
+      "holidayCategory": null,
+      "holidayOffset": null,
+      "clinicalsRequestedResponseThresholdHours": null,
+      "dateOperator": null,
+      "autoExtend": false,
+      "extendStatusReason": null
+    },
+    {
+      "ruleDesc": "Rule 48: Non PA DOH Non Urgent Commercial (NCQA) initial Approve",
+      "isActive": false,
+      "weight": 111,
+      "units": 15,
+      "unitsOfMeasure": "CALENDAR_DAYS",
+      "sourceDateTimeField": "NOTIFICATION_DATE_TIME",
+      "standardFieldCriteria": [
+        {
+          "field": "REQUEST_URGENCY",
+          "values": [
+            "MEDRU1"
+          ]
+        },
+        {
+          "field": "SERVICE_REVIEW_TYPE",
+          "values": [
+            "REVIEW_CTGY_1"
+          ]
+        },
+        {
+          "field": "MEMBER_CLIENT",
+          "values": [
+            "CLIENT_CODE_CTGY_9"
+          ]
+        },
+        {
+          "field": "ENROLLMENT_PLAN",
+          "values": [
+            "PLAN_CTGY_2"
+          ]
+        },
+        {
+          "field": "REVIEW_OUTCOME_STATUS",
+          "values": [
+            "APPROVE"
+          ]
+        },
+        {
+          "field": "REVIEW_OUTCOME_STATUS_REASON",
+          "values": [
+            "STATUS_RSN_CTGY_2"
+          ]
+        }
+      ],
+      "customFieldCriteria": null,
+      "dueTime": "23:59",
+      "holidayDates": [],
+      "holidayCategory": null,
+      "holidayOffset": null,
+      "clinicalsRequestedResponseThresholdHours": null,
+      "dateOperator": null,
+      "autoExtend": false,
+      "extendStatusReason": null
+    },
+    {
+      "ruleDesc": "Rule 49: Non PA DOH Non Urgent Commercial (NCQA)",
+      "isActive": false,
+      "weight": 110,
+      "units": 15,
+      "unitsOfMeasure": "CALENDAR_DAYS",
+      "sourceDateTimeField": "NOTIFICATION_DATE_TIME",
+      "standardFieldCriteria": [
+        {
+          "field": "REQUEST_URGENCY",
+          "values": [
+            "MEDRU1"
+          ]
+        },
+        {
+          "field": "SERVICE_REVIEW_TYPE",
+          "values": [
+            "REVIEW_CTGY_1"
+          ]
+        },
+        {
+          "field": "MEMBER_CLIENT",
+          "values": [
+            "CLIENT_CODE_CTGY_9"
+          ]
+        },
+        {
+          "field": "ENROLLMENT_PLAN",
+          "values": [
+            "PLAN_CTGY_2"
+          ]
+        },
+        {
+          "field": "REVIEW_OUTCOME_STATUS",
+          "values": [
+            "DENY"
+          ]
+        },
+        {
+          "field": "REVIEW_OUTCOME_STATUS_REASON",
+          "values": [
+            "STATUS_RSN_CTGY_3"
+          ]
+        }
+      ],
+      "customFieldCriteria": null,
+      "dueTime": "23:59",
+      "holidayDates": [],
+      "holidayCategory": null,
+      "holidayOffset": null,
+      "clinicalsRequestedResponseThresholdHours": null,
+      "dateOperator": null,
+      "autoExtend": false,
+      "extendStatusReason": null
+    },
+    {
+      "ruleDesc": "Rule 28: Initial Determination or Extension CHIP Non Drug",
+      "isActive": true,
+      "weight": 996,
+      "units": 2,
+      "unitsOfMeasure": "BUSINESS_DAYS",
+      "sourceDateTimeField": "STATUS_CHANGE_DATE_TIME",
+      "standardFieldCriteria": [
+        {
+          "field": "SERVICE_TREATMENT_TYPE",
+          "values": [
+            "TXTYPE_CTGY_2"
+          ]
+        },
+        {
+          "field": "REQUEST_URGENCY",
+          "values": [
+            "MEDRU1"
+          ]
+        },
+        {
+          "field": "SERVICE_REVIEW_TYPE",
+          "values": [
+            "REVIEW_CTGY_1"
+          ]
+        },
+        {
+          "field": "MEMBER_CLIENT",
+          "values": [
+            "IBC_COMM"
+          ]
+        },
+        {
+          "field": "ENROLLMENT_LINE_OF_BUSINESS",
+          "values": [
+            "02_CHIP_FI"
+          ]
+        },
+        {
+          "field": "REVIEW_OUTCOME_STATUS",
+          "values": [
+            "PEND"
+          ]
+        },
+        {
+          "field": "REVIEW_OUTCOME_STATUS_REASON",
+          "values": [
+            "CLINRECV"
+          ]
+        }
+      ],
+      "customFieldCriteria": null,
+      "dueTime": "23:59",
+      "holidayDates": [],
+      "holidayCategory": null,
+      "holidayOffset": null,
+      "clinicalsRequestedResponseThresholdHours": null,
+      "dateOperator": null,
+      "autoExtend": false,
+      "extendStatusReason": null
+    },
+    {
+      "ruleDesc": "Rule 29:  Initial Determination or Extension CHIP Non Drug-Clinical Received",
+      "isActive": true,
+      "weight": 54,
+      "units": 14,
+      "unitsOfMeasure": "CALENDAR_DAYS",
+      "sourceDateTimeField": "STATUS_CHANGE_DATE_TIME",
+      "standardFieldCriteria": [
+        {
+          "field": "SERVICE_TREATMENT_TYPE",
+          "values": [
+            "TXTYPE_CTGY_4"
+          ]
+        },
+        {
+          "field": "REQUEST_URGENCY",
+          "values": [
+            "MEDRU1"
+          ]
+        },
+        {
+          "field": "SERVICE_REVIEW_TYPE",
+          "values": [
+            "REVIEW_CTGY_1"
+          ]
+        },
+        {
+          "field": "MEMBER_CLIENT",
+          "values": [
+            "IBC_COMM"
+          ]
+        },
+        {
+          "field": "ENROLLMENT_LINE_OF_BUSINESS",
+          "values": [
+            "02_CHIP_FI"
+          ]
+        },
+        {
+          "field": "REVIEW_OUTCOME_STATUS",
+          "values": [
+            "PEND"
+          ]
+        },
+        {
+          "field": "REVIEW_OUTCOME_STATUS_REASON",
+          "values": [
+            "MEDRSR11"
+          ]
+        }
+      ],
+      "customFieldCriteria": null,
+      "dueTime": "23:59",
+      "holidayDates": [],
+      "holidayCategory": null,
+      "holidayOffset": null,
+      "clinicalsRequestedResponseThresholdHours": null,
+      "dateOperator": null,
+      "autoExtend": true,
+      "extendStatusReason": "15DNOCLIN"
+    },
+    {
+      "ruleDesc": "Rule 30: Initial Determination or extension CHIP Drug",
+      "isActive": true,
+      "weight": 88,
+      "units": 24,
+      "unitsOfMeasure": "HOURS",
+      "sourceDateTimeField": "NOTIFICATION_DATE_TIME",
+      "standardFieldCriteria": [
+        {
+          "field": "SERVICE_TREATMENT_TYPE",
+          "values": [
+            "TXTYPE_CTGY_1"
+          ]
+        },
+        {
+          "field": "REQUEST_URGENCY",
+          "values": [
+            "URGENCY_CTGY_5"
+          ]
+        },
+        {
+          "field": "SERVICE_REVIEW_TYPE",
+          "values": [
+            "REVIEW_CTGY_1"
+          ]
+        },
+        {
+          "field": "MEMBER_CLIENT",
+          "values": [
+            "IBC_COMM"
+          ]
+        },
+        {
+          "field": "ENROLLMENT_LINE_OF_BUSINESS",
+          "values": [
+            "02_CHIP_FI"
+          ]
+        }
+      ],
+      "customFieldCriteria": null,
+      "dueTime": null,
+      "holidayDates": [],
+      "holidayCategory": null,
+      "holidayOffset": null,
+      "clinicalsRequestedResponseThresholdHours": null,
+      "dateOperator": null,
+      "autoExtend": false,
+      "extendStatusReason": null
+    },
+    {
+      "ruleDesc": "Rule 61:  Non-Urgent CHIP Concurrent NON DRUG INPT Clinical Review",
+      "isActive": true,
+      "weight": 455,
+      "units": 72,
+      "unitsOfMeasure": "HOURS",
+      "sourceDateTimeField": "NOTIFICATION_DATE_TIME",
+      "standardFieldCriteria": [
+        {
+          "field": "SERVICE_TREATMENT_TYPE",
+          "values": [
+            "TXTYPE_CTGY_4"
+          ]
+        },
+        {
+          "field": "REQUEST_URGENCY",
+          "values": [
+            "URGENCY_CTGY_2"
+          ]
+        },
+        {
+          "field": "SERVICE_REVIEW_TYPE",
+          "values": [
+            "MEDRRT03"
+          ]
+        },
+        {
+          "field": "REQUEST_TYPE",
+          "values": [
+            "INPATIENT"
+          ]
+        },
+        {
+          "field": "MEMBER_CLIENT",
+          "values": [
+            "IBC_COMM"
+          ]
+        },
+        {
+          "field": "ENROLLMENT_LINE_OF_BUSINESS",
+          "values": [
+            "02_CHIP_FI"
+          ]
+        },
+        {
+          "field": "REVIEW_OUTCOME_STATUS",
+          "values": [
+            "PEND"
+          ]
+        },
+        {
+          "field": "REVIEW_OUTCOME_STATUS_REASON",
+          "values": [
+            "MEDRSR3"
+          ]
+        }
+      ],
+      "customFieldCriteria": null,
+      "dueTime": null,
+      "holidayDates": [],
+      "holidayCategory": null,
+      "holidayOffset": null,
+      "clinicalsRequestedResponseThresholdHours": null,
+      "dateOperator": null,
+      "autoExtend": false,
+      "extendStatusReason": null
+    },
+    {
+      "ruleDesc": "Rule 62: Non-Urgent CHIP Concurrent NON DRUG INPT Clinical Received",
+      "isActive": true,
+      "weight": 465,
+      "units": 1,
+      "unitsOfMeasure": "BUSINESS_DAYS",
+      "sourceDateTimeField": "STATUS_CHANGE_DATE_TIME",
+      "standardFieldCriteria": [
+        {
+          "field": "SERVICE_TREATMENT_TYPE",
+          "values": [
+            "TXTYPE_CTGY_4"
+          ]
+        },
+        {
+          "field": "REQUEST_URGENCY",
+          "values": [
+            "URGENCY_CTGY_2"
+          ]
+        },
+        {
+          "field": "SERVICE_REVIEW_TYPE",
+          "values": [
+            "MEDRRT03"
+          ]
+        },
+        {
+          "field": "REQUEST_TYPE",
+          "values": [
+            "INPATIENT"
+          ]
+        },
+        {
+          "field": "MEMBER_CLIENT",
+          "values": [
+            "IBC_COMM"
+          ]
+        },
+        {
+          "field": "ENROLLMENT_LINE_OF_BUSINESS",
+          "values": [
+            "02_CHIP_FI"
+          ]
+        },
+        {
+          "field": "REVIEW_OUTCOME_STATUS",
+          "values": [
+            "PEND"
+          ]
+        },
+        {
+          "field": "REVIEW_OUTCOME_STATUS_REASON",
+          "values": [
+            "CLINRECV"
+          ]
+        }
+      ],
+      "customFieldCriteria": null,
+      "dueTime": "23:59",
+      "holidayDates": [],
+      "holidayCategory": null,
+      "holidayOffset": null,
+      "clinicalsRequestedResponseThresholdHours": null,
+      "dateOperator": null,
+      "autoExtend": false,
+      "extendStatusReason": null
+    },
+    {
+      "ruleDesc": "Rule 4: Emergent Medicare",
+      "isActive": true,
+      "weight": 90,
+      "units": 72,
+      "unitsOfMeasure": "HOURS",
+      "sourceDateTimeField": "NOTIFICATION_DATE_TIME",
+      "standardFieldCriteria": [
+        {
+          "field": "REQUEST_URGENCY",
+          "values": [
+            "MEDRU2"
+          ]
+        },
+        {
+          "field": "SERVICE_REVIEW_TYPE",
+          "values": [
+            "IADM"
+          ]
+        },
+        {
+          "field": "REQUEST_TYPE",
+          "values": [
+            "INPATIENT"
+          ]
+        },
+        {
+          "field": "MEMBER_CLIENT",
+          "values": [
+            "CLIENT_CODE_CTGY_5"
+          ]
+        },
+        {
+          "field": "ENROLLMENT_LINE_OF_BUSINESS",
+          "values": [
+            "LOB_CTGY_1"
+          ]
+        }
+      ],
+      "customFieldCriteria": null,
+      "dueTime": null,
+      "holidayDates": [],
+      "holidayCategory": null,
+      "holidayOffset": null,
+      "clinicalsRequestedResponseThresholdHours": null,
+      "dateOperator": null,
+      "autoExtend": false,
+      "extendStatusReason": null
+    },
+    {
+      "ruleDesc": "Rule 5: Concurrent Inpatient",
+      "isActive": false,
+      "weight": 93,
+      "units": 24,
+      "unitsOfMeasure": "HOURS",
+      "sourceDateTimeField": "NOTIFICATION_DATE_TIME",
+      "standardFieldCriteria": [
+        {
+          "field": "REQUEST_URGENCY",
+          "values": [
+            "URGENCY_CTGY_1"
+          ]
+        },
+        {
+          "field": "SERVICE_REVIEW_TYPE",
+          "values": [
+            "MEDRRT03"
+          ]
+        },
+        {
+          "field": "REQUEST_TYPE",
+          "values": [
+            "INPATIENT"
+          ]
+        },
+        {
+          "field": "MEMBER_CLIENT",
+          "values": [
+            "CLIENT_CODE_CTGY_5"
+          ]
+        },
+        {
+          "field": "ENROLLMENT_LINE_OF_BUSINESS",
+          "values": [
+            "LOB_CTGY_1"
+          ]
+        }
+      ],
+      "customFieldCriteria": null,
+      "dueTime": null,
+      "holidayDates": [],
+      "holidayCategory": null,
+      "holidayOffset": null,
+      "clinicalsRequestedResponseThresholdHours": null,
+      "dateOperator": null,
+      "autoExtend": false,
+      "extendStatusReason": null
+    },
+    {
+      "ruleDesc": "Rule 6: Medicare Reopen a discharged INPT or OUTPT Request",
+      "isActive": true,
+      "weight": 58,
+      "units": 3,
+      "unitsOfMeasure": "CALENDAR_DAYS",
+      "sourceDateTimeField": "NOTIFICATION_DATE_TIME",
+      "standardFieldCriteria": [
+        {
+          "field": "REQUEST_URGENCY",
+          "values": [
+            "URGENCY_CTGY_1"
+          ]
+        },
+        {
+          "field": "SERVICE_REVIEW_TYPE",
+          "values": [
+            "REOPN"
+          ]
+        },
+        {
+          "field": "MEMBER_CLIENT",
+          "values": [
+            "CLIENT_CODE_CTGY_5"
+          ]
+        },
+        {
+          "field": "ENROLLMENT_LINE_OF_BUSINESS",
+          "values": [
+            "LOB_CTGY_1"
+          ]
+        }
+      ],
+      "customFieldCriteria": null,
+      "dueTime": "23:59",
+      "holidayDates": [],
+      "holidayCategory": null,
+      "holidayOffset": null,
+      "clinicalsRequestedResponseThresholdHours": null,
+      "dateOperator": null,
+      "autoExtend": false,
+      "extendStatusReason": null
+    },
+    {
+      "ruleDesc": "Rule 8: Medicare and Commercial Retrospective",
+      "isActive": true,
+      "weight": 40,
+      "units": 30,
+      "unitsOfMeasure": "CALENDAR_DAYS",
+      "sourceDateTimeField": "NOTIFICATION_DATE_TIME",
+      "standardFieldCriteria": [
+        {
+          "field": "REQUEST_URGENCY",
+          "values": [
+            "RETRO"
+          ]
+        },
+        {
+          "field": "SERVICE_REVIEW_TYPE",
+          "values": [
+            "REVIEW_CTGY_6"
+          ]
+        },
+        {
+          "field": "MEMBER_CLIENT",
+          "values": [
+            "CLIENT_CODE_CTGY_8"
+          ]
+        },
+        {
+          "field": "ENROLLMENT_LINE_OF_BUSINESS",
+          "values": [
+            "LOB_CTGY_1"
+          ]
+        }
+      ],
+      "customFieldCriteria": null,
+      "dueTime": "23:59",
+      "holidayDates": [],
+      "holidayCategory": null,
+      "holidayOffset": null,
+      "clinicalsRequestedResponseThresholdHours": null,
+      "dateOperator": null,
+      "autoExtend": false,
+      "extendStatusReason": null
+    },
+    {
+      "ruleDesc": "Rule 10: PA DOH Non urgent",
+      "isActive": true,
+      "weight": 104,
+      "units": 2,
+      "unitsOfMeasure": "BUSINESS_DAYS",
+      "sourceDateTimeField": "NOTIFICATION_DATE_TIME",
+      "standardFieldCriteria": [
+        {
+          "field": "REQUEST_URGENCY",
+          "values": [
+            "MEDRU1"
+          ]
+        },
+        {
+          "field": "SERVICE_REVIEW_TYPE",
+          "values": [
+            "REVIEW_CTGY_1"
+          ]
+        },
+        {
+          "field": "MEMBER_CLIENT",
+          "values": [
+            "IBC_COMM"
+          ]
+        },
+        {
+          "field": "ENROLLMENT_LINE_OF_BUSINESS",
+          "values": [
+            "LOB_CTGY_3"
+          ]
+        },
+        {
+          "field": "ENROLLMENT_PLAN",
+          "values": [
+            "PLAN_CTGY_1"
+          ]
+        },
+        {
+          "field": "REVIEW_OUTCOME_STATUS",
+          "values": [
+            "PEND"
+          ]
+        },
+        {
+          "field": "REVIEW_OUTCOME_STATUS_REASON",
+          "values": [
+            "MEDRSR3"
+          ]
+        }
+      ],
+      "customFieldCriteria": null,
+      "dueTime": "23:59",
+      "holidayDates": [],
+      "holidayCategory": "SKIPHDAY_CTGY_1",
+      "holidayOffset": null,
+      "clinicalsRequestedResponseThresholdHours": null,
+      "dateOperator": null,
+      "autoExtend": false,
+      "extendStatusReason": null
+    },
+    {
+      "ruleDesc": "Rule 13: Non PA DOH Non Urgent Commerical (NCQA)",
+      "isActive": true,
+      "weight": 47,
+      "units": 15,
+      "unitsOfMeasure": "CALENDAR_DAYS",
+      "sourceDateTimeField": "NOTIFICATION_DATE_TIME",
+      "standardFieldCriteria": [
+        {
+          "field": "REQUEST_URGENCY",
+          "values": [
+            "MEDRU1"
+          ]
+        },
+        {
+          "field": "SERVICE_REVIEW_TYPE",
+          "values": [
+            "REVIEW_CTGY_1"
+          ]
+        },
+        {
+          "field": "MEMBER_CLIENT",
+          "values": [
+            "IBC_COMM"
+          ]
+        },
+        {
+          "field": "ENROLLMENT_LINE_OF_BUSINESS",
+          "values": [
+            "LOB_CTGY_3"
+          ]
+        },
+        {
+          "field": "ENROLLMENT_PLAN",
+          "values": [
+            "PLAN_CTGY_2"
+          ]
+        },
+        {
+          "field": "REVIEW_OUTCOME_STATUS",
+          "values": [
+            "PEND"
+          ]
+        },
+        {
+          "field": "REVIEW_OUTCOME_STATUS_REASON",
+          "values": [
+            "MEDRSR3"
+          ]
+        }
+      ],
+      "customFieldCriteria": null,
+      "dueTime": "23:59",
+      "holidayDates": [],
+      "holidayCategory": null,
+      "holidayOffset": null,
+      "clinicalsRequestedResponseThresholdHours": null,
+      "dateOperator": null,
+      "autoExtend": false,
+      "extendStatusReason": null
+    },
+    {
+      "ruleDesc": "Rule 15: Commerical (except PA DOH) pending response",
+      "isActive": true,
+      "weight": 49,
+      "units": 5,
+      "unitsOfMeasure": "BUSINESS_DAYS",
+      "sourceDateTimeField": "STATUS_CHANGE_DATE_TIME",
+      "standardFieldCriteria": [
+        {
+          "field": "REQUEST_URGENCY",
+          "values": [
+            "MEDRU1"
+          ]
+        },
+        {
+          "field": "SERVICE_REVIEW_TYPE",
+          "values": [
+            "REVIEW_CTGY_1"
+          ]
+        },
+        {
+          "field": "MEMBER_CLIENT",
+          "values": [
+            "CLIENT_CODE_CTGY_2"
+          ]
+        },
+        {
+          "field": "ENROLLMENT_LINE_OF_BUSINESS",
+          "values": [
+            "LOB_CTGY_3"
+          ]
+        },
+        {
+          "field": "ENROLLMENT_PLAN",
+          "values": [
+            "PLAN_CTGY_2"
+          ]
+        },
+        {
+          "field": "REVIEW_OUTCOME_STATUS",
+          "values": [
+            "PEND"
+          ]
+        },
+        {
+          "field": "REVIEW_OUTCOME_STATUS_REASON",
+          "values": [
+            "STATUS_RSN_CTGY_4"
+          ]
+        }
+      ],
+      "customFieldCriteria": null,
+      "dueTime": "23:59",
+      "holidayDates": [],
+      "holidayCategory": "SKIPHDAY_CTGY_1",
+      "holidayOffset": null,
+      "clinicalsRequestedResponseThresholdHours": null,
+      "dateOperator": null,
+      "autoExtend": false,
+      "extendStatusReason": null
+    },
+    {
+      "ruleDesc": "Rule 16: All Commercial Emergent except Emergent AHNJ",
+      "isActive": true,
+      "weight": 89,
+      "units": 72,
+      "unitsOfMeasure": "HOURS",
+      "sourceDateTimeField": "NOTIFICATION_DATE_TIME",
+      "standardFieldCriteria": [
+        {
+          "field": "REQUEST_URGENCY",
+          "values": [
+            "MEDRU2"
+          ]
+        },
+        {
+          "field": "SERVICE_REVIEW_TYPE",
+          "values": [
+            "IADM"
+          ]
+        },
+        {
+          "field": "REQUEST_TYPE",
+          "values": [
+            "INPATIENT"
+          ]
+        },
+        {
+          "field": "MEMBER_CLIENT",
+          "values": [
+            "CLIENT_CODE_CTGY_4"
+          ]
+        }
+      ],
+      "customFieldCriteria": null,
+      "dueTime": null,
+      "holidayDates": [],
+      "holidayCategory": null,
+      "holidayOffset": null,
+      "clinicalsRequestedResponseThresholdHours": null,
+      "dateOperator": null,
+      "autoExtend": false,
+      "extendStatusReason": null
+    },
+    {
+      "ruleDesc": "Rule 17A: Concurrent Commercial initiated on or before Last Covered Day other than Emergent AHNJ",
+      "isActive": true,
+      "weight": 204,
+      "units": 1,
+      "unitsOfMeasure": "CALENDAR_DAYS",
+      "sourceDateTimeField": "NOTIFICATION_DATE_TIME",
+      "standardFieldCriteria": [
+        {
+          "field": "REQUEST_URGENCY",
+          "values": [
+            "URGENCY_CTGY_2"
+          ]
+        },
+        {
+          "field": "SERVICE_REVIEW_TYPE",
+          "values": [
+            "MEDRRT03"
+          ]
+        },
+        {
+          "field": "REQUEST_TYPE",
+          "values": [
+            "INPATIENT"
+          ]
+        },
+        {
+          "field": "MEMBER_CLIENT",
+          "values": [
+            "CLIENT_CODE_CTGY_4"
+          ]
+        }
+      ],
+      "customFieldCriteria": null,
+      "dueTime": "23:59",
+      "holidayDates": [],
+      "holidayCategory": null,
+      "holidayOffset": null,
+      "clinicalsRequestedResponseThresholdHours": null,
+      "dateOperator": ">=",
+      "autoExtend": false,
+      "extendStatusReason": null
+    },
+    {
+      "ruleDesc": "Rule 19: AHNJ Commerical Emergent 24 hours to request clinical",
+      "isActive": true,
+      "weight": 94,
+      "units": 24,
+      "unitsOfMeasure": "HOURS",
+      "sourceDateTimeField": "NOTIFICATION_DATE_TIME",
+      "standardFieldCriteria": [
+        {
+          "field": "REQUEST_URGENCY",
+          "values": [
+            "MEDRU2"
+          ]
+        },
+        {
+          "field": "SERVICE_REVIEW_TYPE",
+          "values": [
+            "REVIEW_CTGY_2"
+          ]
+        },
+        {
+          "field": "REQUEST_TYPE",
+          "values": [
+            "INPATIENT"
+          ]
+        },
+        {
+          "field": "MEMBER_CLIENT",
+          "values": [
+            "AHNJ_COMM"
+          ]
+        },
+        {
+          "field": "REVIEW_OUTCOME_STATUS",
+          "values": [
+            "PEND"
+          ]
+        },
+        {
+          "field": "REVIEW_OUTCOME_STATUS_REASON",
+          "values": [
+            "MEDRSR3"
+          ]
+        }
+      ],
+      "customFieldCriteria": null,
+      "dueTime": null,
+      "holidayDates": [],
+      "holidayCategory": null,
+      "holidayOffset": null,
+      "clinicalsRequestedResponseThresholdHours": null,
+      "dateOperator": null,
+      "autoExtend": false,
+      "extendStatusReason": null
+    },
+    {
+      "ruleDesc": "Rule 22: All Urgent Commercial",
+      "isActive": true,
+      "weight": 87,
+      "units": 72,
+      "unitsOfMeasure": "HOURS",
+      "sourceDateTimeField": "NOTIFICATION_DATE_TIME",
+      "standardFieldCriteria": [
+        {
+          "field": "REQUEST_URGENCY",
+          "values": [
+            "URG"
+          ]
+        },
+        {
+          "field": "SERVICE_REVIEW_TYPE",
+          "values": [
+            "REVIEW_CTGY_1"
+          ]
+        },
+        {
+          "field": "MEMBER_CLIENT",
+          "values": [
+            "CLIENT_CODE_CTGY_2"
+          ]
+        },
+        {
+          "field": "ENROLLMENT_LINE_OF_BUSINESS",
+          "values": [
+            "LOB_CTGY_3"
+          ]
+        }
+      ],
+      "customFieldCriteria": null,
+      "dueTime": null,
+      "holidayDates": [],
+      "holidayCategory": null,
+      "holidayOffset": null,
+      "clinicalsRequestedResponseThresholdHours": null,
+      "dateOperator": null,
+      "autoExtend": false,
+      "extendStatusReason": null
+    },
+    {
+      "ruleDesc": "Rule 25: AHNJ non urgent concurrent Inpatient",
+      "isActive": true,
+      "weight": 95,
+      "units": 24,
+      "unitsOfMeasure": "HOURS",
+      "sourceDateTimeField": "NOTIFICATION_DATE_TIME",
+      "standardFieldCriteria": [
+        {
+          "field": "REQUEST_URGENCY",
+          "values": [
+            "MEDRU1"
+          ]
+        },
+        {
+          "field": "SERVICE_REVIEW_TYPE",
+          "values": [
+            "MEDRRT03"
+          ]
+        },
+        {
+          "field": "REQUEST_TYPE",
+          "values": [
+            "INPATIENT"
+          ]
+        },
+        {
+          "field": "MEMBER_CLIENT",
+          "values": [
+            "AHNJ_COMM"
+          ]
+        }
+      ],
+      "customFieldCriteria": null,
+      "dueTime": null,
+      "holidayDates": [],
+      "holidayCategory": null,
+      "holidayOffset": null,
+      "clinicalsRequestedResponseThresholdHours": null,
+      "dateOperator": null,
+      "autoExtend": false,
+      "extendStatusReason": null
+    },
+    {
+      "ruleDesc": "Rule 26: Urgent Initial Determination or Extension CHIP Non-Drug",
+      "isActive": true,
+      "weight": 86,
+      "units": 72,
+      "unitsOfMeasure": "HOURS",
+      "sourceDateTimeField": "NOTIFICATION_DATE_TIME",
+      "standardFieldCriteria": [
+        {
+          "field": "SERVICE_TREATMENT_TYPE",
+          "values": [
+            "TXTYPE_CTGY_4"
+          ]
+        },
+        {
+          "field": "REQUEST_URGENCY",
+          "values": [
+            "URG"
+          ]
+        },
+        {
+          "field": "SERVICE_REVIEW_TYPE",
+          "values": [
+            "REVIEW_CTGY_4"
+          ]
+        },
+        {
+          "field": "MEMBER_CLIENT",
+          "values": [
+            "IBC_COMM"
+          ]
+        },
+        {
+          "field": "ENROLLMENT_LINE_OF_BUSINESS",
+          "values": [
+            "02_CHIP_FI"
+          ]
+        },
+        {
+          "field": "ENROLLMENT_PLAN",
+          "values": [
+            "PLAN_CTGY_2"
+          ]
+        }
+      ],
+      "customFieldCriteria": null,
+      "dueTime": null,
+      "holidayDates": [],
+      "holidayCategory": null,
+      "holidayOffset": null,
+      "clinicalsRequestedResponseThresholdHours": null,
+      "dateOperator": null,
+      "autoExtend": false,
+      "extendStatusReason": null
+    },
+    {
+      "ruleDesc": "Rule 27:  Non-Urgent Intial Determination or Extension CHIP NON DRUG",
+      "isActive": true,
+      "weight": 50,
+      "units": 48,
+      "unitsOfMeasure": "HOURS",
+      "sourceDateTimeField": "NOTIFICATION_DATE_TIME",
+      "standardFieldCriteria": [
+        {
+          "field": "SERVICE_TREATMENT_TYPE",
+          "values": [
+            "TXTYPE_CTGY_4"
+          ]
+        },
+        {
+          "field": "REQUEST_URGENCY",
+          "values": [
+            "MEDRU1"
+          ]
+        },
+        {
+          "field": "SERVICE_REVIEW_TYPE",
+          "values": [
+            "REVIEW_CTGY_5"
+          ]
+        },
+        {
+          "field": "MEMBER_CLIENT",
+          "values": [
+            "IBC_COMM"
+          ]
+        },
+        {
+          "field": "ENROLLMENT_LINE_OF_BUSINESS",
+          "values": [
+            "02_CHIP_FI"
+          ]
+        },
+        {
+          "field": "ENROLLMENT_PLAN",
+          "values": [
+            "PLAN_CTGY_2"
+          ]
+        },
+        {
+          "field": "REVIEW_OUTCOME_STATUS",
+          "values": [
+            "PEND"
+          ]
+        },
+        {
+          "field": "REVIEW_OUTCOME_STATUS_REASON",
+          "values": [
+            "MEDRSR3"
+          ]
+        }
+      ],
+      "customFieldCriteria": null,
+      "dueTime": "23:59",
+      "holidayDates": [],
+      "holidayCategory": null,
+      "holidayOffset": null,
+      "clinicalsRequestedResponseThresholdHours": null,
+      "dateOperator": null,
+      "autoExtend": false,
+      "extendStatusReason": null
+    },
+    {
+      "ruleDesc": "Rule 7: Expedited Medicare",
+      "isActive": true,
+      "weight": 92,
+      "units": 72,
+      "unitsOfMeasure": "HOURS",
+      "sourceDateTimeField": "NOTIFICATION_DATE_TIME",
+      "standardFieldCriteria": [
+        {
+          "field": "REQUEST_URGENCY",
+          "values": [
+            "EXPD"
+          ]
+        },
+        {
+          "field": "SERVICE_REVIEW_TYPE",
+          "values": [
+            "REVIEW_CTGY_1"
+          ]
+        },
+        {
+          "field": "MEMBER_CLIENT",
+          "values": [
+            "CLIENT_CODE_CTGY_5"
+          ]
+        },
+        {
+          "field": "ENROLLMENT_LINE_OF_BUSINESS",
+          "values": [
+            "LOB_CTGY_1"
+          ]
+        }
+      ],
+      "customFieldCriteria": null,
+      "dueTime": null,
+      "holidayDates": [],
+      "holidayCategory": null,
+      "holidayOffset": null,
+      "clinicalsRequestedResponseThresholdHours": null,
+      "dateOperator": null,
+      "autoExtend": false,
+      "extendStatusReason": null
+    },
+    {
+      "ruleDesc": "Rule 20:  Commercial AHNJ - Pend for Clinical (72 hours)",
+      "isActive": true,
+      "weight": 998,
+      "units": 72,
+      "unitsOfMeasure": "HOURS",
+      "sourceDateTimeField": "STATUS_CHANGE_DATE_TIME",
+      "standardFieldCriteria": [
+        {
+          "field": "REQUEST_URGENCY",
+          "values": [
+            "URGENCY_CTGY_3"
+          ]
+        },
+        {
+          "field": "SERVICE_REVIEW_TYPE",
+          "values": [
+            "REVIEW_CTGY_6"
+          ]
+        },
+        {
+          "field": "MEMBER_CLIENT",
+          "values": [
+            "AHNJ_COMM"
+          ]
+        },
+        {
+          "field": "REVIEW_OUTCOME_STATUS",
+          "values": [
+            "PEND"
+          ]
+        },
+        {
+          "field": "REVIEW_OUTCOME_STATUS_REASON",
+          "values": [
+            "MEDRSR16"
+          ]
+        }
+      ],
+      "customFieldCriteria": null,
+      "dueTime": null,
+      "holidayDates": [],
+      "holidayCategory": null,
+      "holidayOffset": null,
+      "clinicalsRequestedResponseThresholdHours": null,
+      "dateOperator": null,
+      "autoExtend": false,
+      "extendStatusReason": null
+    },
+    {
+      "ruleDesc": "Rule 3: Standard Medicare Outpatient, Not Medicare Part B",
+      "isActive": true,
+      "weight": 60,
+      "units": 13,
+      "unitsOfMeasure": "CALENDAR_DAYS",
+      "sourceDateTimeField": "NOTIFICATION_DATE_TIME",
+      "standardFieldCriteria": [
+        {
+          "field": "SERVICE_TREATMENT_TYPE",
+          "values": [
+            "TXTYPE_CTGY_2"
+          ]
+        },
+        {
+          "field": "REQUEST_URGENCY",
+          "values": [
+            "STND"
+          ]
+        },
+        {
+          "field": "SERVICE_REVIEW_TYPE",
+          "values": [
+            "REVIEW_CTGY_1"
+          ]
+        },
+        {
+          "field": "REQUEST_TYPE",
+          "values": [
+            "OUTPATIENT"
+          ]
+        },
+        {
+          "field": "MEMBER_CLIENT",
+          "values": [
+            "CLIENT_CODE_CTGY_5"
+          ]
+        },
+        {
+          "field": "ENROLLMENT_LINE_OF_BUSINESS",
+          "values": [
+            "LOB_CTGY_1"
+          ]
+        }
+      ],
+      "customFieldCriteria": null,
+      "dueTime": "23:59",
+      "holidayDates": [],
+      "holidayCategory": null,
+      "holidayOffset": null,
+      "clinicalsRequestedResponseThresholdHours": null,
+      "dateOperator": null,
+      "autoExtend": false,
+      "extendStatusReason": null
+    },
+    {
+      "ruleDesc": "Rule 36:  AHNJ Urgent Commercial - Clinical Received",
+      "isActive": true,
+      "weight": 211,
+      "units": 72,
+      "unitsOfMeasure": "HOURS",
+      "sourceDateTimeField": "STATUS_CHANGE_DATE_TIME",
+      "standardFieldCriteria": [
+        {
+          "field": "REQUEST_URGENCY",
+          "values": [
+            "URG"
+          ]
+        },
+        {
+          "field": "SERVICE_REVIEW_TYPE",
+          "values": [
+            "REVIEW_CTGY_3"
+          ]
+        },
+        {
+          "field": "MEMBER_CLIENT",
+          "values": [
+            "AHNJ_COMM"
+          ]
+        },
+        {
+          "field": "REVIEW_OUTCOME_STATUS",
+          "values": [
+            "PEND"
+          ]
+        },
+        {
+          "field": "REVIEW_OUTCOME_STATUS_REASON",
+          "values": [
+            "MEDRSR16"
+          ]
+        }
+      ],
+      "customFieldCriteria": null,
+      "dueTime": null,
+      "holidayDates": [],
+      "holidayCategory": null,
+      "holidayOffset": null,
+      "clinicalsRequestedResponseThresholdHours": null,
+      "dateOperator": null,
+      "autoExtend": false,
+      "extendStatusReason": null
+    },
+    {
+      "ruleDesc": "Rule 32: BH Inpatient and Outpatient MEND",
+      "isActive": true,
+      "weight": 100,
+      "units": 2,
+      "unitsOfMeasure": "HOURS",
+      "sourceDateTimeField": "NOTIFICATION_DATE_TIME",
+      "standardFieldCriteria": [
+        {
+          "field": "SERVICE_TREATMENT_TYPE",
+          "values": [
+            "TXTYPE_CTGY_3"
+          ]
+        },
+        {
+          "field": "REQUEST_URGENCY",
+          "values": [
+            "URGENCY_CTGY_6"
+          ]
+        },
+        {
+          "field": "SERVICE_REVIEW_TYPE",
+          "values": [
+            "REVIEW_CTGY_7"
+          ]
+        },
+        {
+          "field": "ENROLLMENT_LINE_OF_BUSINESS",
+          "values": [
+            "51_PPO_SF"
+          ]
+        }
+      ],
+      "customFieldCriteria": null,
+      "dueTime": null,
+      "holidayDates": [],
+      "holidayCategory": null,
+      "holidayOffset": null,
+      "clinicalsRequestedResponseThresholdHours": null,
+      "dateOperator": null,
+      "autoExtend": false,
+      "extendStatusReason": null
+    },
+    {
+      "ruleDesc": "Rule 33: BH Inpatient and Outpatient MEND",
+      "isActive": true,
+      "weight": 101,
+      "units": 24,
+      "unitsOfMeasure": "HOURS",
+      "sourceDateTimeField": "NOTIFICATION_DATE_TIME",
+      "standardFieldCriteria": [
+        {
+          "field": "SERVICE_TREATMENT_TYPE",
+          "values": [
+            "TXTYPE_CTGY_3"
+          ]
+        },
+        {
+          "field": "SERVICE_REVIEW_TYPE",
+          "values": [
+            "MENDRETRO"
+          ]
+        },
+        {
+          "field": "ENROLLMENT_LINE_OF_BUSINESS",
+          "values": [
+            "51_PPO_SF"
+          ]
+        }
+      ],
+      "customFieldCriteria": null,
+      "dueTime": null,
+      "holidayDates": [],
+      "holidayCategory": null,
+      "holidayOffset": null,
+      "clinicalsRequestedResponseThresholdHours": null,
+      "dateOperator": null,
+      "autoExtend": false,
+      "extendStatusReason": null
+    },
+    {
+      "ruleDesc": "Rule 35: BUPA 1 BD rule",
+      "isActive": true,
+      "weight": 121,
+      "units": 1,
+      "unitsOfMeasure": "BUSINESS_DAYS",
+      "sourceDateTimeField": "NOTIFICATION_DATE_TIME",
+      "standardFieldCriteria": [
+        {
+          "field": "REQUEST_URGENCY",
+          "values": [
+            "URGENCY_CTGY_2"
+          ]
+        },
+        {
+          "field": "SERVICE_REVIEW_TYPE",
+          "values": [
+            "REVIEW_CTGY_6"
+          ]
+        },
+        {
+          "field": "MEMBER_CLIENT",
+          "values": [
+            "BUPA_COMM"
+          ]
+        },
+        {
+          "field": "REVIEW_OUTCOME_STATUS",
+          "values": [
+            "PEND"
+          ]
+        }
+      ],
+      "customFieldCriteria": null,
+      "dueTime": "16:00",
+      "holidayDates": [],
+      "holidayCategory": null,
+      "holidayOffset": null,
+      "clinicalsRequestedResponseThresholdHours": null,
+      "dateOperator": null,
+      "autoExtend": false,
+      "extendStatusReason": null
+    },
+    {
+      "ruleDesc": "Rule 34: GEOBLUE/HTH initial evaluation rule",
+      "isActive": true,
+      "weight": 105,
+      "units": 2,
+      "unitsOfMeasure": "HOURS",
+      "sourceDateTimeField": "NOTIFICATION_DATE_TIME",
+      "standardFieldCriteria": [
+        {
+          "field": "REQUEST_URGENCY",
+          "values": [
+            "URGENCY_CTGY_6"
+          ]
+        },
+        {
+          "field": "SERVICE_REVIEW_TYPE",
+          "values": [
+            "GEOHTH"
+          ]
+        },
+        {
+          "field": "MEMBER_CLIENT",
+          "values": [
+            "CLIENT_CODE_CTGY_3"
+          ]
+        }
+      ],
+      "customFieldCriteria": null,
+      "dueTime": "23:59",
+      "holidayDates": [],
+      "holidayCategory": null,
+      "holidayOffset": null,
+      "clinicalsRequestedResponseThresholdHours": null,
+      "dateOperator": null,
+      "autoExtend": false,
+      "extendStatusReason": null
+    },
+    {
+      "ruleDesc": "Rule 17B: Concurrent Commercial initiated after Last Covered Day other than Emergent AHNJ",
+      "isActive": true,
+      "weight": 205,
+      "units": 72,
+      "unitsOfMeasure": "HOURS",
+      "sourceDateTimeField": "NOTIFICATION_DATE_TIME",
+      "standardFieldCriteria": [
+        {
+          "field": "REQUEST_URGENCY",
+          "values": [
+            "URGENCY_CTGY_2"
+          ]
+        },
+        {
+          "field": "SERVICE_REVIEW_TYPE",
+          "values": [
+            "MEDRRT03"
+          ]
+        },
+        {
+          "field": "REQUEST_TYPE",
+          "values": [
+            "INPATIENT"
+          ]
+        },
+        {
+          "field": "MEMBER_CLIENT",
+          "values": [
+            "CLIENT_CODE_CTGY_4"
+          ]
+        }
+      ],
+      "customFieldCriteria": null,
+      "dueTime": null,
+      "holidayDates": [],
+      "holidayCategory": null,
+      "holidayOffset": null,
+      "clinicalsRequestedResponseThresholdHours": null,
+      "dateOperator": "<",
+      "autoExtend": false,
+      "extendStatusReason": null
+    },
+    {
+      "ruleDesc": "Rule 11: PA DOH Pending Clinical-Non-Urgent Commercial Fully Insured",
+      "isActive": true,
+      "weight": 106,
+      "units": 45,
+      "unitsOfMeasure": "CALENDAR_DAYS",
+      "sourceDateTimeField": "STATUS_CHANGE_DATE_TIME",
+      "standardFieldCriteria": [
+        {
+          "field": "REQUEST_URGENCY",
+          "values": [
+            "MEDRU1"
+          ]
+        },
+        {
+          "field": "SERVICE_REVIEW_TYPE",
+          "values": [
+            "REVIEW_CTGY_1"
+          ]
+        },
+        {
+          "field": "MEMBER_CLIENT",
+          "values": [
+            "IBC_COMM"
+          ]
+        },
+        {
+          "field": "ENROLLMENT_LINE_OF_BUSINESS",
+          "values": [
+            "LOB_CTGY_3"
+          ]
+        },
+        {
+          "field": "ENROLLMENT_PLAN",
+          "values": [
+            "PLAN_CTGY_1"
+          ]
+        },
+        {
+          "field": "REVIEW_OUTCOME_STATUS",
+          "values": [
+            "PEND"
+          ]
+        },
+        {
+          "field": "REVIEW_OUTCOME_STATUS_REASON",
+          "values": [
+            "MEDRSR11"
+          ]
+        }
+      ],
+      "customFieldCriteria": null,
+      "dueTime": "23:59",
+      "holidayDates": [],
+      "holidayCategory": null,
+      "holidayOffset": null,
+      "clinicalsRequestedResponseThresholdHours": null,
+      "dateOperator": null,
+      "autoExtend": true,
+      "extendStatusReason": "45DNOCLIN"
+    },
+    {
+      "ruleDesc": "Rule 12: PA DOH Pending Response",
+      "isActive": true,
+      "weight": 108,
+      "units": 2,
+      "unitsOfMeasure": "BUSINESS_DAYS",
+      "sourceDateTimeField": "STATUS_CHANGE_DATE_TIME",
+      "standardFieldCriteria": [
+        {
+          "field": "REQUEST_URGENCY",
+          "values": [
+            "MEDRU1"
+          ]
+        },
+        {
+          "field": "SERVICE_REVIEW_TYPE",
+          "values": [
+            "REVIEW_CTGY_1"
+          ]
+        },
+        {
+          "field": "MEMBER_CLIENT",
+          "values": [
+            "IBC_COMM"
+          ]
+        },
+        {
+          "field": "ENROLLMENT_LINE_OF_BUSINESS",
+          "values": [
+            "LOB_CTGY_3"
+          ]
+        },
+        {
+          "field": "ENROLLMENT_PLAN",
+          "values": [
+            "PLAN_CTGY_1"
+          ]
+        },
+        {
+          "field": "REVIEW_OUTCOME_STATUS",
+          "values": [
+            "PEND"
+          ]
+        },
+        {
+          "field": "REVIEW_OUTCOME_STATUS_REASON",
+          "values": [
+            "STATUS_RSN_CTGY_4"
+          ]
+        }
+      ],
+      "customFieldCriteria": null,
+      "dueTime": "23:59",
+      "holidayDates": [],
+      "holidayCategory": "SKIPHDAY_CTGY_1",
+      "holidayOffset": null,
+      "clinicalsRequestedResponseThresholdHours": null,
+      "dateOperator": null,
+      "autoExtend": false,
+      "extendStatusReason": null
+    },
+    {
+      "ruleDesc": "Rule 14: Non-Urgent Commercial Fully and Non-Fully Insured, Pending Additional Clinical Requested",
+      "isActive": true,
+      "weight": 48,
+      "units": 45,
+      "unitsOfMeasure": "CALENDAR_DAYS",
+      "sourceDateTimeField": "STATUS_CHANGE_DATE_TIME",
+      "standardFieldCriteria": [
+        {
+          "field": "REQUEST_URGENCY",
+          "values": [
+            "MEDRU1"
+          ]
+        },
+        {
+          "field": "SERVICE_REVIEW_TYPE",
+          "values": [
+            "REVIEW_CTGY_1"
+          ]
+        },
+        {
+          "field": "MEMBER_CLIENT",
+          "values": [
+            "CLIENT_CODE_CTGY_1"
+          ]
+        },
+        {
+          "field": "ENROLLMENT_LINE_OF_BUSINESS",
+          "values": [
+            "LOB_CTGY_3"
+          ]
+        },
+        {
+          "field": "ENROLLMENT_PLAN",
+          "values": [
+            "PLAN_CTGY_2"
+          ]
+        },
+        {
+          "field": "REVIEW_OUTCOME_STATUS",
+          "values": [
+            "PEND"
+          ]
+        },
+        {
+          "field": "REVIEW_OUTCOME_STATUS_REASON",
+          "values": [
+            "MEDRSR11"
+          ]
+        }
+      ],
+      "customFieldCriteria": null,
+      "dueTime": "23:59",
+      "holidayDates": [],
+      "holidayCategory": null,
+      "holidayOffset": null,
+      "clinicalsRequestedResponseThresholdHours": null,
+      "dateOperator": null,
+      "autoExtend": true,
+      "extendStatusReason": "45DNOCLIN"
+    },
+    {
+      "ruleDesc": "Rule 37: BUPA 3 BD rule for BUPA Lack of Information",
+      "isActive": true,
+      "weight": 212,
+      "units": 3,
+      "unitsOfMeasure": "BUSINESS_DAYS",
+      "sourceDateTimeField": "STATUS_CHANGE_DATE_TIME",
+      "standardFieldCriteria": [
+        {
+          "field": "REQUEST_URGENCY",
+          "values": [
+            "URGENCY_CTGY_5"
+          ]
+        },
+        {
+          "field": "SERVICE_REVIEW_TYPE",
+          "values": [
+            "REVIEW_CTGY_8"
+          ]
+        },
+        {
+          "field": "MEMBER_CLIENT",
+          "values": [
+            "BUPA_COMM"
+          ]
+        },
+        {
+          "field": "REVIEW_OUTCOME_STATUS",
+          "values": [
+            "PEND"
+          ]
+        },
+        {
+          "field": "REVIEW_OUTCOME_STATUS_REASON",
+          "values": [
+            "BUPA011"
+          ]
+        }
+      ],
+      "customFieldCriteria": null,
+      "dueTime": "16:00",
+      "holidayDates": [],
+      "holidayCategory": null,
+      "holidayOffset": null,
+      "clinicalsRequestedResponseThresholdHours": null,
+      "dateOperator": null,
+      "autoExtend": false,
+      "extendStatusReason": null
+    },
+    {
+      "ruleDesc": "Rule 38: RETRO BUPA 3 BD rule for BUPA Lack of Information",
+      "isActive": true,
+      "weight": 999,
+      "units": 30,
+      "unitsOfMeasure": "CALENDAR_DAYS",
+      "sourceDateTimeField": "STATUS_CHANGE_DATE_TIME",
+      "standardFieldCriteria": [
+        {
+          "field": "REQUEST_URGENCY",
+          "values": [
+            "URGENCY_CTGY_4"
+          ]
+        },
+        {
+          "field": "SERVICE_REVIEW_TYPE",
+          "values": [
+            "RETRO"
+          ]
+        },
+        {
+          "field": "MEMBER_CLIENT",
+          "values": [
+            "BUPA_COMM"
+          ]
+        },
+        {
+          "field": "REVIEW_OUTCOME_STATUS",
+          "values": [
+            "PEND"
+          ]
+        },
+        {
+          "field": "REVIEW_OUTCOME_STATUS_REASON",
+          "values": [
+            "BUPA011"
+          ]
+        }
+      ],
+      "customFieldCriteria": null,
+      "dueTime": "23:59",
+      "holidayDates": [],
+      "holidayCategory": null,
+      "holidayOffset": null,
+      "clinicalsRequestedResponseThresholdHours": null,
+      "dateOperator": null,
+      "autoExtend": false,
+      "extendStatusReason": null
+    },
+    {
+      "ruleDesc": "Rule 39: BUPA INPT 2 HR rule for BUPA Incomplete",
+      "isActive": false,
+      "weight": 122,
+      "units": 2,
+      "unitsOfMeasure": "HOURS",
+      "sourceDateTimeField": "STATUS_CHANGE_DATE_TIME",
+      "standardFieldCriteria": [
+        {
+          "field": "REQUEST_URGENCY",
+          "values": [
+            "URGENCY_CTGY_2"
+          ]
+        },
+        {
+          "field": "SERVICE_REVIEW_TYPE",
+          "values": [
+            "REVIEW_CTGY_9"
+          ]
+        },
+        {
+          "field": "REQUEST_TYPE",
+          "values": [
+            "INPATIENT"
+          ]
+        },
+        {
+          "field": "MEMBER_CLIENT",
+          "values": [
+            "BUPA_COMM"
+          ]
+        },
+        {
+          "field": "REVIEW_OUTCOME_STATUS",
+          "values": [
+            "PEND"
+          ]
+        },
+        {
+          "field": "REVIEW_OUTCOME_STATUS_REASON",
+          "values": [
+            "BUPA015"
+          ]
+        }
+      ],
+      "customFieldCriteria": null,
+      "dueTime": null,
+      "holidayDates": [],
+      "holidayCategory": null,
+      "holidayOffset": null,
+      "clinicalsRequestedResponseThresholdHours": null,
+      "dateOperator": null,
+      "autoExtend": false,
+      "extendStatusReason": null
+    },
+    {
+      "ruleDesc": "Rule 40: BUPA INPT 1 BD Approve rule for BUPA Approval Initial Review",
+      "isActive": true,
+      "weight": 123,
+      "units": 1,
+      "unitsOfMeasure": "BUSINESS_DAYS",
+      "sourceDateTimeField": "STATUS_CHANGE_DATE_TIME",
+      "standardFieldCriteria": [
+        {
+          "field": "REQUEST_URGENCY",
+          "values": [
+            "URGENCY_CTGY_2"
+          ]
+        },
+        {
+          "field": "SERVICE_REVIEW_TYPE",
+          "values": [
+            "REVIEW_CTGY_10"
+          ]
+        },
+        {
+          "field": "REQUEST_TYPE",
+          "values": [
+            "INPATIENT"
+          ]
+        },
+        {
+          "field": "MEMBER_CLIENT",
+          "values": [
+            "BUPA_COMM"
+          ]
+        },
+        {
+          "field": "REVIEW_OUTCOME_STATUS",
+          "values": [
+            "APPROVE"
+          ]
+        },
+        {
+          "field": "REVIEW_OUTCOME_STATUS_REASON",
+          "values": [
+            "BUPA005"
+          ]
+        }
+      ],
+      "customFieldCriteria": null,
+      "dueTime": "16:00",
+      "holidayDates": [],
+      "holidayCategory": null,
+      "holidayOffset": null,
+      "clinicalsRequestedResponseThresholdHours": null,
+      "dateOperator": null,
+      "autoExtend": false,
+      "extendStatusReason": null
+    },
+    {
+      "ruleDesc": "Rule 41: BUPA INPT Pend Extension BUPA 2 HR",
+      "isActive": false,
+      "weight": 124,
+      "units": 2,
+      "unitsOfMeasure": "HOURS",
+      "sourceDateTimeField": "STATUS_CHANGE_DATE_TIME",
+      "standardFieldCriteria": [
+        {
+          "field": "REQUEST_URGENCY",
+          "values": [
+            "URGENCY_CTGY_2"
+          ]
+        },
+        {
+          "field": "SERVICE_REVIEW_TYPE",
+          "values": [
+            "MEDRRT03"
+          ]
+        },
+        {
+          "field": "REQUEST_TYPE",
+          "values": [
+            "INPATIENT"
+          ]
+        },
+        {
+          "field": "MEMBER_CLIENT",
+          "values": [
+            "BUPA_COMM"
+          ]
+        },
+        {
+          "field": "REVIEW_OUTCOME_STATUS",
+          "values": [
+            "PEND"
+          ]
+        },
+        {
+          "field": "REVIEW_OUTCOME_STATUS_REASON",
+          "values": [
+            "STATUS_RSN_CTGY_1"
+          ]
+        }
+      ],
+      "customFieldCriteria": null,
+      "dueTime": null,
+      "holidayDates": [],
+      "holidayCategory": null,
+      "holidayOffset": null,
+      "clinicalsRequestedResponseThresholdHours": null,
+      "dateOperator": null,
+      "autoExtend": false,
+      "extendStatusReason": null
+    },
+    {
+      "ruleDesc": "Rule 13B: Non PA DOH Non Urgent Commerical (NCQA) 45 day expiration",
+      "isActive": true,
+      "weight": 42,
+      "units": 15,
+      "unitsOfMeasure": "CALENDAR_DAYS",
+      "sourceDateTimeField": "NOTIFICATION_DATE_TIME",
+      "standardFieldCriteria": [
+        {
+          "field": "REQUEST_URGENCY",
+          "values": [
+            "MEDRU1"
+          ]
+        },
+        {
+          "field": "SERVICE_REVIEW_TYPE",
+          "values": [
+            "REVIEW_CTGY_1"
+          ]
+        },
+        {
+          "field": "MEMBER_CLIENT",
+          "values": [
+            "CLIENT_CODE_CTGY_9"
+          ]
+        },
+        {
+          "field": "ENROLLMENT_LINE_OF_BUSINESS",
+          "values": [
+            "LOB_CTGY_3"
+          ]
+        },
+        {
+          "field": "ENROLLMENT_PLAN",
+          "values": [
+            "PLAN_CTGY_2"
+          ]
+        },
+        {
+          "field": "REVIEW_OUTCOME_STATUS",
+          "values": [
+            "PEND"
+          ]
+        },
+        {
+          "field": "REVIEW_OUTCOME_STATUS_REASON",
+          "values": [
+            "45DNOCLIN"
+          ]
+        }
+      ],
+      "customFieldCriteria": null,
+      "dueTime": "23:59",
+      "holidayDates": [],
+      "holidayCategory": null,
+      "holidayOffset": null,
+      "clinicalsRequestedResponseThresholdHours": null,
+      "dateOperator": null,
+      "autoExtend": false,
+      "extendStatusReason": null
+    },
+    {
+      "ruleDesc": "Rule 50: Medicare INPT extension",
+      "isActive": true,
+      "weight": 93,
+      "units": 3,
+      "unitsOfMeasure": "CALENDAR_DAYS",
+      "sourceDateTimeField": "NOTIFICATION_DATE_TIME",
+      "standardFieldCriteria": [
+        {
+          "field": "REQUEST_URGENCY",
+          "values": [
+            "URGENCY_CTGY_7"
+          ]
+        },
+        {
+          "field": "SERVICE_REVIEW_TYPE",
+          "values": [
+            "MEDRRT03"
+          ]
+        },
+        {
+          "field": "REQUEST_TYPE",
+          "values": [
+            "INPATIENT"
+          ]
+        },
+        {
+          "field": "MEMBER_CLIENT",
+          "values": [
+            "CLIENT_CODE_CTGY_5"
+          ]
+        },
+        {
+          "field": "ENROLLMENT_LINE_OF_BUSINESS",
+          "values": [
+            "LOB_CTGY_1"
+          ]
+        }
+      ],
+      "customFieldCriteria": null,
+      "dueTime": "23:59",
+      "holidayDates": [],
+      "holidayCategory": null,
+      "holidayOffset": null,
+      "clinicalsRequestedResponseThresholdHours": null,
+      "dateOperator": null,
+      "autoExtend": false,
+      "extendStatusReason": null
+    },
+    {
+      "ruleDesc": "Rule 51: AHA Non-PA DOH Non Urgent Commercial (NCQA)",
+      "isActive": true,
+      "weight": 44,
+      "units": 15,
+      "unitsOfMeasure": "CALENDAR_DAYS",
+      "sourceDateTimeField": "NOTIFICATION_DATE_TIME",
+      "standardFieldCriteria": [
+        {
+          "field": "REQUEST_URGENCY",
+          "values": [
+            "MEDRU1"
+          ]
+        },
+        {
+          "field": "SERVICE_REVIEW_TYPE",
+          "values": [
+            "REVIEW_CTGY_1"
+          ]
+        },
+        {
+          "field": "MEMBER_CLIENT",
+          "values": [
+            "CLIENT_CODE_CTGY_6"
+          ]
+        },
+        {
+          "field": "ENROLLMENT_LINE_OF_BUSINESS",
+          "values": [
+            "LOB_CTGY_3"
+          ]
+        },
+        {
+          "field": "ENROLLMENT_PLAN",
+          "values": [
+            "PLAN_CTGY_2"
+          ]
+        },
+        {
+          "field": "REVIEW_OUTCOME_STATUS",
+          "values": [
+            "PEND"
+          ]
+        },
+        {
+          "field": "REVIEW_OUTCOME_STATUS_REASON",
+          "values": [
+            "MEDRSR3"
+          ]
+        }
+      ],
+      "customFieldCriteria": null,
+      "dueTime": "23:59",
+      "holidayDates": [],
+      "holidayCategory": null,
+      "holidayOffset": null,
+      "clinicalsRequestedResponseThresholdHours": null,
+      "dateOperator": null,
+      "autoExtend": false,
+      "extendStatusReason": null
+    },
+    {
+      "ruleDesc": "Rule 52: AHA Non-Urgent Comm Fully/Non-Fully Insured, Pending Addtnl Clinical",
+      "isActive": true,
+      "weight": 43,
+      "units": 45,
+      "unitsOfMeasure": "CALENDAR_DAYS",
+      "sourceDateTimeField": "STATUS_CHANGE_DATE_TIME",
+      "standardFieldCriteria": [
+        {
+          "field": "REQUEST_URGENCY",
+          "values": [
+            "MEDRU1"
+          ]
+        },
+        {
+          "field": "SERVICE_REVIEW_TYPE",
+          "values": [
+            "REVIEW_CTGY_1"
+          ]
+        },
+        {
+          "field": "MEMBER_CLIENT",
+          "values": [
+            "CLIENT_CODE_CTGY_6"
+          ]
+        },
+        {
+          "field": "ENROLLMENT_LINE_OF_BUSINESS",
+          "values": [
+            "LOB_CTGY_3"
+          ]
+        },
+        {
+          "field": "ENROLLMENT_PLAN",
+          "values": [
+            "PLAN_CTGY_2"
+          ]
+        },
+        {
+          "field": "REVIEW_OUTCOME_STATUS",
+          "values": [
+            "PEND"
+          ]
+        },
+        {
+          "field": "REVIEW_OUTCOME_STATUS_REASON",
+          "values": [
+            "MEDRSR11"
+          ]
+        }
+      ],
+      "customFieldCriteria": null,
+      "dueTime": "23:59",
+      "holidayDates": [],
+      "holidayCategory": null,
+      "holidayOffset": null,
+      "clinicalsRequestedResponseThresholdHours": null,
+      "dateOperator": null,
+      "autoExtend": true,
+      "extendStatusReason": "45DNOCLIN"
+    },
+    {
+      "ruleDesc": "Rule 53: AHA Commercial Retrospective Includes BUPA",
+      "isActive": true,
+      "weight": 41,
+      "units": 30,
+      "unitsOfMeasure": "CALENDAR_DAYS",
+      "sourceDateTimeField": "NOTIFICATION_DATE_TIME",
+      "standardFieldCriteria": [
+        {
+          "field": "REQUEST_URGENCY",
+          "values": [
+            "RETRO"
+          ]
+        },
+        {
+          "field": "SERVICE_REVIEW_TYPE",
+          "values": [
+            "REVIEW_CTGY_6"
+          ]
+        },
+        {
+          "field": "MEMBER_CLIENT",
+          "values": [
+            "CLIENT_CODE_CTGY_7"
+          ]
+        }
+      ],
+      "customFieldCriteria": null,
+      "dueTime": "23:59",
+      "holidayDates": [],
+      "holidayCategory": null,
+      "holidayOffset": null,
+      "clinicalsRequestedResponseThresholdHours": null,
+      "dateOperator": null,
+      "autoExtend": false,
+      "extendStatusReason": null
+    },
+    {
+      "ruleDesc": "Rule 42: Appeals 7 day rule for all client codes",
+      "isActive": true,
+      "weight": 56,
+      "units": 7,
+      "unitsOfMeasure": "CALENDAR_DAYS",
+      "sourceDateTimeField": "NOTIFICATION_DATE_TIME",
+      "standardFieldCriteria": [
+        {
+          "field": "REQUEST_URGENCY",
+          "values": [
+            "URGENCY_CTGY_6"
+          ]
+        },
+        {
+          "field": "SERVICE_REVIEW_TYPE",
+          "values": [
+            "AHAIAAPPL"
+          ]
+        }
+      ],
+      "customFieldCriteria": null,
+      "dueTime": "23:59",
+      "holidayDates": [],
+      "holidayCategory": null,
+      "holidayOffset": null,
+      "clinicalsRequestedResponseThresholdHours": null,
+      "dateOperator": null,
+      "autoExtend": false,
+      "extendStatusReason": null
+    },
+    {
+      "ruleDesc": "Rule 55: BUPA 2 HR",
+      "isActive": true,
+      "weight": 221,
+      "units": 2,
+      "unitsOfMeasure": "HOURS",
+      "sourceDateTimeField": "STATUS_CHANGE_DATE_TIME",
+      "standardFieldCriteria": [
+        {
+          "field": "MEMBER_CLIENT",
+          "values": [
+            "BUPA_COMM"
+          ]
+        },
+        {
+          "field": "REVIEW_OUTCOME_STATUS",
+          "values": [
+            "PEND"
+          ]
+        },
+        {
+          "field": "REVIEW_OUTCOME_STATUS_REASON",
+          "values": [
+            "STATUS_RSN_CTGY_1"
+          ]
+        }
+      ],
+      "customFieldCriteria": null,
+      "dueTime": null,
+      "holidayDates": [],
+      "holidayCategory": null,
+      "holidayOffset": null,
+      "clinicalsRequestedResponseThresholdHours": null,
+      "dateOperator": null,
+      "autoExtend": false,
+      "extendStatusReason": null
+    },
+    {
+      "ruleDesc": "Rule 56: BUPA DRG 5 CD Monitoring Review",
+      "isActive": true,
+      "weight": 222,
+      "units": 5,
+      "unitsOfMeasure": "CALENDAR_DAYS",
+      "sourceDateTimeField": "STATUS_CHANGE_DATE_TIME",
+      "standardFieldCriteria": [
+        {
+          "field": "MEMBER_CLIENT",
+          "values": [
+            "BUPA_COMM"
+          ]
+        },
+        {
+          "field": "REVIEW_OUTCOME_STATUS",
+          "values": [
+            "PEND"
+          ]
+        },
+        {
+          "field": "REVIEW_OUTCOME_STATUS_REASON",
+          "values": [
+            "BUPA008"
+          ]
+        }
+      ],
+      "customFieldCriteria": null,
+      "dueTime": "14:00",
+      "holidayDates": [],
+      "holidayCategory": null,
+      "holidayOffset": null,
+      "clinicalsRequestedResponseThresholdHours": null,
+      "dateOperator": null,
+      "autoExtend": false,
+      "extendStatusReason": null
+    },
+    {
+      "ruleDesc": "Rule 57: BUPA 4 Hour RN Review Pend Status",
+      "isActive": true,
+      "weight": 223,
+      "units": 4,
+      "unitsOfMeasure": "HOURS",
+      "sourceDateTimeField": "STATUS_CHANGE_DATE_TIME",
+      "standardFieldCriteria": [
+        {
+          "field": "MEMBER_CLIENT",
+          "values": [
+            "BUPA_COMM"
+          ]
+        },
+        {
+          "field": "REVIEW_OUTCOME_STATUS",
+          "values": [
+            "PEND"
+          ]
+        },
+        {
+          "field": "REVIEW_OUTCOME_STATUS_REASON",
+          "values": [
+            "BUPA014"
+          ]
+        }
+      ],
+      "customFieldCriteria": null,
+      "dueTime": null,
+      "holidayDates": [],
+      "holidayCategory": null,
+      "holidayOffset": null,
+      "clinicalsRequestedResponseThresholdHours": null,
+      "dateOperator": null,
+      "autoExtend": false,
+      "extendStatusReason": null
+    },
+    {
+      "ruleDesc": "Rule 58: BUPA Non DRG 2 BD",
+      "isActive": true,
+      "weight": 224,
+      "units": 2,
+      "unitsOfMeasure": "BUSINESS_DAYS",
+      "sourceDateTimeField": "STATUS_CHANGE_DATE_TIME",
+      "standardFieldCriteria": [
+        {
+          "field": "MEMBER_CLIENT",
+          "values": [
+            "BUPA_COMM"
+          ]
+        },
+        {
+          "field": "REVIEW_OUTCOME_STATUS",
+          "values": [
+            "PEND"
+          ]
+        },
+        {
+          "field": "REVIEW_OUTCOME_STATUS_REASON",
+          "values": [
+            "BUPA017"
+          ]
+        }
+      ],
+      "customFieldCriteria": null,
+      "dueTime": "14:00",
+      "holidayDates": [],
+      "holidayCategory": null,
+      "holidayOffset": null,
+      "clinicalsRequestedResponseThresholdHours": null,
+      "dateOperator": null,
+      "autoExtend": false,
+      "extendStatusReason": null
+    },
+    {
+      "ruleDesc": "Rule 59: BUPA 4 Hour RN Review Approve Status",
+      "isActive": true,
+      "weight": 225,
+      "units": 4,
+      "unitsOfMeasure": "HOURS",
+      "sourceDateTimeField": "STATUS_CHANGE_DATE_TIME",
+      "standardFieldCriteria": [
+        {
+          "field": "MEMBER_CLIENT",
+          "values": [
+            "BUPA_COMM"
+          ]
+        },
+        {
+          "field": "REVIEW_OUTCOME_STATUS",
+          "values": [
+            "APPROVE"
+          ]
+        },
+        {
+          "field": "REVIEW_OUTCOME_STATUS_REASON",
+          "values": [
+            "STATUS_RSN_CTGY_6"
+          ]
+        }
+      ],
+      "customFieldCriteria": null,
+      "dueTime": null,
+      "holidayDates": [],
+      "holidayCategory": null,
+      "holidayOffset": null,
+      "clinicalsRequestedResponseThresholdHours": null,
+      "dateOperator": null,
+      "autoExtend": false,
+      "extendStatusReason": null
+    },
+    {
+      "ruleDesc": "Rule 60: BUPA 4 Hour RN Review Deny Status",
+      "isActive": true,
+      "weight": 226,
+      "units": 4,
+      "unitsOfMeasure": "HOURS",
+      "sourceDateTimeField": "STATUS_CHANGE_DATE_TIME",
+      "standardFieldCriteria": [
+        {
+          "field": "MEMBER_CLIENT",
+          "values": [
+            "BUPA_COMM"
+          ]
+        },
+        {
+          "field": "REVIEW_OUTCOME_STATUS",
+          "values": [
+            "Deny"
+          ]
+        },
+        {
+          "field": "REVIEW_OUTCOME_STATUS_REASON",
+          "values": [
+            "BUPA013"
+          ]
+        }
+      ],
+      "customFieldCriteria": null,
+      "dueTime": null,
+      "holidayDates": [],
+      "holidayCategory": null,
+      "holidayOffset": null,
+      "clinicalsRequestedResponseThresholdHours": null,
+      "dateOperator": null,
+      "autoExtend": false,
+      "extendStatusReason": null
+    },
+    {
+      "ruleDesc": "Rule 63: AHNJ Non Urgent 9 day Commercial-Clinical Review",
+      "isActive": true,
+      "weight": 506,
+      "units": 9,
+      "unitsOfMeasure": "CALENDAR_DAYS",
+      "sourceDateTimeField": "NOTIFICATION_DATE_TIME",
+      "standardFieldCriteria": [
+        {
+          "field": "REQUEST_URGENCY",
+          "values": [
+            "MEDRU1"
+          ]
+        },
+        {
+          "field": "SERVICE_REVIEW_TYPE",
+          "values": [
+            "REVIEW_CTGY_1"
+          ]
+        },
+        {
+          "field": "MEMBER_CLIENT",
+          "values": [
+            "AHNJ_COMM"
+          ]
+        },
+        {
+          "field": "REVIEW_OUTCOME_STATUS",
+          "values": [
+            "PEND"
+          ]
+        },
+        {
+          "field": "REVIEW_OUTCOME_STATUS_REASON",
+          "values": [
+            "MEDRSR3"
+          ]
+        }
+      ],
+      "customFieldCriteria": null,
+      "dueTime": "23:59",
+      "holidayDates": [],
+      "holidayCategory": null,
+      "holidayOffset": null,
+      "clinicalsRequestedResponseThresholdHours": null,
+      "dateOperator": null,
+      "autoExtend": false,
+      "extendStatusReason": null
+    },
+    {
+      "ruleDesc": "Rule 54: AHNJ Commercial Emergent-INPT-CLIN RECEIVED",
+      "isActive": true,
+      "weight": 220,
+      "units": 24,
+      "unitsOfMeasure": "HOURS",
+      "sourceDateTimeField": "STATUS_CHANGE_DATE_TIME",
+      "standardFieldCriteria": [
+        {
+          "field": "REQUEST_URGENCY",
+          "values": [
+            "URGENCY_CTGY_8"
+          ]
+        },
+        {
+          "field": "SERVICE_REVIEW_TYPE",
+          "values": [
+            "REVIEW_CTGY_2"
+          ]
+        },
+        {
+          "field": "REQUEST_TYPE",
+          "values": [
+            "INPATIENT"
+          ]
+        },
+        {
+          "field": "MEMBER_CLIENT",
+          "values": [
+            "AHNJ_COMM"
+          ]
+        },
+        {
+          "field": "REVIEW_OUTCOME_STATUS_REASON",
+          "values": [
+            "CLINRECV"
+          ]
+        }
+      ],
+      "customFieldCriteria": null,
+      "dueTime": null,
+      "holidayDates": [],
+      "holidayCategory": null,
+      "holidayOffset": null,
+      "clinicalsRequestedResponseThresholdHours": null,
+      "dateOperator": null,
+      "autoExtend": false,
+      "extendStatusReason": null
+    },
+    {
+      "ruleDesc": "Rule 65: All INPT Emergent Epic Clinical Pending",
+      "isActive": true,
+      "weight": 245,
+      "units": 48,
+      "unitsOfMeasure": "HOURS",
+      "sourceDateTimeField": "NOTIFICATION_DATE_TIME",
+      "standardFieldCriteria": [
+        {
+          "field": "REQUEST_URGENCY",
+          "values": [
+            "MEDRU2"
+          ]
+        },
+        {
+          "field": "SERVICE_REVIEW_TYPE",
+          "values": [
+            "IADM"
+          ]
+        },
+        {
+          "field": "REQUEST_TYPE",
+          "values": [
+            "INPATIENT"
+          ]
+        },
+        {
+          "field": "MEMBER_CLIENT",
+          "values": [
+            "CLIENT_CODE_CTGY_10"
+          ]
+        },
+        {
+          "field": "REVIEW_OUTCOME_STATUS",
+          "values": [
+            "PEND"
+          ]
+        },
+        {
+          "field": "REVIEW_OUTCOME_STATUS_REASON",
+          "values": [
+            "EPICPEND"
+          ]
+        }
+      ],
+      "customFieldCriteria": null,
+      "dueTime": null,
+      "holidayDates": [],
+      "holidayCategory": null,
+      "holidayOffset": null,
+      "clinicalsRequestedResponseThresholdHours": null,
+      "dateOperator": null,
+      "autoExtend": true,
+      "extendStatusReason": "MEDRSR3"
+    },
+    {
+      "ruleDesc": "Rule 64: AHNJ Non Urgent 9 day Commercial-Clinical Received",
+      "isActive": true,
+      "weight": 508,
+      "units": 9,
+      "unitsOfMeasure": "CALENDAR_DAYS",
+      "sourceDateTimeField": "STATUS_CHANGE_DATE_TIME",
+      "standardFieldCriteria": [
+        {
+          "field": "REQUEST_URGENCY",
+          "values": [
+            "MEDRU1"
+          ]
+        },
+        {
+          "field": "SERVICE_REVIEW_TYPE",
+          "values": [
+            "REVIEW_CTGY_1"
+          ]
+        },
+        {
+          "field": "MEMBER_CLIENT",
+          "values": [
+            "AHNJ_COMM"
+          ]
+        },
+        {
+          "field": "REVIEW_OUTCOME_STATUS",
+          "values": [
+            "PEND"
+          ]
+        },
+        {
+          "field": "REVIEW_OUTCOME_STATUS_REASON",
+          "values": [
+            "CLINRECV"
+          ]
+        }
+      ],
+      "customFieldCriteria": null,
+      "dueTime": "23:59",
+      "holidayDates": [],
+      "holidayCategory": null,
+      "holidayOffset": null,
+      "clinicalsRequestedResponseThresholdHours": null,
+      "dateOperator": null,
+      "autoExtend": false,
+      "extendStatusReason": null
+    }
+  ]
+}

@@ -209,8 +209,12 @@ export function nodesToRule(
         unitsOfMeasure: tatParameters.unitsOfMeasure,
         dueTime: tatParameters.dueTime,
         holidayDates: tatParameters.holidayDates,
+        holidayCategory: tatParameters.holidayCategory,
         holidayOffset: tatParameters.holidayOffset,
         clinicalsRequestedResponseThresholdHours: tatParameters.clinicalsRequestedResponseThresholdHours,
+        dateOperator: tatParameters.dateOperator,
+        autoExtend: tatParameters.autoExtend,
+        extendStatusReason: tatParameters.extendStatusReason,
       },
       actions: undefined, // TAT rules don't have actions
     }

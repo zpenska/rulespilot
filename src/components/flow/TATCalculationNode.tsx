@@ -81,12 +81,17 @@ function TATCalculationNode({ data }: NodeProps) {
         )}
 
         {/* Holiday Configuration */}
-        {(tatData.holidayDates && tatData.holidayDates.length > 0) || tatData.holidayOffset ? (
+        {(tatData.holidayDates && tatData.holidayDates.length > 0) || tatData.holidayCategory || tatData.holidayOffset ? (
           <div className="bg-white/60 rounded px-2 py-1.5">
             <div className="text-xs text-gray-600 mb-0.5">Holiday Configuration</div>
             {tatData.holidayDates && tatData.holidayDates.length > 0 && (
               <div className="text-xs text-gray-700 mb-1">
                 {tatData.holidayDates.length} holiday{tatData.holidayDates.length > 1 ? 's' : ''} defined
+              </div>
+            )}
+            {tatData.holidayCategory && (
+              <div className="text-xs text-gray-700 mb-1">
+                Category: {tatData.holidayCategory}
               </div>
             )}
             {tatData.holidayOffset && (
@@ -97,12 +102,33 @@ function TATCalculationNode({ data }: NodeProps) {
           </div>
         ) : null}
 
+        {/* Date Operator */}
+        {tatData.dateOperator && (
+          <div className="bg-white/60 rounded px-2 py-1.5">
+            <div className="text-xs text-gray-600 mb-0.5">Date Operator</div>
+            <div className="text-sm font-semibold text-gray-900">
+              {tatData.dateOperator}
+            </div>
+          </div>
+        )}
+
         {/* Clinicals Threshold */}
         {tatData.clinicalsRequestedResponseThresholdHours && (
           <div className="bg-white/60 rounded px-2 py-1.5">
             <div className="text-xs text-gray-600 mb-0.5">Clinicals Response Threshold</div>
             <div className="text-sm font-semibold text-gray-900">
               {tatData.clinicalsRequestedResponseThresholdHours} hours
+            </div>
+          </div>
+        )}
+
+        {/* Auto Extend */}
+        {tatData.autoExtend && (
+          <div className="bg-white/60 rounded px-2 py-1.5">
+            <div className="text-xs text-gray-600 mb-0.5">Auto Extend</div>
+            <div className="text-sm font-semibold text-gray-900">
+              Enabled
+              {tatData.extendStatusReason && ` (${tatData.extendStatusReason})`}
             </div>
           </div>
         )}

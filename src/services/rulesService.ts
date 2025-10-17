@@ -292,6 +292,7 @@ export const exportTATRuleToJSON = (rule: Rule): TATRuleExport => {
   const exported: TATRuleExport = {
     sourceDateTimeField: rule.tatParameters.sourceDateTimeField,
     holidayDates: rule.tatParameters.holidayDates,
+    holidayCategory: rule.tatParameters.holidayCategory ?? null,
     clinicalsRequestedResponseThresholdHours: rule.tatParameters.clinicalsRequestedResponseThresholdHours ?? null,
     ruleDesc: rule.ruleDesc,
     customFieldCriteria: customFieldCriteria && customFieldCriteria.length > 0 ? customFieldCriteria : null,
@@ -302,6 +303,9 @@ export const exportTATRuleToJSON = (rule: Rule): TATRuleExport => {
     units: rule.tatParameters.units,
     holidayOffset: rule.tatParameters.holidayOffset ?? null,
     dueTime: rule.tatParameters.dueTime ?? null,
+    dateOperator: rule.tatParameters.dateOperator ?? null,
+    autoExtend: rule.tatParameters.autoExtend ?? false,
+    extendStatusReason: rule.tatParameters.extendStatusReason ?? null,
   }
 
   return exported
@@ -489,8 +493,12 @@ export const importTATRulesFromJSON = async (jsonData: TATRuleExport[]): Promise
           unitsOfMeasure: ruleData.unitsOfMeasure,
           dueTime: ruleData.dueTime,
           holidayDates: ruleData.holidayDates,
+          holidayCategory: ruleData.holidayCategory,
           holidayOffset: ruleData.holidayOffset,
           clinicalsRequestedResponseThresholdHours: ruleData.clinicalsRequestedResponseThresholdHours,
+          dateOperator: ruleData.dateOperator,
+          autoExtend: ruleData.autoExtend,
+          extendStatusReason: ruleData.extendStatusReason,
         },
       }
 

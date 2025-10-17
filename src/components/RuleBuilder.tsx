@@ -62,8 +62,12 @@ export default function RuleBuilder({ rule, onClose, onSave }: RuleBuilderProps)
     unitsOfMeasure: rule?.tatParameters?.unitsOfMeasure || 'HOURS',
     dueTime: rule?.tatParameters?.dueTime || null,
     holidayDates: rule?.tatParameters?.holidayDates || [],
+    holidayCategory: rule?.tatParameters?.holidayCategory || null,
     holidayOffset: rule?.tatParameters?.holidayOffset || null,
     clinicalsRequestedResponseThresholdHours: rule?.tatParameters?.clinicalsRequestedResponseThresholdHours || null,
+    dateOperator: rule?.tatParameters?.dateOperator || null,
+    autoExtend: rule?.tatParameters?.autoExtend || false,
+    extendStatusReason: rule?.tatParameters?.extendStatusReason || null,
   })
   const [holidayDateInput, setHolidayDateInput] = useState('')
 
@@ -591,6 +595,104 @@ export default function RuleBuilder({ rule, onClose, onSave }: RuleBuilderProps)
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-primary focus:border-primary"
                   />
                 </div>
+
+                {/* Holiday Category */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    {TAT_FIELD_LABELS.holidayCategory}
+                  </label>
+                  <p className="text-xs text-gray-500 mb-2">
+                    {TAT_FIELD_DESCRIPTIONS.holidayCategory}
+                  </p>
+                  <input
+                    type="text"
+                    value={tatParameters.holidayCategory || ''}
+                    onChange={(e) =>
+                      setTatParameters({
+                        ...tatParameters,
+                        holidayCategory: e.target.value || null,
+                      })
+                    }
+                    placeholder="e.g., SKIPHDAY_CTGY_1"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-primary focus:border-primary"
+                  />
+                </div>
+
+                {/* Date Operator */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    {TAT_FIELD_LABELS.dateOperator}
+                  </label>
+                  <p className="text-xs text-gray-500 mb-2">
+                    {TAT_FIELD_DESCRIPTIONS.dateOperator}
+                  </p>
+                  <select
+                    value={tatParameters.dateOperator || ''}
+                    onChange={(e) =>
+                      setTatParameters({
+                        ...tatParameters,
+                        dateOperator: (e.target.value || null) as any,
+                      })
+                    }
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-primary focus:border-primary"
+                  >
+                    <option value="">None</option>
+                    <option value="=">=</option>
+                    <option value="<">&lt;</option>
+                    <option value=">">&gt;</option>
+                    <option value="<=">&lt;=</option>
+                    <option value=">=">&gt;=</option>
+                  </select>
+                </div>
+
+                {/* Auto Extend */}
+                <div>
+                  <div className="flex items-center space-x-3">
+                    <input
+                      type="checkbox"
+                      checked={tatParameters.autoExtend || false}
+                      onChange={(e) =>
+                        setTatParameters({
+                          ...tatParameters,
+                          autoExtend: e.target.checked,
+                        })
+                      }
+                      className="h-4 w-4 text-primary border-gray-300 rounded focus:ring-primary"
+                    />
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700">
+                        {TAT_FIELD_LABELS.autoExtend}
+                      </label>
+                      <p className="text-xs text-gray-500">
+                        {TAT_FIELD_DESCRIPTIONS.autoExtend}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Extend Status Reason */}
+                {tatParameters.autoExtend && (
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      {TAT_FIELD_LABELS.extendStatusReason}
+                    </label>
+                    <p className="text-xs text-gray-500 mb-2">
+                      {TAT_FIELD_DESCRIPTIONS.extendStatusReason}
+                    </p>
+                    <input
+                      type="text"
+                      value={tatParameters.extendStatusReason || ''}
+                      onChange={(e) =>
+                        setTatParameters({
+                          ...tatParameters,
+                          extendStatusReason: e.target.value || null,
+                        })
+                      }
+                      placeholder="e.g., 45DNOCLIN"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-primary focus:border-primary"
+                    />
+                  </div>
+                )}
               </div>
             </div>
           ) : (
