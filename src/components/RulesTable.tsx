@@ -10,6 +10,8 @@ import {
   exportAllRulesToJSON,
   exportActiveRulesToJSON,
   importRulesFromJSON,
+  importTATRulesFromJSON,
+  isTATRuleFormat,
   subscribeToRules,
 } from '../services/rulesService'
 
@@ -177,19 +179,31 @@ export default function RulesTable({ onEditRule, onCreateRule, onToggleAI, curre
       // Support both array format and AUTO_WORKFLOW_RULES format
       const rulesData = Array.isArray(jsonData) ? jsonData : jsonData.rules
 
-      if (!Array.isArray(rulesData)) {
+      if (!Array.isArray(rulesData) || rulesData.length === 0) {
         alert('Invalid JSON format. Expected an array of rules or AUTO_WORKFLOW_RULES format.')
         return
       }
 
-      // Add current rule type to imported rules
-      const rulesWithType = rulesData.map((r: any) => ({
-        ...r,
-        ruleType: currentRuleType,
-      }))
+      // Auto-detect rule type from JSON structure (don't rely on active tab)
+      const firstRule = rulesData[0]
+      const isTAT = isTATRuleFormat(firstRule)
 
-      const importedRules = await importRulesFromJSON(rulesWithType)
-      alert(`Successfully imported ${importedRules.length} ${currentRuleType} rules`)
+      // Route to appropriate import function based on detected type
+      let importedRules: Rule[]
+      if (isTAT) {
+        // TAT rules - use TAT import which expects TATRuleExport format
+        importedRules = await importTATRulesFromJSON(rulesData)
+      } else {
+        // Workflow/Skills rules - add current rule type and use workflow import
+        const rulesWithType = rulesData.map((r: any) => ({
+          ...r,
+          ruleType: currentRuleType,
+        }))
+        importedRules = await importRulesFromJSON(rulesWithType)
+      }
+
+      const ruleTypeLabel = isTAT ? 'TAT' : currentRuleType
+      alert(`Successfully imported ${importedRules.length} ${ruleTypeLabel} rules`)
 
       // Reset file input
       if (fileInputRef.current) {

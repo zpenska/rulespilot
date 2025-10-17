@@ -426,6 +426,20 @@ export const exportAsDueDateRules = async (
 }
 
 /**
+ * Detect if a rule JSON object is in TAT format or Workflow format
+ * TAT rules have sourceDateTimeField, units, and unitsOfMeasure
+ * Workflow rules have actions or operator in criteria
+ */
+export const isTATRuleFormat = (rule: any): boolean => {
+  // TAT rules have these required TAT-specific fields
+  return !!(
+    rule.sourceDateTimeField &&
+    rule.units !== undefined &&
+    rule.unitsOfMeasure
+  )
+}
+
+/**
  * Import workflow rules from JSON
  */
 export const importRulesFromJSON = async (jsonData: RuleExport[]): Promise<Rule[]> => {
