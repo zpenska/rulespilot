@@ -83,7 +83,7 @@ export function mergeWorkflowRules(rules: Rule[]): { nodes: Node[]; edges: Edge[
   })
 
   let yOffset = 0
-  const VERTICAL_GROUP_SPACING = 600
+  const VERTICAL_GROUP_SPACING = 3000
   const HORIZONTAL_SPACING = 450
   const VERTICAL_RULE_SPACING = 250
 
@@ -214,7 +214,6 @@ export function mergeWorkflowRules(rules: Rule[]): { nodes: Node[]; edges: Edge[
             target: sharedFirstConditionId,
             type: 'default',
             style: { stroke: '#6b7280', strokeWidth: 2 },
-            animated: true,
           })
         }
       }
