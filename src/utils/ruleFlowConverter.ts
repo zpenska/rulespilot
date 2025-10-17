@@ -29,9 +29,56 @@ export interface TATCalculationNodeData extends TATParameters {
 export function ruleToNodes(rule: Partial<Rule>): { nodes: Node[]; edges: Edge[] } {
   const nodes: Node[] = []
   const edges: Edge[] = []
+  let xOffset = 0
   let yOffset = 0
   const VERTICAL_SPACING = 120
   const HORIZONTAL_SPACING = 300
+
+  // For workflow rules, add trigger event and request type filter nodes
+  let lastWorkflowNodeId: string | null = null
+
+  if (rule.ruleType === 'workflow') {
+    // Add trigger event node if triggers exist
+    if (rule.triggerEvents && rule.triggerEvents.length > 0) {
+      const triggerNodeId = 'trigger-events'
+      nodes.push({
+        id: triggerNodeId,
+        type: 'triggerEventNode',
+        position: { x: xOffset, y: yOffset },
+        data: {
+          triggerEvents: rule.triggerEvents,
+        },
+      })
+      lastWorkflowNodeId = triggerNodeId
+      xOffset += HORIZONTAL_SPACING
+    }
+
+    // Add request type filter node if filter exists
+    if (rule.requestTypeFilter) {
+      const branchNodeId = 'request-type-branch'
+      nodes.push({
+        id: branchNodeId,
+        type: 'requestTypeBranchNode',
+        position: { x: xOffset, y: yOffset },
+        data: {
+          requestTypeFilter: rule.requestTypeFilter,
+        },
+      })
+
+      // Connect trigger to branch if trigger exists
+      if (lastWorkflowNodeId) {
+        edges.push({
+          id: `e-${lastWorkflowNodeId}-${branchNodeId}`,
+          source: lastWorkflowNodeId,
+          target: branchNodeId,
+          type: 'default',
+        })
+      }
+
+      lastWorkflowNodeId = branchNodeId
+      xOffset += HORIZONTAL_SPACING
+    }
+  }
 
   // Add criteria nodes (conditions)
   const allCriteria = [
@@ -53,13 +100,23 @@ export function ruleToNodes(rule: Partial<Rule>): { nodes: Node[]; edges: Edge[]
     nodes.push({
       id: nodeId,
       type: 'conditionNode',
-      position: { x: 0, y: yOffset },
+      position: { x: xOffset, y: yOffset },
       data: {
         type: item.type,
         criteria: item.criteria,
         index: item.index,
       } as ConditionNodeData,
     })
+
+    // Connect first condition to last workflow node (trigger/branch)
+    if (index === 0 && lastWorkflowNodeId) {
+      edges.push({
+        id: `e-${lastWorkflowNodeId}-${nodeId}`,
+        source: lastWorkflowNodeId,
+        target: nodeId,
+        type: 'default',
+      })
+    }
 
     // Add AND logic node between conditions (except after last one)
     if (index < allCriteria.length - 1) {
@@ -68,7 +125,7 @@ export function ruleToNodes(rule: Partial<Rule>): { nodes: Node[]; edges: Edge[]
       nodes.push({
         id: logicNodeId,
         type: 'logicNode',
-        position: { x: 0, y: yOffset },
+        position: { x: xOffset, y: yOffset },
         data: {
           logic: 'AND',
         } as LogicNodeData,

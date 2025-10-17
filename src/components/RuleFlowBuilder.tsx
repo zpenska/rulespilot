@@ -20,6 +20,8 @@ import ConditionNode from './flow/ConditionNode'
 import LogicNode from './flow/LogicNode'
 import ActionNode from './flow/ActionNode'
 import TATCalculationNode from './flow/TATCalculationNode'
+import TriggerEventNode from './flow/TriggerEventNode'
+import RequestTypeBranchNode from './flow/RequestTypeBranchNode'
 import NodePalette from './flow/NodePalette'
 
 interface RuleFlowBuilderProps {
@@ -43,6 +45,8 @@ function RuleFlowBuilderInner({ rule, onNodesChange }: RuleFlowBuilderProps) {
       logicNode: LogicNode,
       actionNode: ActionNode,
       tatCalculationNode: TATCalculationNode,
+      triggerEventNode: TriggerEventNode,
+      requestTypeBranchNode: RequestTypeBranchNode,
     }),
     []
   )
@@ -141,7 +145,7 @@ function RuleFlowBuilderInner({ rule, onNodesChange }: RuleFlowBuilderProps) {
           connectionLineType={ConnectionLineType.SmoothStep}
           defaultViewport={{ x: 0, y: 0, zoom: 0.75 }}
           fitView
-          fitViewOptions={{ padding: 0.3, maxZoom: 0.75 }}
+          fitViewOptions={{ padding: 0.2, maxZoom: 1, minZoom: 0.1 }}
           className="bg-bg-light"
         >
           <Background color="#e1e1e6" gap={16} />
