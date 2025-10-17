@@ -13,6 +13,8 @@ import {
   TATParameters,
   SourceDateTimeField,
   UnitsOfMeasure,
+  TriggerEvent,
+  RequestTypeFilter,
 } from '../types/rules'
 import {
   FIELD_DEFINITIONS,
@@ -54,6 +56,13 @@ export default function RuleBuilder({ rule, onClose, onSave }: RuleBuilderProps)
   const [errors, setErrors] = useState<string[]>([])
   const [saving, setSaving] = useState(false)
   const currentRuleType = useRulesStore((state) => state.currentRuleType)
+
+  // Workflow-specific state (only for workflow rules)
+  const [triggerEvents, setTriggerEvents] = useState<TriggerEvent[]>(rule?.triggerEvents || [])
+  const [requestTypeFilter, setRequestTypeFilter] = useState<RequestTypeFilter>(
+    rule?.requestTypeFilter || null
+  )
+  const [fireOnce, setFireOnce] = useState<boolean>(rule?.fireOnce || false)
 
   // TAT-specific state
   const [tatParameters, setTatParameters] = useState<TATParameters>({
@@ -145,6 +154,17 @@ export default function RuleBuilder({ rule, onClose, onSave }: RuleBuilderProps)
         delete cleanedActions.generateLetters
       }
       ruleData.actions = Object.keys(cleanedActions).length > 0 ? cleanedActions : undefined
+
+      // Add workflow-specific fields
+      if (triggerEvents.length > 0) {
+        ruleData.triggerEvents = triggerEvents
+      }
+      if (requestTypeFilter) {
+        ruleData.requestTypeFilter = requestTypeFilter
+      }
+      if (fireOnce) {
+        ruleData.fireOnce = fireOnce
+      }
     }
 
     const validationErrors = validateRule(ruleData)
@@ -377,6 +397,119 @@ export default function RuleBuilder({ rule, onClose, onSave }: RuleBuilderProps)
               </div>
             )}
           </div>
+
+          {/* Workflow-Specific Fields (Trigger Events, Request Type Filter) */}
+          {currentRuleType === 'workflow' && (
+            <div className="bg-white rounded-xl shadow-sm border border-table-border p-6 mb-4">
+              <h4 className="text-base font-semibold text-gray-900 mb-6 pb-3 border-b border-gray-200">
+                Workflow Triggers & Filters
+              </h4>
+
+              <div className="space-y-6">
+                {/* Trigger Events */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-3">
+                    Trigger Events
+                  </label>
+                  <p className="text-xs text-gray-500 mb-3">
+                    Select when this workflow rule should fire
+                  </p>
+                  <div className="grid grid-cols-2 gap-3">
+                    {[
+                      { value: 'CREATE_REQUEST' as TriggerEvent, label: 'Create Request' },
+                      { value: 'EDIT_REQUEST' as TriggerEvent, label: 'Edit Request' },
+                      { value: 'EXTEND_REQUEST' as TriggerEvent, label: 'Extend Request' },
+                      { value: 'CREATE_SERVICE' as TriggerEvent, label: 'Create Service' },
+                      { value: 'EDIT_SERVICE' as TriggerEvent, label: 'Edit Service' },
+                      { value: 'EXTEND_SERVICE' as TriggerEvent, label: 'Extend Service' },
+                      { value: 'SAVE_QUESTIONNAIRE' as TriggerEvent, label: 'Save Questionnaire' },
+                    ].map((trigger) => (
+                      <label
+                        key={trigger.value}
+                        className="flex items-center space-x-2 p-2 border rounded-md hover:bg-gray-50 cursor-pointer"
+                      >
+                        <input
+                          type="checkbox"
+                          checked={triggerEvents.includes(trigger.value)}
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              setTriggerEvents([...triggerEvents, trigger.value])
+                            } else {
+                              setTriggerEvents(
+                                triggerEvents.filter((t) => t !== trigger.value)
+                              )
+                            }
+                          }}
+                          className="rounded border-gray-300 text-primary focus:ring-primary"
+                        />
+                        <span className="text-sm text-gray-700">{trigger.label}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Request Type Filter */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-3">
+                    Request Type Filter
+                  </label>
+                  <p className="text-xs text-gray-500 mb-3">
+                    Filter by request type (optional)
+                  </p>
+                  <div className="flex gap-3">
+                    <label className="flex items-center space-x-2 p-3 border rounded-md hover:bg-gray-50 cursor-pointer flex-1">
+                      <input
+                        type="radio"
+                        name="requestTypeFilter"
+                        checked={requestTypeFilter === null}
+                        onChange={() => setRequestTypeFilter(null)}
+                        className="border-gray-300 text-primary focus:ring-primary"
+                      />
+                      <span className="text-sm text-gray-700">Any Request Type</span>
+                    </label>
+                    <label className="flex items-center space-x-2 p-3 border rounded-md hover:bg-gray-50 cursor-pointer flex-1">
+                      <input
+                        type="radio"
+                        name="requestTypeFilter"
+                        checked={requestTypeFilter === 'INPATIENT'}
+                        onChange={() => setRequestTypeFilter('INPATIENT')}
+                        className="border-gray-300 text-primary focus:ring-primary"
+                      />
+                      <span className="text-sm text-gray-700">Inpatient Only</span>
+                    </label>
+                    <label className="flex items-center space-x-2 p-3 border rounded-md hover:bg-gray-50 cursor-pointer flex-1">
+                      <input
+                        type="radio"
+                        name="requestTypeFilter"
+                        checked={requestTypeFilter === 'OUTPATIENT'}
+                        onChange={() => setRequestTypeFilter('OUTPATIENT')}
+                        className="border-gray-300 text-primary focus:ring-primary"
+                      />
+                      <span className="text-sm text-gray-700">Outpatient Only</span>
+                    </label>
+                  </div>
+                </div>
+
+                {/* Fire Once */}
+                <div>
+                  <label className="flex items-center space-x-2 p-3 border rounded-md hover:bg-gray-50 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={fireOnce}
+                      onChange={(e) => setFireOnce(e.target.checked)}
+                      className="rounded border-gray-300 text-primary focus:ring-primary"
+                    />
+                    <div>
+                      <span className="text-sm font-medium text-gray-700">Fire Once Per Request</span>
+                      <p className="text-xs text-gray-500 mt-0.5">
+                        Rule will only fire one time for each request
+                      </p>
+                    </div>
+                  </label>
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Actions or TAT Parameters based on rule type */}
           {currentRuleType === 'tat' ? (
@@ -988,6 +1121,217 @@ export default function RuleBuilder({ rule, onClose, onSave }: RuleBuilderProps)
                   />
                 )}
               </div>
+                </>
+              )}
+
+              {/* Workflow-only actions (Create Task, Transfer, Create Program) */}
+              {currentRuleType === 'workflow' && (
+                <>
+                  {/* Create Task */}
+                  <div className="space-y-2">
+                    <div className="flex items-center space-x-3">
+                      <input
+                        type="checkbox"
+                        checked={!!actions.createTask}
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            setActions({
+                              ...actions,
+                              createTask: { taskType: '', taskReason: '' },
+                            })
+                          } else {
+                            const { createTask, ...rest } = actions
+                            setActions(rest)
+                          }
+                        }}
+                        className="rounded border-gray-300"
+                      />
+                      <label className="text-sm font-medium text-gray-700">Create Task</label>
+                    </div>
+                    {actions.createTask && (
+                      <div className="ml-6 space-y-3">
+                        <div>
+                          <label className="block text-xs font-medium text-gray-600 mb-1">
+                            Task Type
+                          </label>
+                          <input
+                            type="text"
+                            value={actions.createTask.taskType}
+                            onChange={(e) =>
+                              setActions({
+                                ...actions,
+                                createTask: {
+                                  ...actions.createTask!,
+                                  taskType: e.target.value,
+                                },
+                              })
+                            }
+                            placeholder="e.g., IBX Retro TAT Tracking"
+                            className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-medium text-gray-600 mb-1">
+                            Task Reason
+                          </label>
+                          <input
+                            type="text"
+                            value={actions.createTask.taskReason}
+                            onChange={(e) =>
+                              setActions({
+                                ...actions,
+                                createTask: {
+                                  ...actions.createTask!,
+                                  taskReason: e.target.value,
+                                },
+                              })
+                            }
+                            placeholder="e.g., Lack of Clinical"
+                            className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md"
+                          />
+                        </div>
+                        <div className="grid grid-cols-2 gap-3">
+                          <div>
+                            <label className="block text-xs font-medium text-gray-600 mb-1">
+                              Days Until Due
+                            </label>
+                            <input
+                              type="number"
+                              value={actions.createTask.daysUntilDue || ''}
+                              onChange={(e) =>
+                                setActions({
+                                  ...actions,
+                                  createTask: {
+                                    ...actions.createTask!,
+                                    daysUntilDue: e.target.value
+                                      ? parseInt(e.target.value)
+                                      : null,
+                                  },
+                                })
+                              }
+                              placeholder="e.g., 5"
+                              className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-xs font-medium text-gray-600 mb-1">
+                              Task Owner
+                            </label>
+                            <input
+                              type="text"
+                              value={actions.createTask.taskOwner || ''}
+                              onChange={(e) =>
+                                setActions({
+                                  ...actions,
+                                  createTask: {
+                                    ...actions.createTask!,
+                                    taskOwner: e.target.value || null,
+                                  },
+                                })
+                              }
+                              placeholder="e.g., Dept: UMTATIBC"
+                              className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md"
+                            />
+                          </div>
+                        </div>
+                        <div>
+                          <label className="flex items-center space-x-2">
+                            <input
+                              type="checkbox"
+                              checked={actions.createTask.autoClose || false}
+                              onChange={(e) =>
+                                setActions({
+                                  ...actions,
+                                  createTask: {
+                                    ...actions.createTask!,
+                                    autoClose: e.target.checked,
+                                  },
+                                })
+                              }
+                              className="rounded border-gray-300"
+                            />
+                            <span className="text-xs text-gray-600">Auto-close task</span>
+                          </label>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Transfer Ownership */}
+                  <div className="space-y-2">
+                    <div className="flex items-center space-x-3">
+                      <input
+                        type="checkbox"
+                        checked={!!actions.transferOwnership}
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            setActions({
+                              ...actions,
+                              transferOwnership: { transferTo: '' },
+                            })
+                          } else {
+                            const { transferOwnership, ...rest } = actions
+                            setActions(rest)
+                          }
+                        }}
+                        className="rounded border-gray-300"
+                      />
+                      <label className="text-sm font-medium text-gray-700">
+                        Transfer Ownership
+                      </label>
+                    </div>
+                    {actions.transferOwnership && (
+                      <input
+                        type="text"
+                        value={actions.transferOwnership.transferTo}
+                        onChange={(e) =>
+                          setActions({
+                            ...actions,
+                            transferOwnership: { transferTo: e.target.value },
+                          })
+                        }
+                        placeholder="Transfer to (e.g., Dept: BHIP)"
+                        className="w-full ml-6 px-3 py-2 text-sm border border-gray-300 rounded-md"
+                      />
+                    )}
+                  </div>
+
+                  {/* Create Program */}
+                  <div className="space-y-2">
+                    <div className="flex items-center space-x-3">
+                      <input
+                        type="checkbox"
+                        checked={!!actions.createProgram}
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            setActions({
+                              ...actions,
+                              createProgram: { programName: '' },
+                            })
+                          } else {
+                            const { createProgram, ...rest } = actions
+                            setActions(rest)
+                          }
+                        }}
+                        className="rounded border-gray-300"
+                      />
+                      <label className="text-sm font-medium text-gray-700">Create Program</label>
+                    </div>
+                    {actions.createProgram && (
+                      <input
+                        type="text"
+                        value={actions.createProgram.programName}
+                        onChange={(e) =>
+                          setActions({
+                            ...actions,
+                            createProgram: { programName: e.target.value },
+                          })
+                        }
+                        placeholder="Program name (e.g., Transition of Care)"
+                        className="w-full ml-6 px-3 py-2 text-sm border border-gray-300 rounded-md"
+                      />
+                    )}
+                  </div>
                 </>
               )}
             </div>
