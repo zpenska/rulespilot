@@ -15,6 +15,9 @@ import {
   UnitsOfMeasure,
   TriggerEvent,
   RequestTypeFilter,
+  MessageContext,
+  MessageDisplayLocation,
+  MessageColor,
 } from '../types/rules'
 import {
   FIELD_DEFINITIONS,
@@ -1106,21 +1109,128 @@ export default function RuleBuilder({ rule, onClose, onSave }: RuleBuilderProps)
                     }}
                     className="rounded border-gray-300"
                   />
-                  <label className="text-sm font-medium text-gray-700">Hints</label>
+                  <label className="text-sm font-medium text-gray-700">Hints / Messages</label>
                 </div>
                 {actions.hints && (
-                  <textarea
-                    value={actions.hints.message}
-                    onChange={(e) =>
-                      setActions({
-                        ...actions,
-                        hints: { message: e.target.value },
-                      })
-                    }
-                    placeholder="Enter hint message..."
-                    rows={3}
-                    className="w-full ml-6 px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-primary focus:border-primary"
-                  />
+                  <div className="ml-6 space-y-3">
+                    {/* Message Text */}
+                    <div>
+                      <label className="block text-xs font-medium text-gray-600 mb-1">
+                        Message
+                      </label>
+                      <textarea
+                        value={actions.hints.message}
+                        onChange={(e) =>
+                          setActions({
+                            ...actions,
+                            hints: { ...actions.hints!, message: e.target.value },
+                          })
+                        }
+                        placeholder="Enter message to be displayed..."
+                        rows={3}
+                        className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-primary focus:border-primary"
+                      />
+                    </div>
+
+                    {/* Context - Multi-select */}
+                    <div>
+                      <label className="block text-xs font-medium text-gray-600 mb-1">
+                        Context
+                      </label>
+                      <div className="space-y-1">
+                        {(['MEMBER_DEMOGRAPHICS', 'PROVIDER_DEMOGRAPHICS', 'SERVICES_DIAGNOSIS', 'BUSINESS_ENTERPRISE_CATEGORIES'] as MessageContext[]).map((ctx) => (
+                          <label key={ctx} className="flex items-center space-x-2">
+                            <input
+                              type="checkbox"
+                              checked={actions.hints?.context?.includes(ctx) || false}
+                              onChange={(e) => {
+                                const currentContext = actions.hints?.context || []
+                                const newContext = e.target.checked
+                                  ? [...currentContext, ctx]
+                                  : currentContext.filter((c) => c !== ctx)
+                                setActions({
+                                  ...actions,
+                                  hints: {
+                                    ...actions.hints!,
+                                    context: newContext.length > 0 ? newContext : undefined,
+                                  },
+                                })
+                              }}
+                              className="rounded border-gray-300"
+                            />
+                            <span className="text-xs text-gray-700">
+                              {ctx.replace(/_/g, ' ').toLowerCase().replace(/\b\w/g, (c) => c.toUpperCase())}
+                            </span>
+                          </label>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Display Location */}
+                    <div>
+                      <label className="block text-xs font-medium text-gray-600 mb-1">
+                        Where to Display
+                      </label>
+                      <select
+                        value={actions.hints?.displayLocation || ''}
+                        onChange={(e) =>
+                          setActions({
+                            ...actions,
+                            hints: {
+                              ...actions.hints!,
+                              displayLocation: e.target.value ? (e.target.value as MessageDisplayLocation) : undefined,
+                            },
+                          })
+                        }
+                        className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-primary focus:border-primary"
+                      >
+                        <option value="">Select location...</option>
+                        <option value="MEMBER">Member</option>
+                        <option value="PROVIDER">Provider</option>
+                        <option value="SERVICES_DIAGNOSIS">Services & Diagnosis</option>
+                      </select>
+                    </div>
+
+                    {/* Color */}
+                    <div>
+                      <label className="block text-xs font-medium text-gray-600 mb-1">
+                        Message Color
+                      </label>
+                      <div className="flex space-x-2">
+                        {(['RED', 'YELLOW', 'GREEN', 'BLUE'] as MessageColor[]).map((color) => {
+                          const colorClasses = {
+                            RED: 'bg-red-100 border-red-300 hover:bg-red-200',
+                            YELLOW: 'bg-yellow-100 border-yellow-300 hover:bg-yellow-200',
+                            GREEN: 'bg-green-100 border-green-300 hover:bg-green-200',
+                            BLUE: 'bg-blue-100 border-blue-300 hover:bg-blue-200',
+                          }
+                          const isSelected = actions.hints?.color === color
+                          return (
+                            <button
+                              key={color}
+                              type="button"
+                              onClick={() =>
+                                setActions({
+                                  ...actions,
+                                  hints: {
+                                    ...actions.hints!,
+                                    color: color,
+                                  },
+                                })
+                              }
+                              className={`flex-1 px-4 py-2 text-xs font-medium rounded-md border-2 transition-all ${
+                                colorClasses[color]
+                              } ${
+                                isSelected ? 'ring-2 ring-offset-2 ring-gray-400' : ''
+                              }`}
+                            >
+                              {color.charAt(0) + color.slice(1).toLowerCase()}
+                            </button>
+                          )
+                        })}
+                      </div>
+                    </div>
+                  </div>
                 )}
               </div>
                 </>

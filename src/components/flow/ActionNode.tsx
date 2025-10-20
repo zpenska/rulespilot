@@ -72,6 +72,18 @@ function ActionNode({ data }: NodeProps) {
   const config = getActionConfig()
   const Icon = config.icon
 
+  // Override color for hints action if message color is specified
+  let nodeColor = config.color
+  if (actionType === 'hints' && actionData.color) {
+    const messageColorClasses: Record<string, string> = {
+      RED: 'bg-red-100 text-red-700 border-red-300',
+      YELLOW: 'bg-yellow-100 text-yellow-700 border-yellow-300',
+      GREEN: 'bg-green-100 text-green-700 border-green-300',
+      BLUE: 'bg-blue-100 text-blue-700 border-blue-300',
+    }
+    nodeColor = messageColorClasses[actionData.color] || config.color
+  }
+
   const getActionDetails = () => {
     if (!actionData) return '(click to configure)'
 
@@ -103,7 +115,24 @@ function ActionNode({ data }: NodeProps) {
     if (actionType === 'hints') {
       const msg = actionData.message || actionData.hint || ''
       if (!msg) return '(click to add message)'
-      return msg.substring(0, 30) + (msg.length > 30 ? '...' : '')
+
+      const parts: string[] = []
+      parts.push(msg.substring(0, 25) + (msg.length > 25 ? '...' : ''))
+
+      if (actionData.displayLocation) {
+        const locationLabels: Record<string, string> = {
+          MEMBER: 'Member',
+          PROVIDER: 'Provider',
+          SERVICES_DIAGNOSIS: 'Services'
+        }
+        parts.push(`→ ${locationLabels[actionData.displayLocation] || actionData.displayLocation}`)
+      }
+
+      if (actionData.context && Array.isArray(actionData.context) && actionData.context.length > 0) {
+        parts.push(`[${actionData.context.length} context${actionData.context.length > 1 ? 's' : ''}]`)
+      }
+
+      return parts.join(' ')
     }
     if (actionType === 'createTask') {
       const taskType = actionData.taskType || ''
@@ -131,7 +160,7 @@ function ActionNode({ data }: NodeProps) {
   }
 
   return (
-    <div className={`rounded-lg shadow-sm border-2 p-3 min-w-[200px] ${config.color}`}>
+    <div className={`rounded-lg shadow-sm border-2 p-3 min-w-[200px] ${nodeColor}`}>
       <Handle type="target" position={Position.Left} className="!bg-gray-600 !w-3 !h-3" />
 
       <div className="flex items-start space-x-2">

@@ -119,8 +119,28 @@ export interface CloseAction {
   dispositionCode: string
 }
 
+export type MessageContext =
+  | 'MEMBER_DEMOGRAPHICS'
+  | 'PROVIDER_DEMOGRAPHICS'
+  | 'SERVICES_DIAGNOSIS'
+  | 'BUSINESS_ENTERPRISE_CATEGORIES'
+
+export type MessageDisplayLocation =
+  | 'MEMBER'
+  | 'PROVIDER'
+  | 'SERVICES_DIAGNOSIS'
+
+export type MessageColor =
+  | 'RED'
+  | 'YELLOW'
+  | 'GREEN'
+  | 'BLUE'
+
 export interface HintsAction {
   message: string
+  context?: MessageContext[]
+  displayLocation?: MessageDisplayLocation
+  color?: MessageColor
 }
 
 export interface CreateTaskAction {

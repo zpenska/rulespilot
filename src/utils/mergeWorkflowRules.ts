@@ -7,6 +7,53 @@ interface RuleColor {
   label: string
 }
 
+// Special fields that get their own node types
+const SPECIAL_FIELDS = {
+  SOURCE_SYSTEM: 'REQUEST_ORIGINATING_SYSTEM_SOURCE',
+  LINE_OF_BUSINESS: 'ENROLLMENT_LINE_OF_BUSINESS',
+  CLIENT: 'MEMBER_CLIENT',
+  REQUEST_TYPE: 'REQUEST_TYPE',
+} as const
+
+interface SpecialFieldNodes {
+  sourceSystem?: StandardFieldCriteria
+  lineOfBusiness?: StandardFieldCriteria
+  client?: StandardFieldCriteria
+  requestType?: StandardFieldCriteria
+}
+
+/**
+ * Extract special fields from standard criteria
+ */
+function extractSpecialFields(criteria: StandardFieldCriteria[]): {
+  specialFields: SpecialFieldNodes
+  remainingCriteria: StandardFieldCriteria[]
+} {
+  const specialFields: SpecialFieldNodes = {}
+  const remainingCriteria: StandardFieldCriteria[] = []
+
+  criteria.forEach((c) => {
+    switch (c.field) {
+      case SPECIAL_FIELDS.SOURCE_SYSTEM:
+        specialFields.sourceSystem = c
+        break
+      case SPECIAL_FIELDS.LINE_OF_BUSINESS:
+        specialFields.lineOfBusiness = c
+        break
+      case SPECIAL_FIELDS.CLIENT:
+        specialFields.client = c
+        break
+      case SPECIAL_FIELDS.REQUEST_TYPE:
+        specialFields.requestType = c
+        break
+      default:
+        remainingCriteria.push(c)
+    }
+  })
+
+  return { specialFields, remainingCriteria }
+}
+
 /**
  * Generate a unique signature for a condition to detect duplicates
  */
@@ -150,13 +197,17 @@ export function mergeWorkflowRules(rules: Rule[]): { nodes: Node[]; edges: Edge[
         requestTypeXOffset += HORIZONTAL_SPACING
       }
 
-      // Group rules by their first condition within this request type
+      // Group rules by their first non-special condition within this request type
       const firstConditionGroups = new Map<string, { rule: Rule; color: RuleColor }[]>()
 
       rulesWithFilter.forEach((ruleData) => {
         const { rule } = ruleData
+
+        // Extract special fields to find first non-special condition
+        const { remainingCriteria } = extractSpecialFields(rule.standardFieldCriteria || [])
+
         const allCriteria = [
-          ...(rule.standardFieldCriteria || []).map((c, i) => ({
+          ...remainingCriteria.map((c, i) => ({
             type: 'standard' as const,
             criteria: c,
             index: i,
@@ -164,7 +215,7 @@ export function mergeWorkflowRules(rules: Rule[]): { nodes: Node[]; edges: Edge[
           ...(rule.customFieldCriteria || []).map((c, i) => ({
             type: 'custom' as const,
             criteria: c,
-            index: i + (rule.standardFieldCriteria?.length || 0),
+            index: i + remainingCriteria.length,
           })),
         ]
 
@@ -176,7 +227,7 @@ export function mergeWorkflowRules(rules: Rule[]): { nodes: Node[]; edges: Edge[
           }
           firstConditionGroups.get(signature)!.push(ruleData)
         } else {
-          // Rules with no conditions - treat as separate group
+          // Rules with no non-special conditions - treat as separate group
           firstConditionGroups.set(`no-condition-${rule.id}`, [ruleData])
         }
       })
@@ -186,8 +237,12 @@ export function mergeWorkflowRules(rules: Rule[]): { nodes: Node[]; edges: Edge[
 
       firstConditionGroups.forEach((rulesWithSameFirstCondition, signature) => {
       const firstRule = rulesWithSameFirstCondition[0].rule
+
+      // Extract special fields to get non-special criteria
+      const { remainingCriteria: firstRuleRemainingCriteria } = extractSpecialFields(firstRule.standardFieldCriteria || [])
+
       const firstCriteria = [
-        ...(firstRule.standardFieldCriteria || []).map((c, i) => ({
+        ...firstRuleRemainingCriteria.map((c, i) => ({
           type: 'standard' as const,
           criteria: c,
           index: i,
@@ -195,13 +250,13 @@ export function mergeWorkflowRules(rules: Rule[]): { nodes: Node[]; edges: Edge[
         ...(firstRule.customFieldCriteria || []).map((c, i) => ({
           type: 'custom' as const,
           criteria: c,
-          index: i + (firstRule.standardFieldCriteria?.length || 0),
+          index: i + firstRuleRemainingCriteria.length,
         })),
       ]
 
       let sharedFirstConditionId: string | null = null
 
-        // Create shared first condition node if rules have conditions
+        // Create shared first condition node if rules have non-special conditions
         if (firstCriteria.length > 0) {
           const firstCondition = firstCriteria[0]
           sharedFirstConditionId = `shared-condition-${groupId}-${filterKey}-${signature}`
@@ -223,17 +278,8 @@ export function mergeWorkflowRules(rules: Rule[]): { nodes: Node[]; edges: Edge[
             },
           })
 
-          // Connect shared first condition to branch node or trigger
-          const sourceNodeId = branchNodeId || lastSharedNodeId
-          if (sourceNodeId) {
-            edges.push({
-              id: `e-${sourceNodeId}-${sharedFirstConditionId}`,
-              source: sourceNodeId,
-              target: sharedFirstConditionId,
-              type: 'default',
-              style: { stroke: '#6b7280', strokeWidth: 2 },
-            })
-          }
+          // NOTE: Edge to shared first condition is now created from each rule's special field chain
+          // (see below in the rule loop where we connect lastNodeId to sharedFirstConditionId)
         }
 
         // Now create each rule's remaining path
@@ -243,9 +289,12 @@ export function mergeWorkflowRules(rules: Rule[]): { nodes: Node[]; edges: Edge[
           const rulePrefix = `rule-${rule.id}`
           let ruleXOffset = requestTypeXOffset + HORIZONTAL_SPACING
 
-        // Gather all criteria for this rule
+        // Extract special fields from standard criteria
+        const { specialFields, remainingCriteria } = extractSpecialFields(rule.standardFieldCriteria || [])
+
+        // Gather all non-special criteria for this rule
         const allCriteria = [
-          ...(rule.standardFieldCriteria || []).map((c, i) => ({
+          ...remainingCriteria.map((c, i) => ({
             type: 'standard' as const,
             criteria: c,
             index: i,
@@ -253,11 +302,67 @@ export function mergeWorkflowRules(rules: Rule[]): { nodes: Node[]; edges: Edge[
           ...(rule.customFieldCriteria || []).map((c, i) => ({
             type: 'custom' as const,
             criteria: c,
-            index: i + (rule.standardFieldCriteria?.length || 0),
+            index: i + remainingCriteria.length,
           })),
         ]
 
-        let lastNodeId = sharedFirstConditionId
+        // Start from branch node or trigger, NOT from shared first condition
+        let lastNodeId = branchNodeId || (group.triggers.length > 0 ? `trigger-${groupId}` : null)
+
+        // Create special field nodes in order before regular conditions
+        const specialFieldOrder: Array<{ key: keyof SpecialFieldNodes; type: string; }> = [
+          { key: 'sourceSystem', type: 'sourceSystemNode' },
+          { key: 'lineOfBusiness', type: 'lineOfBusinessNode' },
+          { key: 'client', type: 'clientNode' },
+          { key: 'requestType', type: 'requestTypeFieldNode' },
+        ]
+
+        specialFieldOrder.forEach(({ key, type: nodeType }) => {
+          const fieldCriteria = specialFields[key]
+          if (fieldCriteria) {
+            const specialNodeId = `${rulePrefix}-${key}`
+
+            nodes.push({
+              id: specialNodeId,
+              type: nodeType,
+              position: { x: ruleXOffset, y: ruleYOffset },
+              data: {
+                values: fieldCriteria.values,
+                operator: fieldCriteria.operator,
+              },
+            })
+
+            if (lastNodeId) {
+              edges.push({
+                id: `e-${lastNodeId}-${specialNodeId}`,
+                source: lastNodeId,
+                target: specialNodeId,
+                type: 'default',
+                style: { stroke: color.edge, strokeWidth: 2 },
+              })
+            }
+
+            lastNodeId = specialNodeId
+            ruleXOffset += HORIZONTAL_SPACING
+          }
+        })
+
+        // If there's a shared first condition, connect from last special field (or branch/trigger if no special fields)
+        if (sharedFirstConditionId && lastNodeId) {
+          edges.push({
+            id: `e-${lastNodeId}-${sharedFirstConditionId}`,
+            source: lastNodeId,
+            target: sharedFirstConditionId,
+            type: 'default',
+            style: { stroke: color.edge, strokeWidth: 2 },
+          })
+          lastNodeId = sharedFirstConditionId
+          ruleXOffset += HORIZONTAL_SPACING
+        } else if (sharedFirstConditionId) {
+          // Fallback if no lastNodeId
+          lastNodeId = sharedFirstConditionId
+          ruleXOffset += HORIZONTAL_SPACING
+        }
 
         // Create remaining condition nodes (skip first one as it's shared)
         allCriteria.slice(1).forEach((item, index) => {

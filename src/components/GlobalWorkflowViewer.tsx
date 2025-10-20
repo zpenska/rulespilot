@@ -18,6 +18,10 @@ import LogicNode from './flow/LogicNode'
 import ActionNode from './flow/ActionNode'
 import TriggerEventNode from './flow/TriggerEventNode'
 import RequestTypeBranchNode from './flow/RequestTypeBranchNode'
+import SourceSystemNode from './flow/SourceSystemNode'
+import LineOfBusinessNode from './flow/LineOfBusinessNode'
+import ClientNode from './flow/ClientNode'
+import RequestTypeFieldNode from './flow/RequestTypeFieldNode'
 
 interface GlobalWorkflowViewerProps {
   onClose: () => void
@@ -50,6 +54,10 @@ function GlobalWorkflowViewerInner({ onClose }: GlobalWorkflowViewerProps) {
       actionNode: ActionNode,
       triggerEventNode: TriggerEventNode,
       requestTypeBranchNode: RequestTypeBranchNode,
+      sourceSystemNode: SourceSystemNode,
+      lineOfBusinessNode: LineOfBusinessNode,
+      clientNode: ClientNode,
+      requestTypeFieldNode: RequestTypeFieldNode,
     }),
     []
   )
