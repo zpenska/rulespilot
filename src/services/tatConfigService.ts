@@ -58,8 +58,8 @@ export async function saveTATConfig(config: TATConfig): Promise<void> {
       const docRef = doc(db, CONFIG_COLLECTION, TAT_CONFIG_DOC)
       await setDoc(docRef, config)
     } catch (error) {
-      console.error('Failed to save TAT config to Firebase:', error)
-      throw error
+      console.warn('Failed to save TAT config to Firebase (saved to localStorage):', error)
+      // Don't throw - allow graceful degradation to localStorage
     }
   }
 }
