@@ -415,7 +415,7 @@ export const exportAsAutoWorkflowRules = async (
 ): Promise<AutoWorkflowRulesExport> => {
   const rulesToExport = rules || (await getActiveRules('workflow'))
   // Filter to only workflow rules
-  const workflowRules = rulesToExport.filter(r => r.ruleType === 'workflow' || r.ruleType === 'skills')
+  const workflowRules = rulesToExport.filter(r => r.ruleType === 'workflow')
 
   return {
     type: 'AUTO_WORKFLOW_RULES',

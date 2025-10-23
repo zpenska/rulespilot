@@ -2,7 +2,6 @@ import Anthropic from '@anthropic-ai/sdk'
 import { Rule, StandardFieldCriteria, CustomFieldCriteria, RuleActions, RuleType, TATParameters } from '../../types/rules'
 import AI_KNOWLEDGE_BASE from '../../config/aiKnowledgeBase'
 import AI_KNOWLEDGE_WORKFLOW from '../../config/aiKnowledgeWorkflow'
-import AI_KNOWLEDGE_SKILLS from '../../config/aiKnowledgeSkills'
 import AI_KNOWLEDGE_TAT from '../../config/aiKnowledgeTAT'
 
 const anthropic = new Anthropic({
@@ -15,10 +14,10 @@ function getKnowledgeBase(ruleType: RuleType): string {
   switch (ruleType) {
     case 'workflow':
       return AI_KNOWLEDGE_WORKFLOW + '\n\n' + AI_KNOWLEDGE_BASE // Include base + workflow-specific
-    case 'skills':
-      return AI_KNOWLEDGE_SKILLS + '\n\n' + AI_KNOWLEDGE_BASE // Include base + skills-specific
     case 'tat':
       return AI_KNOWLEDGE_TAT // TAT-specific only (different structure)
+    case 'pullQueue':
+      return AI_KNOWLEDGE_BASE // Pull Queue is configuration, not rules
     default:
       return AI_KNOWLEDGE_BASE
   }

@@ -2,9 +2,10 @@
  * TAT (Turnaround Time) Rule Configuration
  *
  * Defines fields and options specific to TAT rules for calculating service due date/time.
+ * Also includes enterprise-level TAT configuration for pause functionality.
  */
 
-import { SourceDateTimeField, UnitsOfMeasure } from '../types/rules'
+import { SourceDateTimeField, UnitsOfMeasure, TATConfig } from '../types/rules'
 
 // Source Date/Time Field Options
 export const SOURCE_DATE_TIME_FIELDS: Array<{
@@ -93,3 +94,12 @@ export const TAT_FIELD_DESCRIPTIONS = {
   autoExtend: 'Enable automatic due date extension when specific conditions are met',
   extendStatusReason: 'Status reason code that triggers the automatic extension (e.g., 45DNOCLIN)',
 }
+
+// TAT Pause Configuration
+export const DEFAULT_TAT_CONFIG: TATConfig = {
+  pauseStatusReasons: []
+}
+
+// TAT Pause Description
+export const TAT_PAUSE_DESCRIPTION =
+  'Select status reasons that will pause the TAT clock. When a request enters one of these statuses, the TAT timer will stop until the status changes to a non-pause reason.'

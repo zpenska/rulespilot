@@ -1,5 +1,17 @@
 // Rule type categories
-export type RuleType = 'workflow' | 'skills' | 'tat'
+export type RuleType = 'workflow' | 'tat' | 'pullQueue'
+
+// Pull Queue Configuration
+export interface PullQueueConfig {
+  escalationsFirst: boolean
+  tatSafetyWindowHours: number
+  departmentOrder: string[]
+}
+
+// TAT Configuration
+export interface TATConfig {
+  pauseStatusReasons: string[]
+}
 
 // Operator types based on business requirements
 export type StandardOperator =
@@ -203,7 +215,7 @@ export interface TATParameters {
 export interface Rule {
   id: string
   code?: string  // For table display
-  ruleType: RuleType  // Type of rule: rules, skills, or tat
+  ruleType: RuleType  // Type of rule: workflow, tat, or pullQueue
   ruleDesc: string
   standardFieldCriteria: StandardFieldCriteria[]
   customFieldCriteria: CustomFieldCriteria[]
@@ -211,7 +223,7 @@ export interface Rule {
   activationDate?: string  // YYYY-MM-DD format
   status: 'active' | 'inactive'
   category?: string
-  actions?: RuleActions  // Only for workflow rules (rules/skills)
+  actions?: RuleActions  // Only for workflow rules
   tatParameters?: TATParameters  // Only for TAT rules
   triggerEvents?: TriggerEvent[]  // When this workflow rule fires
   requestTypeFilter?: RequestTypeFilter  // Inpatient/Outpatient/null filter

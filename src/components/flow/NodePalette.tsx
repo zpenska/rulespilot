@@ -1,7 +1,6 @@
 import { DragEvent, useState, useMemo } from 'react'
 import { ChevronDown, ChevronRight, Filter, GitBranch, Zap, Clock } from 'lucide-react'
 import { FIELD_DEFINITIONS } from '../../config/fieldDefinitions'
-import { SKILLS_ACTIONS } from '../../config/skillsConfig'
 import { useRulesStore } from '../../store/rulesStore'
 
 interface NodePaletteProps {
@@ -46,12 +45,10 @@ export default function NodePalette({ onDragStart }: NodePaletteProps) {
 
   // Get actions based on current rule type
   const actions = useMemo(() => {
-    if (currentRuleType === 'skills') {
-      return SKILLS_ACTIONS.map(action => ({ type: action.type, label: action.label }))
-    } else if (currentRuleType === 'workflow') {
+    if (currentRuleType === 'workflow') {
       return rulesActions
     }
-    return [] // TAT rules don't have actions, they have TAT calculation
+    return [] // TAT and pullQueue don't have actions in the visual builder
   }, [currentRuleType])
 
   return (

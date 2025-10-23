@@ -150,15 +150,15 @@ export default function RuleBuilder({ rule, onClose, onSave }: RuleBuilderProps)
     if (ruleType === 'tat') {
       // TAT rules need tatParameters
       ruleData.tatParameters = tatParameters
-    } else {
-      // Workflow rules (rules/skills) need actions
+    } else if (ruleType === 'workflow') {
+      // Workflow rules need actions
       const cleanedActions = { ...actions }
       if (cleanedActions.generateLetters && cleanedActions.generateLetters.length === 0) {
         delete cleanedActions.generateLetters
       }
       ruleData.actions = Object.keys(cleanedActions).length > 0 ? cleanedActions : undefined
 
-      // Add workflow-specific fields (only for workflow type, not skills)
+      // Add workflow-specific fields
       if (ruleType === 'workflow') {
         if (triggerEvents.length > 0) {
           ruleData.triggerEvents = triggerEvents
@@ -841,112 +841,6 @@ export default function RuleBuilder({ rule, onClose, onSave }: RuleBuilderProps)
               </h4>
 
             <div className="space-y-4">
-              {/* Skills-only actions */}
-              {currentRuleType === 'skills' && (
-                <>
-              {/* Assign Skill */}
-              <div className="flex items-center space-x-3">
-                <input
-                  type="checkbox"
-                  checked={!!actions.assignSkill}
-                  onChange={(e) => {
-                    if (e.target.checked) {
-                      setActions({ ...actions, assignSkill: { skillCode: '' } })
-                    } else {
-                      const { assignSkill, ...rest } = actions
-                      setActions(rest)
-                    }
-                  }}
-                  className="rounded border-gray-300"
-                />
-                <label className="text-sm font-medium text-gray-700">Assign Skill</label>
-                {actions.assignSkill && (
-                  <input
-                    type="text"
-                    value={actions.assignSkill.skillCode}
-                    onChange={(e) =>
-                      setActions({
-                        ...actions,
-                        assignSkill: { skillCode: e.target.value },
-                      })
-                    }
-                    placeholder="Skill Code (e.g., SKILL1)"
-                    className="flex-1 px-3 py-1 text-sm border border-gray-300 rounded-md"
-                  />
-                )}
-              </div>
-
-              {/* Assign Licenses */}
-              <div className="flex flex-col space-y-2">
-                <div className="flex items-center space-x-3">
-                  <input
-                    type="checkbox"
-                    checked={!!actions.assignLicense}
-                    onChange={(e) => {
-                      if (e.target.checked) {
-                        setActions({ ...actions, assignLicense: { licenseCodes: [] } })
-                      } else {
-                        const { assignLicense, ...rest } = actions
-                        setActions(rest)
-                      }
-                    }}
-                    className="rounded border-gray-300"
-                  />
-                  <label className="text-sm font-medium text-gray-700">Assign Licenses</label>
-                </div>
-                {actions.assignLicense && (
-                  <div className="ml-8 space-y-2">
-                    {(actions.assignLicense.licenseCodes || []).map((license, index) => (
-                      <div key={index} className="flex items-center space-x-2">
-                        <input
-                          type="text"
-                          value={license}
-                          onChange={(e) => {
-                            const newLicenses = [...(actions.assignLicense?.licenseCodes || [])]
-                            newLicenses[index] = e.target.value
-                            setActions({
-                              ...actions,
-                              assignLicense: { licenseCodes: newLicenses },
-                            })
-                          }}
-                          placeholder="License Code (e.g., RN, LPC)"
-                          className="flex-1 px-3 py-1 text-sm border border-gray-300 rounded-md"
-                        />
-                        <button
-                          type="button"
-                          onClick={() => {
-                            const newLicenses = (actions.assignLicense?.licenseCodes || []).filter((_, i) => i !== index)
-                            setActions({
-                              ...actions,
-                              assignLicense: { licenseCodes: newLicenses },
-                            })
-                          }}
-                          className="px-2 py-1 text-sm text-red-600 hover:bg-red-50 rounded"
-                        >
-                          Remove
-                        </button>
-                      </div>
-                    ))}
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setActions({
-                          ...actions,
-                          assignLicense: {
-                            licenseCodes: [...(actions.assignLicense?.licenseCodes || []), '']
-                          },
-                        })
-                      }}
-                      className="px-3 py-1 text-sm text-primary hover:bg-primary-light rounded"
-                    >
-                      + Add License
-                    </button>
-                  </div>
-                )}
-              </div>
-                </>
-              )}
-
               {/* Workflow-only actions */}
               {currentRuleType === 'workflow' && (
                 <>

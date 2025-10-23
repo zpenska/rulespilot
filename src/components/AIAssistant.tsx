@@ -24,11 +24,11 @@ export default function AIAssistant({ onRuleGenerated, onClose }: AIAssistantPro
           'Behavioral health with prior denials to clinical review and generate appeal letter',
           'Emergency inpatient admissions route to UR, generate tracking letter, and add monitoring hint',
         ]
-      case 'skills':
+      case 'pullQueue':
         return [
-          'Assign cardiology skill to requests with cardiac diagnoses',
-          'Pediatric requests require RN and PEDS licenses',
-          'High-value surgical cases to surgical review with MD license',
+          'Configure pull queue with 12-hour TAT safety window and escalations first',
+          'Set department priority order: Cardiology, BH, Oncology',
+          'Enable TAT safety override for items due within 8 hours',
         ]
       case 'tat':
         return [

@@ -14,6 +14,8 @@ import {
   isTATRuleFormat,
   subscribeToRules,
 } from '../services/rulesService'
+import PullQueueConfig from './PullQueueConfig'
+import TATConfig from './TATConfig'
 
 type TabFilter = 'all' | 'active' | 'inactive'
 
@@ -66,7 +68,14 @@ export default function RulesTable({ onEditRule, onCreateRule, onToggleAI, onOpe
   }, [openDropdown, showSettingsDropdown])
 
   // Subscribe to rules changes (filtered by current rule type)
+  // Skip subscription for pullQueue since it's a config page, not a rules list
   useEffect(() => {
+    if (currentRuleType === 'pullQueue') {
+      setRules([])
+      setLoading(false)
+      return
+    }
+
     setLoading(true)
     const unsubscribe = subscribeToRules(
       (updatedRules) => {
@@ -263,8 +272,8 @@ export default function RulesTable({ onEditRule, onCreateRule, onToggleAI, onOpe
 
   const ruleTypeTabs: { value: RuleType; label: string }[] = [
     { value: 'workflow', label: 'Workflow' },
-    { value: 'skills', label: 'Skills' },
     { value: 'tat', label: 'TAT' },
+    { value: 'pullQueue', label: 'Pull Queue' },
   ]
 
   return (
@@ -292,8 +301,9 @@ export default function RulesTable({ onEditRule, onCreateRule, onToggleAI, onOpe
             ))}
           </div>
 
-          {/* Action Buttons */}
-          <div className="flex items-center space-x-2">
+          {/* Action Buttons - Hide when on Pull Queue tab */}
+          {currentRuleType !== 'pullQueue' && (
+            <div className="flex items-center space-x-2">
               <div className="relative" ref={settingsDropdownRef}>
                 <button
                   onClick={() => setShowSettingsDropdown(!showSettingsDropdown)}
@@ -386,10 +396,20 @@ export default function RulesTable({ onEditRule, onCreateRule, onToggleAI, onOpe
               New Rule
             </button>
           </div>
+          )}
           </div>
 
-          {/* White Section - Filter Tabs and Table */}
-          <div className="bg-white rounded-b-xl px-3 py-4">
+          {/* Conditionally render Pull Queue Config, TAT Config + Rules Table, or Rules Table */}
+          {currentRuleType === 'pullQueue' ? (
+            <div className="bg-white rounded-b-xl">
+              <PullQueueConfig />
+            </div>
+          ) : (
+            <>
+            {/* Show TAT Config at top when on TAT tab */}
+            {currentRuleType === 'tat' && <TATConfig />}
+
+            <div className="bg-white rounded-b-xl px-3 py-4">
             {/* Filter Tabs Section */}
             <div className="flex items-center justify-between mb-4">
               <div className="inline-flex border border-gray-300 rounded-lg overflow-hidden">
@@ -717,6 +737,8 @@ export default function RulesTable({ onEditRule, onCreateRule, onToggleAI, onOpe
               </div>
             </div>
           </div>
+          </>
+          )}
         </div>
       </div>
     </div>
