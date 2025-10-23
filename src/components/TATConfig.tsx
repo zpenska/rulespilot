@@ -5,7 +5,11 @@ import { DEFAULT_TAT_CONFIG, TAT_PAUSE_DESCRIPTION } from '../config/tatConfig'
 import { getTATConfig, saveTATConfig } from '../services/tatConfigService'
 import { getDictionaryOptions } from '../services/dictionaryService'
 
-export default function TATConfigComponent() {
+interface TATConfigProps {
+  onClose: () => void
+}
+
+export default function TATConfigComponent({ onClose }: TATConfigProps) {
   const [config, setConfig] = useState<TATConfig>(DEFAULT_TAT_CONFIG)
   const [originalConfig, setOriginalConfig] = useState<TATConfig>(DEFAULT_TAT_CONFIG)
   const [loading, setLoading] = useState(true)
@@ -90,17 +94,25 @@ export default function TATConfigComponent() {
   }
 
   return (
-    <div className="bg-white border-t border-gray-200">
+    <div className="bg-white">
       <div className="p-6">
         <div className="max-w-4xl mx-auto">
           {/* Header */}
-          <div className="mb-6">
-            <h3 className="text-base font-semibold text-gray-900 mb-2">
-              TAT Pause Configuration
-            </h3>
-            <p className="text-sm text-gray-600">
-              {TAT_PAUSE_DESCRIPTION}
-            </p>
+          <div className="mb-6 flex items-start justify-between">
+            <div className="flex-1">
+              <h3 className="text-base font-semibold text-gray-900 mb-2">
+                TAT Pause Configuration
+              </h3>
+              <p className="text-sm text-gray-600">
+                {TAT_PAUSE_DESCRIPTION}
+              </p>
+            </div>
+            <button
+              onClick={onClose}
+              className="ml-4 p-2 hover:bg-gray-100 rounded-full transition-colors"
+            >
+              <X className="w-5 h-5 text-gray-500" />
+            </button>
           </div>
 
           {/* Status Reasons Selection */}

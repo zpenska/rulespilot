@@ -21,6 +21,7 @@ export default function PullQueueConfigComponent() {
     // Check if config has changes from original
     const changed =
       config.escalationsFirst !== originalConfig.escalationsFirst ||
+      config.maxQueueCapacity !== originalConfig.maxQueueCapacity ||
       config.tatSafetyWindowHours !== originalConfig.tatSafetyWindowHours ||
       JSON.stringify(config.departmentOrder) !== JSON.stringify(originalConfig.departmentOrder)
     setHasChanges(changed)
@@ -169,35 +170,35 @@ export default function PullQueueConfigComponent() {
             </div>
           </div>
 
-          {/* TAT Safety Window */}
+          {/* Max Queue Capacity */}
           <div className="bg-white rounded-xl shadow-sm border border-table-border p-6">
             <h3 className="text-base font-semibold text-gray-900 mb-4 pb-3 border-b border-gray-200">
-              TAT Safety Window
+              Max Queue Capacity
             </h3>
             <div className="flex items-center space-x-4">
               <div className="flex-1">
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Safety Window (hours)
+                  Maximum Requests per User
                 </label>
                 <p className="text-xs text-gray-500 mb-3">
-                  Items due within this window will override all other priorities to prevent missed TAT deadlines
+                  Sets the maximum number of requests that can be pulled into a user's queue at one time
                 </p>
                 <input
                   type="number"
                   min="1"
-                  max="72"
-                  value={config.tatSafetyWindowHours}
-                  onChange={(e) => setConfig({ ...config, tatSafetyWindowHours: parseInt(e.target.value) || 1 })}
+                  max="200"
+                  value={config.maxQueueCapacity}
+                  onChange={(e) => setConfig({ ...config, maxQueueCapacity: parseInt(e.target.value) || 1 })}
                   className="w-32 px-3 py-2 border border-gray-300 rounded-md focus:ring-primary focus:border-primary"
                 />
-                <span className="ml-2 text-sm text-gray-600">hours</span>
+                <span className="ml-2 text-sm text-gray-600">requests</span>
               </div>
-              <div className="flex-shrink-0 px-6 py-4 bg-amber-50 border border-amber-200 rounded-lg">
-                <div className="text-2xl font-bold text-amber-600">
-                  {config.tatSafetyWindowHours}h
+              <div className="flex-shrink-0 px-6 py-4 bg-blue-50 border border-blue-200 rounded-lg">
+                <div className="text-2xl font-bold text-blue-600">
+                  {config.maxQueueCapacity}
                 </div>
-                <div className="text-xs text-amber-700 mt-1">
-                  Safety Window
+                <div className="text-xs text-blue-700 mt-1">
+                  Max Capacity
                 </div>
               </div>
             </div>
@@ -267,6 +268,40 @@ export default function PullQueueConfigComponent() {
                   </div>
                 )
               })}
+            </div>
+          </div>
+
+          {/* TAT Safety Window */}
+          <div className="bg-white rounded-xl shadow-sm border border-table-border p-6">
+            <h3 className="text-base font-semibold text-gray-900 mb-4 pb-3 border-b border-gray-200">
+              TAT Safety Window
+            </h3>
+            <div className="flex items-center space-x-4">
+              <div className="flex-1">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Safety Window (hours)
+                </label>
+                <p className="text-xs text-gray-500 mb-3">
+                  Items due within this window will override all other priorities to prevent missed TAT deadlines
+                </p>
+                <input
+                  type="number"
+                  min="1"
+                  max="72"
+                  value={config.tatSafetyWindowHours}
+                  onChange={(e) => setConfig({ ...config, tatSafetyWindowHours: parseInt(e.target.value) || 1 })}
+                  className="w-32 px-3 py-2 border border-gray-300 rounded-md focus:ring-primary focus:border-primary"
+                />
+                <span className="ml-2 text-sm text-gray-600">hours</span>
+              </div>
+              <div className="flex-shrink-0 px-6 py-4 bg-amber-50 border border-amber-200 rounded-lg">
+                <div className="text-2xl font-bold text-amber-600">
+                  {config.tatSafetyWindowHours}h
+                </div>
+                <div className="text-xs text-amber-700 mt-1">
+                  Safety Window
+                </div>
+              </div>
             </div>
           </div>
 

@@ -3,8 +3,9 @@ import { PullQueueConfig } from '../types/rules'
 // Default Pull Queue Configuration
 export const DEFAULT_PULL_QUEUE_CONFIG: PullQueueConfig = {
   escalationsFirst: true,
+  maxQueueCapacity: 50,
   tatSafetyWindowHours: 12,
-  departmentOrder: ['Cardiology', 'BH', 'Oncology', 'General'],
+  departmentOrder: ['Cardiology', 'BH', 'Oncology', 'NICU', 'General'],
 }
 
 // Sample departments - can be loaded from a dictionary/CSV in the future
@@ -12,6 +13,7 @@ export const AVAILABLE_DEPARTMENTS = [
   { code: 'Cardiology', name: 'Cardiology' },
   { code: 'BH', name: 'Behavioral Health' },
   { code: 'Oncology', name: 'Oncology' },
+  { code: 'NICU', name: 'NICU' },
   { code: 'General', name: 'General' },
   { code: 'Pediatrics', name: 'Pediatrics' },
   { code: 'Surgery', name: 'Surgery' },

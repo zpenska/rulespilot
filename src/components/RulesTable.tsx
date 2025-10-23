@@ -38,6 +38,7 @@ export default function RulesTable({ onEditRule, onCreateRule, onToggleAI, onOpe
   const [loading, setLoading] = useState(true)
   const [openDropdown, setOpenDropdown] = useState<string | null>(null)
   const [showSettingsDropdown, setShowSettingsDropdown] = useState(false)
+  const [showTATConfig, setShowTATConfig] = useState(false)
   const [dropdownPosition, setDropdownPosition] = useState<{ top: number; right: number } | null>(null)
   const dropdownRef = useRef<HTMLDivElement>(null)
   const settingsDropdownRef = useRef<HTMLDivElement>(null)
@@ -301,9 +302,8 @@ export default function RulesTable({ onEditRule, onCreateRule, onToggleAI, onOpe
             ))}
           </div>
 
-          {/* Action Buttons - Hide when on Pull Queue tab */}
-          {currentRuleType !== 'pullQueue' && (
-            <div className="flex items-center space-x-2">
+          {/* Action Buttons */}
+          <div className="flex items-center space-x-2">
               <div className="relative" ref={settingsDropdownRef}>
                 <button
                   onClick={() => setShowSettingsDropdown(!showSettingsDropdown)}
@@ -316,6 +316,22 @@ export default function RulesTable({ onEditRule, onCreateRule, onToggleAI, onOpe
                 {showSettingsDropdown && (
                   <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg border border-gray-200 z-10">
                     <div className="py-1">
+                      {/* TAT-specific option */}
+                      {currentRuleType === 'tat' && (
+                        <>
+                          <button
+                            onClick={() => {
+                              setShowTATConfig(true)
+                              setShowSettingsDropdown(false)
+                            }}
+                            className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center space-x-2"
+                          >
+                            <Settings className="w-4 h-4" />
+                            <span>TAT Pause Settings</span>
+                          </button>
+                          <div className="border-t border-gray-100"></div>
+                        </>
+                      )}
                       <button
                         onClick={() => {
                           handleImportRules()
@@ -396,19 +412,14 @@ export default function RulesTable({ onEditRule, onCreateRule, onToggleAI, onOpe
               New Rule
             </button>
           </div>
-          )}
           </div>
 
-          {/* Conditionally render Pull Queue Config, TAT Config + Rules Table, or Rules Table */}
+          {/* Conditionally render Pull Queue Config or Rules Table */}
           {currentRuleType === 'pullQueue' ? (
             <div className="bg-white rounded-b-xl">
               <PullQueueConfig />
             </div>
           ) : (
-            <>
-            {/* Show TAT Config at top when on TAT tab */}
-            {currentRuleType === 'tat' && <TATConfig />}
-
             <div className="bg-white rounded-b-xl px-3 py-4">
             {/* Filter Tabs Section */}
             <div className="flex items-center justify-between mb-4">
@@ -737,10 +748,25 @@ export default function RulesTable({ onEditRule, onCreateRule, onToggleAI, onOpe
               </div>
             </div>
           </div>
-          </>
           )}
         </div>
       </div>
+
+      {/* TAT Config Modal */}
+      {showTATConfig && (
+        <div className="fixed inset-0 z-50 overflow-y-auto">
+          <div className="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+            <div
+              className="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75"
+              onClick={() => setShowTATConfig(false)}
+            />
+
+            <div className="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-4xl sm:w-full">
+              <TATConfig onClose={() => setShowTATConfig(false)} />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

@@ -82,6 +82,14 @@ export default function RuleBuilder({ rule, onClose, onSave }: RuleBuilderProps)
     extendStatusReason: rule?.tatParameters?.extendStatusReason || null,
   })
   const [holidayDateInput, setHolidayDateInput] = useState('')
+  const [skillOptions, setSkillOptions] = useState<Array<{ value: string; label: string }>>([])
+
+  // Load skill options for Assign Skill action
+  useEffect(() => {
+    if (currentRuleType === 'workflow') {
+      getDictionaryOptions('Skills').then(setSkillOptions).catch(console.error)
+    }
+  }, [currentRuleType])
 
   const handleAddStandardCriteria = () => {
     setStandardCriteria([
@@ -844,6 +852,77 @@ export default function RuleBuilder({ rule, onClose, onSave }: RuleBuilderProps)
               {/* Workflow-only actions */}
               {currentRuleType === 'workflow' && (
                 <>
+              {/* Assign Skill */}
+              <div className="flex items-center space-x-3">
+                <input
+                  type="checkbox"
+                  checked={!!actions.assignSkill}
+                  onChange={(e) => {
+                    if (e.target.checked) {
+                      setActions({ ...actions, assignSkill: { skillCode: '' } })
+                    } else {
+                      const { assignSkill, ...rest } = actions
+                      setActions(rest)
+                    }
+                  }}
+                  className="rounded border-gray-300"
+                />
+                <label className="text-sm font-medium text-gray-700">Assign Skill</label>
+                {actions.assignSkill && (
+                  <select
+                    value={actions.assignSkill.skillCode}
+                    onChange={(e) =>
+                      setActions({
+                        ...actions,
+                        assignSkill: { skillCode: e.target.value },
+                      })
+                    }
+                    className="flex-1 px-3 py-1 text-sm border border-gray-300 rounded-md"
+                  >
+                    <option value="">Select Skill...</option>
+                    {skillOptions.map((opt) => (
+                      <option key={opt.value} value={opt.value}>
+                        {opt.label}
+                      </option>
+                    ))}
+                  </select>
+                )}
+              </div>
+
+              {/* Assign Licenses */}
+              <div className="flex items-center space-x-3">
+                <input
+                  type="checkbox"
+                  checked={!!actions.assignLicense}
+                  onChange={(e) => {
+                    if (e.target.checked) {
+                      setActions({ ...actions, assignLicense: { licenseCodes: [] } })
+                    } else {
+                      const { assignLicense, ...rest } = actions
+                      setActions(rest)
+                    }
+                  }}
+                  className="rounded border-gray-300"
+                />
+                <label className="text-sm font-medium text-gray-700">Assign Licenses</label>
+                {actions.assignLicense && (
+                  <input
+                    type="text"
+                    value={actions.assignLicense.licenseCodes.join(', ')}
+                    onChange={(e) =>
+                      setActions({
+                        ...actions,
+                        assignLicense: {
+                          licenseCodes: e.target.value.split(',').map((s) => s.trim()).filter(Boolean),
+                        },
+                      })
+                    }
+                    placeholder="License codes (e.g., RN, LPC, MD)"
+                    className="flex-1 px-3 py-1 text-sm border border-gray-300 rounded-md"
+                  />
+                )}
+              </div>
+
               {/* Department Routing */}
               <div className="flex items-center space-x-3">
                 <input

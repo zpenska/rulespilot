@@ -4,6 +4,7 @@ export type RuleType = 'workflow' | 'tat' | 'pullQueue'
 // Pull Queue Configuration
 export interface PullQueueConfig {
   escalationsFirst: boolean
+  maxQueueCapacity: number
   tatSafetyWindowHours: number
   departmentOrder: string[]
 }
