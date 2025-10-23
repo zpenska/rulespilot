@@ -135,13 +135,15 @@ export interface CloseAction {
 export type MessageContext =
   | 'MEMBER_DEMOGRAPHICS'
   | 'PROVIDER_DEMOGRAPHICS'
-  | 'SERVICES_DIAGNOSIS'
+  | 'SERVICES'
+  | 'DIAGNOSIS'
   | 'BUSINESS_ENTERPRISE_CATEGORIES'
 
 export type MessageDisplayLocation =
   | 'MEMBER'
   | 'PROVIDER'
-  | 'SERVICES_DIAGNOSIS'
+  | 'SERVICES'
+  | 'DIAGNOSIS'
 
 export type MessageColor =
   | 'RED'

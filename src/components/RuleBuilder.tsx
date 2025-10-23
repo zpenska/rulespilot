@@ -1111,7 +1111,7 @@ export default function RuleBuilder({ rule, onClose, onSave }: RuleBuilderProps)
                         Context
                       </label>
                       <div className="space-y-1">
-                        {(['MEMBER_DEMOGRAPHICS', 'PROVIDER_DEMOGRAPHICS', 'SERVICES_DIAGNOSIS', 'BUSINESS_ENTERPRISE_CATEGORIES'] as MessageContext[]).map((ctx) => (
+                        {(['MEMBER_DEMOGRAPHICS', 'PROVIDER_DEMOGRAPHICS', 'SERVICES', 'DIAGNOSIS', 'BUSINESS_ENTERPRISE_CATEGORIES'] as MessageContext[]).map((ctx) => (
                           <label key={ctx} className="flex items-center space-x-2">
                             <input
                               type="checkbox"
@@ -1160,7 +1160,8 @@ export default function RuleBuilder({ rule, onClose, onSave }: RuleBuilderProps)
                         <option value="">Select location...</option>
                         <option value="MEMBER">Member</option>
                         <option value="PROVIDER">Provider</option>
-                        <option value="SERVICES_DIAGNOSIS">Services & Diagnosis</option>
+                        <option value="SERVICES">Services</option>
+                        <option value="DIAGNOSIS">Diagnosis</option>
                       </select>
                     </div>
 

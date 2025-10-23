@@ -123,7 +123,8 @@ function ActionNode({ data }: NodeProps) {
         const locationLabels: Record<string, string> = {
           MEMBER: 'Member',
           PROVIDER: 'Provider',
-          SERVICES_DIAGNOSIS: 'Services'
+          SERVICES: 'Services',
+          DIAGNOSIS: 'Diagnosis'
         }
         parts.push(`→ ${locationLabels[actionData.displayLocation] || actionData.displayLocation}`)
       }

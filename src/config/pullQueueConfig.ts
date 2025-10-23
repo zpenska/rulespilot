@@ -3,7 +3,7 @@ import { PullQueueConfig } from '../types/rules'
 // Default Pull Queue Configuration
 export const DEFAULT_PULL_QUEUE_CONFIG: PullQueueConfig = {
   escalationsFirst: true,
-  maxQueueCapacity: 50,
+  maxQueueCapacity: 5,
   tatSafetyWindowHours: 12,
   departmentOrder: ['Cardiology', 'BH', 'Oncology', 'NICU', 'General'],
 }
