@@ -1,0 +1,15 @@
+Skill_Code,Skill_Description,Active
+CARDIOLOGY,Cardiology,TRUE
+ORTHOPEDICS,Orthopedics,TRUE
+NEUROLOGY,Neurology/Neurosurgery,TRUE
+ONCOLOGY,Oncology/Hematology,TRUE
+GASTROENTEROLOGY,Gastroenterology,TRUE
+PULMONOLOGY,Pulmonology,TRUE
+GENERAL_SURGERY,General Surgery,TRUE
+OB_GYN,Obstetrics & Gynecology,TRUE
+PEDIATRICS,Pediatrics,TRUE
+PSYCHIATRY,Psychiatry,TRUE
+EMERGENCY_MEDICINE,Emergency Medicine,TRUE
+RADIOLOGY,Radiology,TRUE
+ANESTHESIOLOGY,Anesthesiology,TRUE
+PAIN_MANAGEMENT,Pain Management,TRUE
