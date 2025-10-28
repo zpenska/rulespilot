@@ -179,7 +179,7 @@ export default function SkillForm({ skill, onClose, onSave }: SkillFormProps) {
               Map Diagnosis Codes
             </label>
             <p className="text-xs text-gray-500 mb-2">
-              Enter single codes, comma-separated codes, or ranges (e.g., "E11.9" or "E11.0, E11.1, E11.9" or "E11.0-E11.9")
+              Enter single codes, comma-separated codes, or ranges (e.g., "E11.9", "E11.0, E11.1, E11.9", "E11.0-E11.9")
             </p>
             <div className="flex gap-2 mb-3">
               <input
@@ -192,7 +192,7 @@ export default function SkillForm({ skill, onClose, onSave }: SkillFormProps) {
                     handleAddDiagnosisCode()
                   }
                 }}
-                placeholder="E11.9 or E11.0, E11.1, E11.9 or E11.0-E11.9"
+                placeholder="e.g., E11.9, E12.1, E13.0"
                 className="flex-1 px-4 py-2 border border-gray-300 rounded-md focus:ring-primary focus:border-primary"
               />
               <button
@@ -228,7 +228,7 @@ export default function SkillForm({ skill, onClose, onSave }: SkillFormProps) {
               Map Service Codes (Optional)
             </label>
             <p className="text-xs text-gray-500 mb-2">
-              Enter single codes, comma-separated codes, or ranges (e.g., "99213" or "99213, 99214, 99215" or "99213-99215")
+              Enter single codes, comma-separated codes, or ranges (e.g., "99213", "99213, 99214, 99215", "99213-99215")
             </p>
             <div className="flex gap-2 mb-3">
               <input
@@ -241,7 +241,7 @@ export default function SkillForm({ skill, onClose, onSave }: SkillFormProps) {
                     handleAddServiceCode()
                   }
                 }}
-                placeholder="99213 or 99213, 99214, 99215 or 99213-99215"
+                placeholder="e.g., 99213, 99214, 99215"
                 className="flex-1 px-4 py-2 border border-gray-300 rounded-md focus:ring-primary focus:border-primary"
               />
               <button
