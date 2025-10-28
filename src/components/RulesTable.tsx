@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { Search, Plus, Download, Upload, Trash2, Power, PowerOff, Copy, Eye, MoreVertical, Settings, Sparkles, Workflow, Globe } from 'lucide-react'
 import { Rule, RuleType } from '../types/rules'
 import {
@@ -20,16 +21,12 @@ import TATConfig from './TATConfig'
 type TabFilter = 'all' | 'active' | 'inactive'
 
 interface RulesTableProps {
-  onEditRule: (rule: Rule) => void
-  onCreateRule: () => void
-  onToggleAI?: () => void
-  onOpenBranchingBuilder?: () => void
-  onOpenGlobalViewer?: () => void
   currentRuleType: RuleType
   onRuleTypeChange: (ruleType: RuleType) => void
 }
 
-export default function RulesTable({ onEditRule, onCreateRule, onToggleAI, onOpenBranchingBuilder, onOpenGlobalViewer, currentRuleType, onRuleTypeChange }: RulesTableProps) {
+export default function RulesTable({ currentRuleType, onRuleTypeChange }: RulesTableProps) {
+  const navigate = useNavigate()
   const [rules, setRules] = useState<Rule[]>([])
   const [filteredRules, setFilteredRules] = useState<Rule[]>([])
   const [selectedRules, setSelectedRules] = useState<Set<string>>(new Set())
@@ -146,7 +143,7 @@ export default function RulesTable({ onEditRule, onCreateRule, onToggleAI, onOpe
 
   const handleClone = async (rule: Rule) => {
     const cloned = await cloneRule(rule.id)
-    onEditRule(cloned)
+    navigate(`/${currentRuleType}/edit/${cloned.id}`)
   }
 
   const handleBulkActivate = async () => {
@@ -273,6 +270,8 @@ export default function RulesTable({ onEditRule, onCreateRule, onToggleAI, onOpe
 
   const ruleTypeTabs: { value: RuleType; label: string }[] = [
     { value: 'workflow', label: 'Workflow' },
+    { value: 'hints', label: 'Hints' },
+    { value: 'skills', label: 'Skills' },
     { value: 'tat', label: 'TAT' },
     { value: 'pullQueue', label: 'Pull Queue' },
   ]
@@ -377,35 +376,33 @@ export default function RulesTable({ onEditRule, onCreateRule, onToggleAI, onOpe
                 />
               </div>
               {/* Workflow-specific buttons */}
-              {currentRuleType === 'workflow' && onOpenGlobalViewer && (
+              {currentRuleType === 'workflow' && (
                 <button
-                  onClick={onOpenGlobalViewer}
+                  onClick={() => navigate(`/${currentRuleType}/viewer`)}
                   className="inline-flex items-center px-3 py-1.5 border border-gray-300 rounded text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
                 >
                   <Globe className="w-4 h-4 mr-1.5" />
                   View All Workflows
                 </button>
               )}
-              {currentRuleType === 'workflow' && onOpenBranchingBuilder && (
+              {currentRuleType === 'workflow' && (
                 <button
-                  onClick={onOpenBranchingBuilder}
+                  onClick={() => navigate(`/${currentRuleType}/branching`)}
                   className="inline-flex items-center px-3 py-1.5 border border-gray-300 rounded text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
                 >
                   <Workflow className="w-4 h-4 mr-1.5" />
                   Build Branching Flow
                 </button>
               )}
-              {onToggleAI && (
-                <button
-                  onClick={onToggleAI}
-                  className="inline-flex items-center px-3 py-1.5 border border-transparent rounded text-sm font-medium text-white bg-primary hover:bg-primary-hover"
-                >
-                  <Sparkles className="w-4 h-4 mr-1.5" />
-                  AI Assistant
-                </button>
-              )}
+              <button
+                onClick={() => navigate(`/${currentRuleType}/ai`)}
+                className="inline-flex items-center px-3 py-1.5 border border-transparent rounded text-sm font-medium text-white bg-primary hover:bg-primary-hover"
+              >
+                <Sparkles className="w-4 h-4 mr-1.5" />
+                AI Assistant
+              </button>
             <button
-              onClick={onCreateRule}
+              onClick={() => navigate(`/${currentRuleType}/new`)}
               className="inline-flex items-center px-3 py-1.5 border border-transparent rounded text-sm font-medium text-white bg-primary hover:bg-primary-hover"
             >
               <Plus className="w-4 h-4 mr-1.5" />
@@ -541,7 +538,7 @@ export default function RulesTable({ onEditRule, onCreateRule, onToggleAI, onOpe
                     <div className="text-center">
                       <p className="text-gray-500">No rules found</p>
                       <button
-                        onClick={onCreateRule}
+                        onClick={() => navigate(`/${currentRuleType}/new`)}
                         className="mt-4 text-primary hover:text-primary-hover"
                       >
                         Create your first rule
@@ -639,16 +636,6 @@ export default function RulesTable({ onEditRule, onCreateRule, onToggleAI, onOpe
                               </div>
                             ) : rule.actions ? (
                               <div className="flex flex-wrap gap-1">
-                                {rule.actions.assignSkill && (
-                                  <span className="inline-flex px-2 py-0.5 rounded text-sm font-medium bg-primary-light text-primary">
-                                    Assign Skill
-                                  </span>
-                                )}
-                                {rule.actions.assignLicense && (
-                                  <span className="inline-flex px-2 py-0.5 rounded text-sm font-medium bg-purple-50 text-purple-600">
-                                    Assign Licenses
-                                  </span>
-                                )}
                                 {rule.actions.departmentRouting && (
                                   <span className="inline-flex px-2 py-0.5 rounded text-sm font-medium bg-orange-50 text-orange-600">
                                     Department Routing
@@ -664,11 +651,12 @@ export default function RulesTable({ onEditRule, onCreateRule, onToggleAI, onOpe
                                     Letter ({rule.actions.generateLetters.length})
                                   </span>
                                 )}
-                                {rule.actions.hints && (
-                                  <span className="inline-flex px-2 py-0.5 rounded text-sm font-medium bg-yellow-50 text-yellow-600">
-                                    Hints
-                                  </span>
-                                )}
+                              </div>
+                            ) : rule.hints ? (
+                              <div className="flex flex-wrap gap-1">
+                                <span className="inline-flex px-2 py-0.5 rounded text-sm font-medium bg-yellow-50 text-yellow-600">
+                                  Hints
+                                </span>
                               </div>
                             ) : (
                               '-'
@@ -698,7 +686,7 @@ export default function RulesTable({ onEditRule, onCreateRule, onToggleAI, onOpe
                                 <div className="py-1">
                                   <button
                                     onClick={() => {
-                                      onEditRule(rule)
+                                      navigate(`/${currentRuleType}/edit/${rule.id}`)
                                       setOpenDropdown(null)
                                     }}
                                     className="w-full text-left px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-50 flex items-center space-x-2"

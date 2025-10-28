@@ -1,6 +1,9 @@
 import { useState, useEffect } from 'react'
+import { Routes, Route, useNavigate, useParams } from 'react-router-dom'
 import RulesTable from './components/RulesTable'
 import RuleBuilder from './components/RuleBuilder'
+import HintsRuleBuilder from './components/HintsRuleBuilder'
+import SkillsManager from './components/SkillsManager'
 import AIAssistant from './components/AIAssistant'
 import GlobalWorkflowViewer from './components/GlobalWorkflowViewer'
 import BranchingWorkflowBuilder from './components/BranchingWorkflowBuilder'
@@ -8,22 +11,11 @@ import { Rule, RuleType } from './types/rules'
 import { initializeDictionaries } from './services/dictionaryService'
 import { isConfigured as isFirebaseConfigured } from './config/firebase'
 import { useRulesStore } from './store/rulesStore'
+import { getRule } from './services/rulesService'
 import { AlertCircle } from 'lucide-react'
 
 function App() {
-  const currentRuleType = useRulesStore((state) => state.currentRuleType)
-  const setCurrentRuleType = useRulesStore((state) => state.setCurrentRuleType)
-  const [showRuleBuilder, setShowRuleBuilder] = useState(false)
-  const [showAIAssistant, setShowAIAssistant] = useState(false)
-  const [showGlobalViewer, setShowGlobalViewer] = useState(false)
-  const [showBranchingBuilder, setShowBranchingBuilder] = useState(false)
-  const [editingRule, setEditingRule] = useState<Rule | null>(null)
-  const [aiGeneratedRule, setAiGeneratedRule] = useState<Partial<Rule> | null>(null)
   const [initializing, setInitializing] = useState(true)
-
-  const handleRuleTypeChange = (ruleType: RuleType) => {
-    setCurrentRuleType(ruleType)
-  }
 
   useEffect(() => {
     // Initialize dictionaries on app load
@@ -46,38 +38,6 @@ function App() {
 
     return () => clearTimeout(initTimeout)
   }, [])
-
-  const handleCreateRule = () => {
-    setEditingRule(null)
-    setAiGeneratedRule(null)
-    setShowRuleBuilder(true)
-  }
-
-  const handleEditRule = (rule: Rule) => {
-    setEditingRule(rule)
-    setAiGeneratedRule(null)
-    setShowRuleBuilder(true)
-  }
-
-  const handleCloseRuleBuilder = () => {
-    setShowRuleBuilder(false)
-    setEditingRule(null)
-    setAiGeneratedRule(null)
-  }
-
-  const handleSaveRule = (_rule: Rule) => {
-    // Rule is already saved by RuleBuilder
-    setShowRuleBuilder(false)
-    setEditingRule(null)
-    setAiGeneratedRule(null)
-  }
-
-  const handleAIRuleGenerated = (rule: Partial<Rule>) => {
-    setAiGeneratedRule(rule)
-    setEditingRule(null)
-    setShowRuleBuilder(true)
-    setShowAIAssistant(false)
-  }
 
   if (initializing) {
     return (
@@ -112,63 +72,141 @@ function App() {
         </div>
       )}
 
-      {/* Main Content */}
-      <main className="flex-1 flex flex-col">
-        {/* Rules Table */}
-        <div className="flex-1 flex flex-col min-h-0">
-          <RulesTable
-            onEditRule={handleEditRule}
-            onCreateRule={handleCreateRule}
-            onToggleAI={() => setShowAIAssistant(!showAIAssistant)}
-            onOpenGlobalViewer={() => setShowGlobalViewer(true)}
-            onOpenBranchingBuilder={() => setShowBranchingBuilder(true)}
-            currentRuleType={currentRuleType}
-            onRuleTypeChange={handleRuleTypeChange}
-          />
-        </div>
+      {/* Main Content - Route-based */}
+      <main className="flex-1 flex flex-col min-h-0">
+        <Routes>
+          {/* Default route - workflow rules */}
+          <Route path="/" element={<RulesTableWrapper />} />
+
+          {/* Rules table by type */}
+          <Route path="/:ruleType" element={<RulesTableWrapper />} />
+
+          {/* Create new rule */}
+          <Route path="/:ruleType/new" element={<RuleBuilderWrapper />} />
+
+          {/* Edit existing rule */}
+          <Route path="/:ruleType/edit/:ruleId" element={<RuleBuilderWrapper />} />
+
+          {/* AI Assistant */}
+          <Route path="/:ruleType/ai" element={<AIAssistantWrapper />} />
+
+          {/* Global Workflow Viewer */}
+          <Route path="/:ruleType/viewer" element={<GlobalWorkflowViewerWrapper />} />
+
+          {/* Branching Workflow Builder */}
+          <Route path="/:ruleType/branching" element={<BranchingWorkflowBuilderWrapper />} />
+        </Routes>
       </main>
-
-      {/* AI Assistant Modal */}
-      {showAIAssistant && (
-        <div className="fixed inset-0 z-50 overflow-y-auto">
-          <div className="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
-            <div className="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75" onClick={() => setShowAIAssistant(false)} />
-
-            <div className="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl sm:w-full">
-              <AIAssistant
-                onRuleGenerated={handleAIRuleGenerated}
-                onClose={() => setShowAIAssistant(false)}
-              />
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Rule Builder Modal */}
-      {showRuleBuilder && (
-        <RuleBuilder
-          rule={aiGeneratedRule ? { ...editingRule, ...aiGeneratedRule } as Rule : editingRule}
-          onClose={handleCloseRuleBuilder}
-          onSave={handleSaveRule}
-        />
-      )}
-
-      {/* Global Workflow Viewer */}
-      {showGlobalViewer && (
-        <GlobalWorkflowViewer onClose={() => setShowGlobalViewer(false)} />
-      )}
-
-      {/* Branching Workflow Builder */}
-      {showBranchingBuilder && (
-        <BranchingWorkflowBuilder
-          onClose={() => setShowBranchingBuilder(false)}
-          onSave={(nodes, edges) => {
-            console.log('Branching flow saved:', nodes, edges)
-            // Future: Convert branching flow to multiple rules
-          }}
-        />
-      )}
     </div>
+  )
+}
+
+// Wrapper components for route-based rendering
+
+function RulesTableWrapper() {
+  const navigate = useNavigate()
+  const { ruleType = 'workflow' } = useParams<{ ruleType: RuleType }>()
+  const setCurrentRuleType = useRulesStore((state) => state.setCurrentRuleType)
+
+  useEffect(() => {
+    setCurrentRuleType(ruleType as RuleType)
+  }, [ruleType, setCurrentRuleType])
+
+  // Show Skills Manager for skills tab
+  if (ruleType === 'skills') {
+    return <SkillsManager />
+  }
+
+  // Show Rules Table for all other rule types
+  return (
+    <RulesTable
+      currentRuleType={ruleType as RuleType}
+      onRuleTypeChange={(type) => navigate(`/${type}`)}
+    />
+  )
+}
+
+function RuleBuilderWrapper() {
+  const navigate = useNavigate()
+  const { ruleType = 'workflow', ruleId } = useParams<{ ruleType: RuleType; ruleId?: string }>()
+  const [rule, setRule] = useState<Rule | null>(null)
+  const [loading, setLoading] = useState(!!ruleId)
+
+  useEffect(() => {
+    if (ruleId) {
+      setLoading(true)
+      getRule(ruleId)
+        .then(setRule)
+        .catch(console.error)
+        .finally(() => setLoading(false))
+    }
+  }, [ruleId])
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center p-8">
+        <div className="text-gray-500">Loading rule...</div>
+      </div>
+    )
+  }
+
+  // Use HintsRuleBuilder for hints rules
+  if (ruleType === 'hints') {
+    return (
+      <HintsRuleBuilder
+        rule={rule}
+        onClose={() => navigate(`/${ruleType}`)}
+        onSave={() => navigate(`/${ruleType}`)}
+      />
+    )
+  }
+
+  // Use standard RuleBuilder for workflow and TAT rules
+  return (
+    <RuleBuilder
+      rule={rule}
+      onClose={() => navigate(`/${ruleType}`)}
+      onSave={() => navigate(`/${ruleType}`)}
+    />
+  )
+}
+
+function AIAssistantWrapper() {
+  const navigate = useNavigate()
+  const { ruleType = 'workflow' } = useParams<{ ruleType: RuleType }>()
+
+  return (
+    <div className="flex-1 flex flex-col bg-white">
+      <AIAssistant
+        onRuleGenerated={() => {
+          // Navigate to rule builder with the generated rule
+          navigate(`/${ruleType}/new`)
+        }}
+        onClose={() => navigate(`/${ruleType}`)}
+      />
+    </div>
+  )
+}
+
+function GlobalWorkflowViewerWrapper() {
+  const navigate = useNavigate()
+  const { ruleType = 'workflow' } = useParams<{ ruleType: RuleType }>()
+
+  return <GlobalWorkflowViewer onClose={() => navigate(`/${ruleType}`)} />
+}
+
+function BranchingWorkflowBuilderWrapper() {
+  const navigate = useNavigate()
+  const { ruleType = 'workflow' } = useParams<{ ruleType: RuleType }>()
+
+  return (
+    <BranchingWorkflowBuilder
+      onClose={() => navigate(`/${ruleType}`)}
+      onSave={(nodes, edges) => {
+        console.log('Branching flow saved:', nodes, edges)
+        navigate(`/${ruleType}`)
+      }}
+    />
   )
 }
 

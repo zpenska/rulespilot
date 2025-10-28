@@ -252,26 +252,6 @@ export const validateActions = (actions?: RuleActions): ValidationError[] => {
     return errors
   }
 
-  // Validate assignSkill
-  if (actions.assignSkill) {
-    if (!actions.assignSkill.skillCode || actions.assignSkill.skillCode.trim() === '') {
-      errors.push({
-        field: 'actions.assignSkill.skillCode',
-        message: 'Skill code is required for assignSkill action',
-      })
-    }
-  }
-
-  // Validate assignLicense
-  if (actions.assignLicense) {
-    if (!actions.assignLicense.licenseCodes || actions.assignLicense.licenseCodes.length === 0) {
-      errors.push({
-        field: 'actions.assignLicense.licenseCodes',
-        message: 'At least one license code is required for assignLicense action',
-      })
-    }
-  }
-
   // Validate departmentRouting
   if (actions.departmentRouting) {
     if (!actions.departmentRouting.departmentCode || actions.departmentRouting.departmentCode.trim() === '') {
@@ -307,16 +287,6 @@ export const validateActions = (actions?: RuleActions): ValidationError[] => {
       errors.push({
         field: 'actions.close.dispositionCode',
         message: 'Disposition code is required for close action',
-      })
-    }
-  }
-
-  // Validate hints
-  if (actions.hints) {
-    if (!actions.hints.message || actions.hints.message.trim() === '') {
-      errors.push({
-        field: 'actions.hints.message',
-        message: 'Message is required for hints action',
       })
     }
   }

@@ -1,5 +1,5 @@
 // Rule type categories
-export type RuleType = 'workflow' | 'tat' | 'pullQueue'
+export type RuleType = 'workflow' | 'tat' | 'pullQueue' | 'hints' | 'skills'
 
 // Pull Queue Configuration
 export interface PullQueueConfig {
@@ -174,14 +174,11 @@ export interface CreateProgramAction {
   programName: string
 }
 
-// Combined actions interface
+// Combined actions interface (for workflow rules only)
 export interface RuleActions {
-  assignSkill?: AssignSkillAction
-  assignLicense?: AssignLicenseAction
   departmentRouting?: DepartmentRoutingAction
   generateLetters?: GenerateLetterAction[]
   close?: CloseAction
-  hints?: HintsAction
   createTask?: CreateTaskAction
   transferOwnership?: TransferOwnershipAction
   createProgram?: CreateProgramAction
@@ -218,7 +215,7 @@ export interface TATParameters {
 export interface Rule {
   id: string
   code?: string  // For table display
-  ruleType: RuleType  // Type of rule: workflow, tat, or pullQueue
+  ruleType: RuleType  // Type of rule: workflow, tat, pullQueue, hints, or skills
   ruleDesc: string
   standardFieldCriteria: StandardFieldCriteria[]
   customFieldCriteria: CustomFieldCriteria[]
@@ -227,6 +224,7 @@ export interface Rule {
   status: 'active' | 'inactive'
   category?: string
   actions?: RuleActions  // Only for workflow rules
+  hints?: HintsAction  // Only for hints rules
   tatParameters?: TATParameters  // Only for TAT rules
   triggerEvents?: TriggerEvent[]  // When this workflow rule fires
   requestTypeFilter?: RequestTypeFilter  // Inpatient/Outpatient/null filter
@@ -335,6 +333,18 @@ export interface Dictionary {
 export interface ValidationError {
   field: string
   message: string
+}
+
+// Skills Definition - for skills management
+export interface SkillDefinition {
+  id: string
+  skillName: string
+  description: string
+  diagnosisCodes: string[]
+  serviceCodes: string[]
+  active: boolean
+  createdAt: string
+  updatedAt: string
 }
 
 // Legacy RuleGroup type (not used in current implementation)
