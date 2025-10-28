@@ -94,13 +94,13 @@ export default function SkillsManager() {
       </div>
 
       {/* Filter Tabs */}
-      <div className="flex items-center space-x-1 mb-4 bg-gray-100 rounded-lg p-1 w-fit">
+      <div className="inline-flex border border-gray-300 rounded-lg overflow-hidden mb-4">
         <button
           onClick={() => setActiveTab('all')}
-          className={`inline-flex items-center space-x-2 px-4 py-2 text-sm font-medium rounded-md transition-colors ${
+          className={`inline-flex items-center space-x-2 px-4 py-2 text-sm font-medium border-r border-gray-300 ${
             activeTab === 'all'
-              ? 'bg-white text-gray-900 shadow-sm'
-              : 'text-gray-700 hover:bg-gray-50'
+              ? 'bg-primary-light text-gray-900'
+              : 'bg-white text-gray-700 hover:bg-gray-50'
           }`}
         >
           <span>All</span>
@@ -112,10 +112,10 @@ export default function SkillsManager() {
         </button>
         <button
           onClick={() => setActiveTab('active')}
-          className={`inline-flex items-center space-x-2 px-4 py-2 text-sm font-medium rounded-md transition-colors ${
+          className={`inline-flex items-center space-x-2 px-4 py-2 text-sm font-medium border-r border-gray-300 ${
             activeTab === 'active'
-              ? 'bg-white text-gray-900 shadow-sm'
-              : 'text-gray-700 hover:bg-gray-50'
+              ? 'bg-primary-light text-gray-900'
+              : 'bg-white text-gray-700 hover:bg-gray-50'
           }`}
         >
           <span>Active</span>
@@ -127,10 +127,10 @@ export default function SkillsManager() {
         </button>
         <button
           onClick={() => setActiveTab('inactive')}
-          className={`inline-flex items-center space-x-2 px-4 py-2 text-sm font-medium rounded-md transition-colors ${
+          className={`inline-flex items-center space-x-2 px-4 py-2 text-sm font-medium ${
             activeTab === 'inactive'
-              ? 'bg-white text-gray-900 shadow-sm'
-              : 'text-gray-700 hover:bg-gray-50'
+              ? 'bg-primary-light text-gray-900'
+              : 'bg-white text-gray-700 hover:bg-gray-50'
           }`}
         >
           <span>Inactive</span>
