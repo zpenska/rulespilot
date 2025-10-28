@@ -78,19 +78,9 @@ export default function SkillsManager() {
 
   return (
     <div className="bg-white rounded-b-xl px-6 py-4">
-      {/* Add Button */}
-      <div className="flex items-center justify-end mb-6">
-        <button
-          onClick={() => navigate('/skills/new')}
-          className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary hover:bg-primary-hover"
-        >
-          <Plus className="w-4 h-4 mr-2" />
-          Add New Skill
-        </button>
-      </div>
-
-      {/* Filter Tabs */}
-      <div className="inline-flex border border-gray-300 rounded-lg overflow-hidden mb-4">
+      {/* Filter Tabs and Add Button */}
+      <div className="flex items-center justify-between mb-4">
+        <div className="inline-flex border border-gray-300 rounded-lg overflow-hidden">
         <button
           onClick={() => setActiveTab('all')}
           className={`inline-flex items-center space-x-2 px-4 py-2 text-sm font-medium border-r border-gray-300 ${
@@ -135,6 +125,15 @@ export default function SkillsManager() {
           }`}>
             {inactiveCount}
           </span>
+        </button>
+        </div>
+
+        <button
+          onClick={() => navigate('/skills/new')}
+          className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary hover:bg-primary-hover"
+        >
+          <Plus className="w-4 h-4 mr-2" />
+          Add New Skill
         </button>
       </div>
 
