@@ -6,7 +6,7 @@ export interface PullQueueConfig {
   escalationsFirst: boolean
   maxQueueCapacity: number
   tatSafetyWindowHours: number
-  departmentOrder: string[]
+  departmentOrder: string[][] // Array of priority levels, each containing department codes at that priority
 }
 
 // TAT Configuration
@@ -220,6 +220,7 @@ export interface Rule {
   standardFieldCriteria: StandardFieldCriteria[]
   customFieldCriteria: CustomFieldCriteria[]
   weight?: number
+  atoms?: number  // Auto-calculated count of criteria fields
   activationDate?: string  // YYYY-MM-DD format
   status: 'active' | 'inactive'
   category?: string

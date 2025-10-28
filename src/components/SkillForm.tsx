@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react'
-import { Plus, X, Save } from 'lucide-react'
+import { Plus, X, Save, Sparkles } from 'lucide-react'
 import { SkillDefinition } from '../types/rules'
 import { collection, addDoc, updateDoc, doc } from 'firebase/firestore'
 import { db } from '../config/firebase'
+import { getMedicalCodesFromNaturalLanguage } from '../services/ai/claude'
 
 interface SkillFormProps {
   skill?: SkillDefinition | null
@@ -18,6 +19,12 @@ export default function SkillForm({ skill, onClose, onSave }: SkillFormProps) {
   const [serviceInput, setServiceInput] = useState('')
   const [serviceCodes, setServiceCodes] = useState<string[]>([])
   const [saving, setSaving] = useState(false)
+
+  // AI query states
+  const [diagnosisAIQuery, setDiagnosisAIQuery] = useState('')
+  const [serviceAIQuery, setServiceAIQuery] = useState('')
+  const [loadingDiagnosisAI, setLoadingDiagnosisAI] = useState(false)
+  const [loadingServiceAI, setLoadingServiceAI] = useState(false)
 
   useEffect(() => {
     if (skill) {
@@ -78,6 +85,54 @@ export default function SkillForm({ skill, onClose, onSave }: SkillFormProps) {
 
   const handleRemoveServiceCode = (code: string) => {
     setServiceCodes(serviceCodes.filter(c => c !== code))
+  }
+
+  const handleDiagnosisAIQuery = async () => {
+    if (!diagnosisAIQuery.trim()) return
+
+    setLoadingDiagnosisAI(true)
+    try {
+      const codes = await getMedicalCodesFromNaturalLanguage(diagnosisAIQuery, 'diagnosis')
+
+      // Filter out codes that are already in the list
+      const newCodes = codes.filter(code => !diagnosisCodes.includes(code))
+
+      if (newCodes.length > 0) {
+        setDiagnosisCodes([...diagnosisCodes, ...newCodes])
+        setDiagnosisAIQuery('')
+      } else {
+        alert('No new codes found or all suggested codes are already added.')
+      }
+    } catch (error) {
+      console.error('Error getting diagnosis codes from AI:', error)
+      alert('Failed to get codes from AI. Please try again.')
+    } finally {
+      setLoadingDiagnosisAI(false)
+    }
+  }
+
+  const handleServiceAIQuery = async () => {
+    if (!serviceAIQuery.trim()) return
+
+    setLoadingServiceAI(true)
+    try {
+      const codes = await getMedicalCodesFromNaturalLanguage(serviceAIQuery, 'service')
+
+      // Filter out codes that are already in the list
+      const newCodes = codes.filter(code => !serviceCodes.includes(code))
+
+      if (newCodes.length > 0) {
+        setServiceCodes([...serviceCodes, ...newCodes])
+        setServiceAIQuery('')
+      } else {
+        alert('No new codes found or all suggested codes are already added.')
+      }
+    } catch (error) {
+      console.error('Error getting service codes from AI:', error)
+      alert('Failed to get codes from AI. Please try again.')
+    } finally {
+      setLoadingServiceAI(false)
+    }
   }
 
   const handleSaveSkill = async () => {
@@ -181,6 +236,8 @@ export default function SkillForm({ skill, onClose, onSave }: SkillFormProps) {
             <p className="text-xs text-gray-500 mb-2">
               Enter single codes, comma-separated codes, or ranges (e.g., "E11.9", "E11.0, E11.1, E11.9", "E11.0-E11.9")
             </p>
+
+            {/* Manual Entry */}
             <div className="flex gap-2 mb-3">
               <input
                 type="text"
@@ -198,10 +255,50 @@ export default function SkillForm({ skill, onClose, onSave }: SkillFormProps) {
               <button
                 onClick={handleAddDiagnosisCode}
                 className="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary-hover"
+                title="Add codes manually"
               >
                 <Plus className="w-4 h-4" />
               </button>
             </div>
+
+            {/* AI Query */}
+            <div className="mb-3 p-4 bg-gradient-to-r from-purple-50 to-blue-50 rounded-lg border border-purple-200">
+              <div className="flex items-center gap-2 mb-2">
+                <Sparkles className="w-4 h-4 text-purple-600" />
+                <label className="text-sm font-medium text-purple-900">
+                  AI-Powered Code Search
+                </label>
+              </div>
+              <p className="text-xs text-purple-700 mb-3">
+                Describe what you're looking for in natural language (e.g., "give me all diagnosis codes for heart disease")
+              </p>
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={diagnosisAIQuery}
+                  onChange={(e) => setDiagnosisAIQuery(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault()
+                      handleDiagnosisAIQuery()
+                    }
+                  }}
+                  placeholder="e.g., all diagnosis codes for diabetes"
+                  className="flex-1 px-4 py-2 border border-purple-300 rounded-md focus:ring-purple-500 focus:border-purple-500"
+                  disabled={loadingDiagnosisAI}
+                />
+                <button
+                  onClick={handleDiagnosisAIQuery}
+                  disabled={loadingDiagnosisAI || !diagnosisAIQuery.trim()}
+                  className="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed inline-flex items-center gap-2"
+                  title="Use AI to find codes"
+                >
+                  <Sparkles className="w-4 h-4" />
+                  {loadingDiagnosisAI ? 'Searching...' : 'AI Search'}
+                </button>
+              </div>
+            </div>
+
             {diagnosisCodes.length > 0 && (
               <div className="flex flex-wrap gap-2 p-3 bg-gray-50 rounded-md border border-gray-200">
                 {diagnosisCodes.map((code) => (
@@ -230,6 +327,8 @@ export default function SkillForm({ skill, onClose, onSave }: SkillFormProps) {
             <p className="text-xs text-gray-500 mb-2">
               Enter single codes, comma-separated codes, or ranges (e.g., "99213", "99213, 99214, 99215", "99213-99215")
             </p>
+
+            {/* Manual Entry */}
             <div className="flex gap-2 mb-3">
               <input
                 type="text"
@@ -247,10 +346,50 @@ export default function SkillForm({ skill, onClose, onSave }: SkillFormProps) {
               <button
                 onClick={handleAddServiceCode}
                 className="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary-hover"
+                title="Add codes manually"
               >
                 <Plus className="w-4 h-4" />
               </button>
             </div>
+
+            {/* AI Query */}
+            <div className="mb-3 p-4 bg-gradient-to-r from-purple-50 to-blue-50 rounded-lg border border-purple-200">
+              <div className="flex items-center gap-2 mb-2">
+                <Sparkles className="w-4 h-4 text-purple-600" />
+                <label className="text-sm font-medium text-purple-900">
+                  AI-Powered Code Search
+                </label>
+              </div>
+              <p className="text-xs text-purple-700 mb-3">
+                Describe what you're looking for in natural language (e.g., "give me all service codes for office visits")
+              </p>
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={serviceAIQuery}
+                  onChange={(e) => setServiceAIQuery(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault()
+                      handleServiceAIQuery()
+                    }
+                  }}
+                  placeholder="e.g., all CPT codes for physical therapy"
+                  className="flex-1 px-4 py-2 border border-purple-300 rounded-md focus:ring-purple-500 focus:border-purple-500"
+                  disabled={loadingServiceAI}
+                />
+                <button
+                  onClick={handleServiceAIQuery}
+                  disabled={loadingServiceAI || !serviceAIQuery.trim()}
+                  className="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed inline-flex items-center gap-2"
+                  title="Use AI to find codes"
+                >
+                  <Sparkles className="w-4 h-4" />
+                  {loadingServiceAI ? 'Searching...' : 'AI Search'}
+                </button>
+              </div>
+            </div>
+
             {serviceCodes.length > 0 && (
               <div className="flex flex-wrap gap-2 p-3 bg-gray-50 rounded-md border border-gray-200">
                 {serviceCodes.map((code) => (

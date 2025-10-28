@@ -17,6 +17,7 @@ import {
 } from '../config/fieldDefinitions'
 import { validateRule } from '../services/validationService'
 import { createRule, updateRule } from '../services/rulesService'
+import { calculateAtoms } from '../utils/ruleUtils'
 
 interface HintsRuleBuilderProps {
   rule?: Rule | null
@@ -36,6 +37,9 @@ export default function HintsRuleBuilder({ rule, onClose, onSave }: HintsRuleBui
   )
   const [hints, setHints] = useState<HintsAction>(rule?.hints || { message: '' })
   const [errors, setErrors] = useState<string[]>([])
+
+  // Calculate atoms automatically from criteria
+  const atoms = calculateAtoms({ standardFieldCriteria: standardCriteria, customFieldCriteria: customCriteria })
   const [saving, setSaving] = useState(false)
 
   const handleAddStandardCriteria = () => {
@@ -70,6 +74,7 @@ export default function HintsRuleBuilder({ rule, onClose, onSave }: HintsRuleBui
       standardFieldCriteria: standardCriteria,
       customFieldCriteria: customCriteria,
       weight,
+      atoms,
       status,
       hints,
     }
@@ -174,6 +179,18 @@ export default function HintsRuleBuilder({ rule, onClose, onSave }: HintsRuleBui
                   />
                 </div>
                 <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Atoms (Criteria Count)
+                  </label>
+                  <input
+                    type="number"
+                    value={atoms}
+                    disabled
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50 text-gray-600 cursor-not-allowed"
+                    title="Auto-calculated from number of criteria fields"
+                  />
+                </div>
+                <div className="col-span-2">
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Status
                   </label>

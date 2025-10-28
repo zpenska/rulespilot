@@ -33,6 +33,7 @@ import { createRule, updateRule } from '../services/rulesService'
 import { getDictionaryOptions } from '../services/dictionaryService'
 import { useRulesStore } from '../store/rulesStore'
 import RuleFlowBuilder from './RuleFlowBuilder'
+import { calculateAtoms } from '../utils/ruleUtils'
 
 interface RuleBuilderProps {
   rule?: Rule | null
@@ -54,6 +55,9 @@ export default function RuleBuilder({ rule, onClose, onSave }: RuleBuilderProps)
   )
   const [actions, setActions] = useState<RuleActions>(rule?.actions || {})
   const [errors, setErrors] = useState<string[]>([])
+
+  // Calculate atoms automatically from criteria
+  const atoms = calculateAtoms({ standardFieldCriteria: standardCriteria, customFieldCriteria: customCriteria })
   const [saving, setSaving] = useState(false)
   const currentRuleType = useRulesStore((state) => state.currentRuleType)
 
@@ -139,6 +143,7 @@ export default function RuleBuilder({ rule, onClose, onSave }: RuleBuilderProps)
       standardFieldCriteria: standardCriteria,
       customFieldCriteria: customCriteria,
       weight,
+      atoms,
       activationDate,
       status,
     }
@@ -282,19 +287,33 @@ export default function RuleBuilder({ rule, onClose, onSave }: RuleBuilderProps)
                   placeholder="Describe what this rule does..."
                 />
               </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Weight (Priority)
-                </label>
-                <input
-                  type="number"
-                  value={weight || ''}
-                  onChange={(e) =>
-                    setWeight(e.target.value ? parseInt(e.target.value) : undefined)
-                  }
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-primary focus:border-primary"
-                  placeholder="Higher weight = higher priority"
-                />
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Weight (Priority)
+                  </label>
+                  <input
+                    type="number"
+                    value={weight || ''}
+                    onChange={(e) =>
+                      setWeight(e.target.value ? parseInt(e.target.value) : undefined)
+                    }
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-primary focus:border-primary"
+                    placeholder="Higher weight = higher priority"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Atoms (Criteria Count)
+                  </label>
+                  <input
+                    type="number"
+                    value={atoms}
+                    disabled
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50 text-gray-600 cursor-not-allowed"
+                    title="Auto-calculated from number of criteria fields"
+                  />
+                </div>
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">

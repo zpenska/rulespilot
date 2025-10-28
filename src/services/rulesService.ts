@@ -14,6 +14,7 @@ import {
 import { db } from '../config/firebase'
 import { Rule, RuleExport, AutoWorkflowRulesExport, RuleType, TATRuleExport, DueDateRulesExport, StandardOperator, CustomOperator } from '../types/rules'
 import { nanoid } from 'nanoid'
+import { calculateAtoms } from '../utils/ruleUtils'
 
 const RULES_COLLECTION = 'rules'
 
@@ -52,10 +53,14 @@ export const createRule = async (rule: Omit<Rule, 'id' | 'createdAt' | 'updatedA
   const id = nanoid()
   const now = new Date().toISOString()
 
+  // Calculate atoms if not provided
+  const atoms = rule.atoms ?? calculateAtoms(rule)
+
   const newRule: Rule = {
     ...rule,
     id,
     code: rule.code || generateRuleCode(),
+    atoms,
     createdAt: now,
     updatedAt: now,
   }
@@ -179,8 +184,19 @@ export const getInactiveRules = async (): Promise<Rule[]> => {
 export const updateRule = async (id: string, updates: Partial<Rule>): Promise<void> => {
   const docRef = doc(db, RULES_COLLECTION, id)
 
+  // Recalculate atoms if criteria fields are being updated
+  let atoms = updates.atoms
+  if (updates.standardFieldCriteria !== undefined || updates.customFieldCriteria !== undefined) {
+    // If criteria are being updated, recalculate atoms
+    atoms = calculateAtoms({
+      standardFieldCriteria: updates.standardFieldCriteria,
+      customFieldCriteria: updates.customFieldCriteria,
+    })
+  }
+
   const cleanedUpdates = removeUndefinedFields({
     ...updates,
+    ...(atoms !== undefined && { atoms }),
     updatedAt: new Date().toISOString(),
   })
 

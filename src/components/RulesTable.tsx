@@ -26,6 +26,7 @@ import AIAssistant from './AIAssistant'
 import GlobalWorkflowViewer from './GlobalWorkflowViewer'
 import BranchingWorkflowBuilder from './BranchingWorkflowBuilder'
 import { SkillDefinition } from '../types/rules'
+import { getAtoms } from '../utils/ruleUtils'
 import { doc, getDoc } from 'firebase/firestore'
 import { db } from '../config/firebase'
 
@@ -502,23 +503,29 @@ export default function RulesTable({ currentRuleType, onRuleTypeChange }: RulesT
               )}
             </div>
           ) : showRuleBuilder ? (
-            <div className="bg-white rounded-b-xl">
+            <div className="h-[calc(100vh-12rem)]">
               {ruleBuilderLoading ? (
-                <div className="flex items-center justify-center p-8">
+                <div className="flex items-center justify-center p-8 bg-white">
                   <div className="text-gray-500">Loading rule...</div>
                 </div>
               ) : currentRuleType === 'hints' ? (
-                <HintsRuleBuilder
-                  rule={editingRule}
-                  onClose={() => navigate(`/${currentRuleType}`)}
-                  onSave={() => navigate(`/${currentRuleType}`)}
-                />
+                // Use old builder for editing hints rules
+                <div className="bg-white rounded-b-xl">
+                  <HintsRuleBuilder
+                    rule={editingRule}
+                    onClose={() => navigate(`/${currentRuleType}`)}
+                    onSave={() => navigate(`/${currentRuleType}`)}
+                  />
+                </div>
               ) : (
-                <RuleBuilder
-                  rule={editingRule}
-                  onClose={() => navigate(`/${currentRuleType}`)}
-                  onSave={() => navigate(`/${currentRuleType}`)}
-                />
+                // Use old builder for editing other rules
+                <div className="bg-white rounded-b-xl">
+                  <RuleBuilder
+                    rule={editingRule}
+                    onClose={() => navigate(`/${currentRuleType}`)}
+                    onSave={() => navigate(`/${currentRuleType}`)}
+                  />
+                </div>
               )}
             </div>
           ) : currentRuleType === 'pullQueue' ? (
@@ -691,6 +698,9 @@ export default function RulesTable({ currentRuleType, onRuleTypeChange }: RulesT
                           Weight
                         </th>
                         <th className="px-4 py-2 text-left text-sm font-medium text-table-header">
+                          Atoms
+                        </th>
+                        <th className="px-4 py-2 text-left text-sm font-medium text-table-header">
                           Rule Actions
                         </th>
                         <th className="px-4 py-2 text-left text-sm font-medium text-table-header">
@@ -732,6 +742,9 @@ export default function RulesTable({ currentRuleType, onRuleTypeChange }: RulesT
                           </td>
                           <td className="px-4 py-3 text-sm text-gray-600">
                             {rule.weight ?? '-'}
+                          </td>
+                          <td className="px-4 py-3 text-sm text-gray-600">
+                            {getAtoms(rule)}
                           </td>
                           <td className="px-4 py-3 text-sm text-gray-500">
                             {rule.ruleType === 'tat' && rule.tatParameters ? (

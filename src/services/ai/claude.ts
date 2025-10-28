@@ -198,3 +198,51 @@ You are an AI assistant helping users build healthcare authorization rules. Answ
 
   return response.content[0].type === 'text' ? response.content[0].text : ''
 }
+
+/**
+ * Get medical codes from natural language query
+ */
+export async function getMedicalCodesFromNaturalLanguage(
+  query: string,
+  codeType: 'diagnosis' | 'service'
+): Promise<string[]> {
+  const codeTypeDescription = codeType === 'diagnosis'
+    ? 'ICD-10 diagnosis codes'
+    : 'CPT/HCPCS service/procedure codes'
+
+  const message = await anthropic.messages.create({
+    model: 'claude-sonnet-4-20250514',
+    max_tokens: 1000,
+    messages: [
+      {
+        role: 'user',
+        content: `You are a medical coding expert. Based on the user's natural language query, provide a list of relevant ${codeTypeDescription}.
+
+User query: "${query}"
+
+Return ONLY a JSON array of code strings, no explanations or extra text.
+Example format: ["E11.9", "E11.65", "E10.9"]
+
+If the query is for ${codeType === 'diagnosis' ? 'diagnosis' : 'service'} codes, provide the most relevant codes.
+Include both specific and general codes when appropriate.
+Maximum 20 codes.`,
+      },
+    ],
+  })
+
+  const responseText = message.content[0].type === 'text' ? message.content[0].text : ''
+
+  // Extract JSON from markdown code blocks if present
+  const jsonMatch =
+    responseText.match(/```(?:json)?\n?([\s\S]*?)\n?```/) ||
+    responseText.match(/\[[\s\S]*?\]/)
+  const jsonText = jsonMatch ? jsonMatch[1] || jsonMatch[0] : responseText
+
+  try {
+    const codes = JSON.parse(jsonText.trim())
+    return Array.isArray(codes) ? codes : []
+  } catch (error) {
+    console.error('Error parsing AI response:', error)
+    return []
+  }
+}
