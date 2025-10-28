@@ -78,12 +78,8 @@ export default function SkillsManager() {
 
   return (
     <div className="bg-white rounded-b-xl px-6 py-4">
-      {/* Header with Add Button */}
-      <div className="flex items-center justify-between mb-6">
-        <div>
-          <h2 className="text-xl font-semibold text-gray-900">Skills Management</h2>
-          <p className="text-sm text-gray-600 mt-1">Manage skills and map them to diagnosis and service codes</p>
-        </div>
+      {/* Add Button */}
+      <div className="flex items-center justify-end mb-6">
         <button
           onClick={() => navigate('/skills/new')}
           className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary hover:bg-primary-hover"
