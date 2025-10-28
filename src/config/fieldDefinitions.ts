@@ -386,4 +386,5 @@ export const CUSTOM_FIELD_ASSOCIATIONS = [
   { value: 'MEMBER', label: 'Member' },
   { value: 'ENROLLMENT', label: 'Enrollment' },
   { value: 'REQUEST', label: 'Request' },
+  { value: 'SERVICE', label: 'Service' },
 ] as const

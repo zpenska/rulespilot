@@ -29,7 +29,7 @@ export type CustomOperator = 'IN' | 'NOT_IN'
 
 export type ProviderRole = 'SERVICING' | 'REFERRING' | 'ORDERING' | 'RENDERING'
 
-export type CustomFieldAssociation = 'MEMBER' | 'ENROLLMENT' | 'REQUEST'
+export type CustomFieldAssociation = 'MEMBER' | 'ENROLLMENT' | 'REQUEST' | 'SERVICE'
 
 // Standard field names
 export type StandardFieldName =
