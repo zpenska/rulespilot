@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { Search, Plus, Download, Upload, Trash2, Power, PowerOff, Copy, Eye, MoreVertical, Settings, Sparkles, Workflow, Globe } from 'lucide-react'
 import { Rule, RuleType } from '../types/rules'
 import {
@@ -14,9 +14,16 @@ import {
   importTATRulesFromJSON,
   isTATRuleFormat,
   subscribeToRules,
+  getRule,
 } from '../services/rulesService'
 import PullQueueConfig from './PullQueueConfig'
 import TATConfig from './TATConfig'
+import SkillsManager from './SkillsManager'
+import RuleBuilder from './RuleBuilder'
+import HintsRuleBuilder from './HintsRuleBuilder'
+import AIAssistant from './AIAssistant'
+import GlobalWorkflowViewer from './GlobalWorkflowViewer'
+import BranchingWorkflowBuilder from './BranchingWorkflowBuilder'
 
 type TabFilter = 'all' | 'active' | 'inactive'
 
@@ -27,6 +34,7 @@ interface RulesTableProps {
 
 export default function RulesTable({ currentRuleType, onRuleTypeChange }: RulesTableProps) {
   const navigate = useNavigate()
+  const { ruleId, '*': routeSuffix } = useParams<{ ruleId?: string; '*'?: string }>()
   const [rules, setRules] = useState<Rule[]>([])
   const [filteredRules, setFilteredRules] = useState<Rule[]>([])
   const [selectedRules, setSelectedRules] = useState<Set<string>>(new Set())
@@ -41,6 +49,30 @@ export default function RulesTable({ currentRuleType, onRuleTypeChange }: RulesT
   const settingsDropdownRef = useRef<HTMLDivElement>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const buttonRefs = useRef<{ [key: string]: HTMLButtonElement | null }>({})
+
+  // Check what view we're in based on URL
+  const [editingRule, setEditingRule] = useState<Rule | null>(null)
+  const [ruleBuilderLoading, setRuleBuilderLoading] = useState(false)
+
+  const isCreatingNew = routeSuffix === 'new'
+  const isEditingRule = routeSuffix?.startsWith('edit/') && ruleId
+  const isAIView = routeSuffix === 'ai'
+  const isViewerView = routeSuffix === 'viewer'
+  const isBranchingView = routeSuffix === 'branching'
+  const showRuleBuilder = isCreatingNew || isEditingRule
+
+  // Load rule for editing
+  useEffect(() => {
+    if (isEditingRule && ruleId) {
+      setRuleBuilderLoading(true)
+      getRule(ruleId)
+        .then(setEditingRule)
+        .catch(console.error)
+        .finally(() => setRuleBuilderLoading(false))
+    } else {
+      setEditingRule(null)
+    }
+  }, [isEditingRule, ruleId])
 
   // Handle click outside to close dropdown
   useEffect(() => {
@@ -411,11 +443,51 @@ export default function RulesTable({ currentRuleType, onRuleTypeChange }: RulesT
           </div>
           </div>
 
-          {/* Conditionally render Pull Queue Config or Rules Table */}
-          {currentRuleType === 'pullQueue' ? (
+          {/* Conditionally render based on route and rule type */}
+          {isAIView ? (
+            <div className="bg-white rounded-b-xl">
+              <AIAssistant
+                onRuleGenerated={() => navigate(`/${currentRuleType}/new`)}
+                onClose={() => navigate(`/${currentRuleType}`)}
+              />
+            </div>
+          ) : isViewerView ? (
+            <div className="bg-white rounded-b-xl">
+              <GlobalWorkflowViewer onClose={() => navigate(`/${currentRuleType}`)} />
+            </div>
+          ) : isBranchingView ? (
+            <div className="bg-white rounded-b-xl">
+              <BranchingWorkflowBuilder
+                onClose={() => navigate(`/${currentRuleType}`)}
+                onSave={() => navigate(`/${currentRuleType}`)}
+              />
+            </div>
+          ) : showRuleBuilder ? (
+            <div className="bg-white rounded-b-xl">
+              {ruleBuilderLoading ? (
+                <div className="flex items-center justify-center p-8">
+                  <div className="text-gray-500">Loading rule...</div>
+                </div>
+              ) : currentRuleType === 'hints' ? (
+                <HintsRuleBuilder
+                  rule={editingRule}
+                  onClose={() => navigate(`/${currentRuleType}`)}
+                  onSave={() => navigate(`/${currentRuleType}`)}
+                />
+              ) : (
+                <RuleBuilder
+                  rule={editingRule}
+                  onClose={() => navigate(`/${currentRuleType}`)}
+                  onSave={() => navigate(`/${currentRuleType}`)}
+                />
+              )}
+            </div>
+          ) : currentRuleType === 'pullQueue' ? (
             <div className="bg-white rounded-b-xl">
               <PullQueueConfig />
             </div>
+          ) : currentRuleType === 'skills' ? (
+            <SkillsManager />
           ) : (
             <div className="bg-white rounded-b-xl px-3 py-4">
             {/* Filter Tabs Section */}

@@ -197,9 +197,9 @@ export default function RuleBuilder({ rule, onClose, onSave }: RuleBuilderProps)
   }
 
   return (
-    <div className="flex-1 flex flex-col bg-bg-light overflow-hidden">
-      {/* Header */}
-      <div className="bg-white px-6 py-4 border-b border-gray-200 flex items-center justify-between">
+    <div className="flex flex-col h-full">
+      {/* Header - Inline style without modal appearance */}
+      <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
         <h3 className="text-lg font-medium text-gray-900">
           {rule ? 'Edit Rule' : 'Create New Rule'}
         </h3>
@@ -230,13 +230,6 @@ export default function RuleBuilder({ rule, onClose, onSave }: RuleBuilderProps)
               Visual Builder
             </button>
           </div>
-
-          <button
-            onClick={onClose}
-            className="text-gray-400 hover:text-gray-500"
-          >
-            <X className="w-5 h-5" />
-          </button>
         </div>
       </div>
 

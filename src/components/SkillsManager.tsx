@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Plus, X, Trash2, Edit2, Search } from 'lucide-react'
+import { Plus, X, Trash2, Edit2 } from 'lucide-react'
 import { SkillDefinition } from '../types/rules'
 import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc } from 'firebase/firestore'
 import { db } from '../config/firebase'
@@ -8,7 +8,6 @@ export default function SkillsManager() {
   const [skills, setSkills] = useState<SkillDefinition[]>([])
   const [showDialog, setShowDialog] = useState(false)
   const [editingSkill, setEditingSkill] = useState<SkillDefinition | null>(null)
-  const [searchTerm, setSearchTerm] = useState('')
   const [loading, setLoading] = useState(true)
 
   // Form state
@@ -138,18 +137,14 @@ export default function SkillsManager() {
     }
   }
 
-  const filteredSkills = skills.filter(skill =>
-    skill.skillName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    skill.description.toLowerCase().includes(searchTerm.toLowerCase())
-  )
-
   return (
-    <div className="flex-1 flex flex-col bg-bg-light">
-      {/* Header */}
-      <div className="px-6 py-4 bg-white border-b border-table-border">
-        <div className="flex items-center justify-between">
+    <>
+      {/* Content within the white rounded box */}
+      <div className="bg-white rounded-b-xl px-6 py-4">
+        {/* Header with Add Button */}
+        <div className="flex items-center justify-between mb-6">
           <div>
-            <h1 className="text-2xl font-semibold text-gray-900">Skills Management</h1>
+            <h2 className="text-xl font-semibold text-gray-900">Skills Management</h2>
             <p className="text-sm text-gray-600 mt-1">Manage skills and map them to diagnosis and service codes</p>
           </div>
           <button
@@ -161,32 +156,18 @@ export default function SkillsManager() {
           </button>
         </div>
 
-        {/* Search */}
-        <div className="mt-4 relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-          <input
-            type="text"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder="Search skills..."
-            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:ring-primary focus:border-primary"
-          />
-        </div>
-      </div>
-
-      {/* Skills Table */}
-      <div className="flex-1 overflow-auto px-6 py-4">
+        {/* Table Container */}
         {loading ? (
           <div className="flex items-center justify-center h-64">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
           </div>
-        ) : filteredSkills.length === 0 ? (
-          <div className="flex flex-col items-center justify-center h-64 text-gray-500">
+        ) : skills.length === 0 ? (
+          <div className="flex flex-col items-center justify-center h-64 text-gray-500 border border-gray-200 rounded-lg">
             <p className="text-lg font-medium">No skills found</p>
             <p className="text-sm mt-2">Click "Add New Skill" to create your first skill</p>
           </div>
         ) : (
-          <div className="bg-white rounded-lg shadow-sm border border-table-border overflow-hidden">
+          <div className="rounded-lg border border-table-border bg-white shadow-sm overflow-hidden">
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
                 <tr>
@@ -208,7 +189,7 @@ export default function SkillsManager() {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {filteredSkills.map((skill) => (
+                {skills.map((skill) => (
                   <tr key={skill.id} className="hover:bg-gray-50">
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm font-medium text-gray-900">{skill.skillName}</div>
@@ -321,12 +302,12 @@ export default function SkillsManager() {
                     />
                   </div>
 
-                  {/* Map Diagnoses */}
+                  {/* Map Diagnosis Codes */}
                   <div>
                     <label className="block text-sm font-medium text-gray-900 mb-2">
-                      Map Diagnoses
+                      Map Diagnosis Codes
                     </label>
-                    <div className="flex gap-2 mb-2">
+                    <div className="flex gap-2 mb-3">
                       <input
                         type="text"
                         value={diagnosisInput}
@@ -337,32 +318,34 @@ export default function SkillsManager() {
                             handleAddDiagnosisCode()
                           }
                         }}
-                        placeholder="Diagnosis Code (e.g., E11.9)"
+                        placeholder="Enter diagnosis code (e.g., E11.9)"
                         className="flex-1 px-4 py-2 border border-gray-300 rounded-md focus:ring-primary focus:border-primary"
                       />
                       <button
                         onClick={handleAddDiagnosisCode}
                         className="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary-hover"
                       >
-                        Add
+                        <Plus className="w-4 h-4" />
                       </button>
                     </div>
-                    <div className="flex flex-wrap gap-2">
-                      {diagnosisCodes.map((code) => (
-                        <div
-                          key={code}
-                          className="inline-flex items-center bg-blue-100 rounded px-3 py-1.5 text-sm font-medium text-blue-800"
-                        >
-                          <span>{code}</span>
-                          <button
-                            onClick={() => handleRemoveDiagnosisCode(code)}
-                            className="ml-2 text-blue-600 hover:text-blue-800"
+                    {diagnosisCodes.length > 0 && (
+                      <div className="flex flex-wrap gap-2 p-3 bg-gray-50 rounded-md border border-gray-200">
+                        {diagnosisCodes.map((code) => (
+                          <div
+                            key={code}
+                            className="inline-flex items-center bg-blue-100 rounded px-3 py-1.5 text-sm font-medium text-blue-800"
                           >
-                            <X className="w-3 h-3" />
-                          </button>
-                        </div>
-                      ))}
-                    </div>
+                            <span>{code}</span>
+                            <button
+                              onClick={() => handleRemoveDiagnosisCode(code)}
+                              className="ml-2 text-blue-600 hover:text-blue-800"
+                            >
+                              <X className="w-3 h-3" />
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
 
                   {/* Map Service Codes */}
@@ -370,7 +353,7 @@ export default function SkillsManager() {
                     <label className="block text-sm font-medium text-gray-900 mb-2">
                       Map Service Codes (Optional)
                     </label>
-                    <div className="flex gap-2 mb-2">
+                    <div className="flex gap-2 mb-3">
                       <input
                         type="text"
                         value={serviceInput}
@@ -381,32 +364,34 @@ export default function SkillsManager() {
                             handleAddServiceCode()
                           }
                         }}
-                        placeholder="Service Code (e.g., 99213)"
+                        placeholder="Enter service code (e.g., 99213)"
                         className="flex-1 px-4 py-2 border border-gray-300 rounded-md focus:ring-primary focus:border-primary"
                       />
                       <button
                         onClick={handleAddServiceCode}
                         className="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary-hover"
                       >
-                        Add
+                        <Plus className="w-4 h-4" />
                       </button>
                     </div>
-                    <div className="flex flex-wrap gap-2">
-                      {serviceCodes.map((code) => (
-                        <div
-                          key={code}
-                          className="inline-flex items-center bg-green-100 rounded px-3 py-1.5 text-sm font-medium text-green-800"
-                        >
-                          <span>{code}</span>
-                          <button
-                            onClick={() => handleRemoveServiceCode(code)}
-                            className="ml-2 text-green-600 hover:text-green-800"
+                    {serviceCodes.length > 0 && (
+                      <div className="flex flex-wrap gap-2 p-3 bg-gray-50 rounded-md border border-gray-200">
+                        {serviceCodes.map((code) => (
+                          <div
+                            key={code}
+                            className="inline-flex items-center bg-green-100 rounded px-3 py-1.5 text-sm font-medium text-green-800"
                           >
-                            <X className="w-3 h-3" />
-                          </button>
-                        </div>
-                      ))}
-                    </div>
+                            <span>{code}</span>
+                            <button
+                              onClick={() => handleRemoveServiceCode(code)}
+                              className="ml-2 text-green-600 hover:text-green-800"
+                            >
+                              <X className="w-3 h-3" />
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 </div>
 
@@ -430,6 +415,6 @@ export default function SkillsManager() {
           </div>
         </div>
       )}
-    </div>
+    </>
   )
 }

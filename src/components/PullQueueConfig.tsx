@@ -136,11 +136,65 @@ export default function PullQueueConfigComponent() {
             )}
           </div>
 
-          {/* Escalation Priority Toggle */}
+          {/* 1. TAT Safety Window */}
           <div className="bg-white rounded-xl shadow-sm border border-table-border p-6">
-            <h3 className="text-base font-semibold text-gray-900 mb-4 pb-3 border-b border-gray-200">
-              Escalation Priority
-            </h3>
+            <div className="flex items-start space-x-3 mb-4 pb-3 border-b border-gray-200">
+              <div className="flex-shrink-0 w-8 h-8 rounded-full bg-red-100 text-red-600 flex items-center justify-center text-sm font-bold">
+                1
+              </div>
+              <div className="flex-1">
+                <h3 className="text-base font-semibold text-gray-900">
+                  TAT Safety
+                </h3>
+                <p className="text-xs text-gray-500 mt-1">
+                  Highest priority - overrides all other priorities
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center space-x-4">
+              <div className="flex-1">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Safety Window (hours)
+                </label>
+                <p className="text-xs text-gray-500 mb-3">
+                  Items due within this window will override all other priorities to prevent missed TAT deadlines
+                </p>
+                <input
+                  type="number"
+                  min="1"
+                  max="72"
+                  value={config.tatSafetyWindowHours}
+                  onChange={(e) => setConfig({ ...config, tatSafetyWindowHours: parseInt(e.target.value) || 1 })}
+                  className="w-32 px-3 py-2 border border-gray-300 rounded-md focus:ring-primary focus:border-primary"
+                />
+                <span className="ml-2 text-sm text-gray-600">hours</span>
+              </div>
+              <div className="flex-shrink-0 px-6 py-4 bg-amber-50 border border-amber-200 rounded-lg">
+                <div className="text-2xl font-bold text-amber-600">
+                  {config.tatSafetyWindowHours}h
+                </div>
+                <div className="text-xs text-amber-700 mt-1">
+                  Safety Window
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* 2. Escalation Priority */}
+          <div className="bg-white rounded-xl shadow-sm border border-table-border p-6">
+            <div className="flex items-start space-x-3 mb-4 pb-3 border-b border-gray-200">
+              <div className="flex-shrink-0 w-8 h-8 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center text-sm font-bold">
+                2
+              </div>
+              <div className="flex-1">
+                <h3 className="text-base font-semibold text-gray-900">
+                  Escalated Items
+                </h3>
+                <p className="text-xs text-gray-500 mt-1">
+                  Second priority - after TAT safety
+                </p>
+              </div>
+            </div>
             <div className="flex items-center justify-between">
               <div className="flex-1">
                 <label className="flex items-center space-x-3 cursor-pointer">
@@ -167,6 +221,76 @@ export default function PullQueueConfigComponent() {
               }`}>
                 {config.escalationsFirst ? 'Enabled' : 'Disabled'}
               </div>
+            </div>
+          </div>
+
+          {/* 3. Department Priority Order */}
+          <div className="bg-white rounded-xl shadow-sm border border-table-border p-6">
+            <div className="flex items-start space-x-3 mb-4 pb-3 border-b border-gray-200">
+              <div className="flex-shrink-0 w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-sm font-bold">
+                3
+              </div>
+              <div className="flex-1">
+                <h3 className="text-base font-semibold text-gray-900">
+                  Department Priority
+                </h3>
+                <p className="text-xs text-gray-500 mt-1">
+                  Drag departments to reorder priority. Top = highest priority. Each level sorts by soonest TAT.
+                </p>
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              {config.departmentOrder.map((dept, index) => {
+                const deptInfo = AVAILABLE_DEPARTMENTS.find(d => d.code === dept)
+                return (
+                  <div
+                    key={dept}
+                    draggable
+                    onDragStart={() => handleDragStart(index)}
+                    onDragOver={(e) => handleDragOver(e, index)}
+                    onDragEnd={handleDragEnd}
+                    className={`group flex items-center justify-between p-4 border-2 rounded-lg cursor-move transition-all ${
+                      draggedIndex === index
+                        ? 'border-primary bg-primary-light shadow-lg'
+                        : 'border-gray-200 bg-white hover:border-primary hover:shadow-md'
+                    }`}
+                  >
+                    <div className="flex items-center space-x-4">
+                      <GripVertical className="w-5 h-5 text-gray-400 group-hover:text-primary" />
+                      <div className="flex items-center space-x-3">
+                        <div className="flex items-center justify-center w-8 h-8 rounded-full bg-primary text-white text-sm font-semibold">
+                          {index + 1}
+                        </div>
+                        <div>
+                          <div className="text-sm font-medium text-gray-900">
+                            {deptInfo?.name || dept}
+                          </div>
+                          <div className="text-xs text-gray-500">
+                            → Then soonest TAT
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <button
+                        onClick={() => moveDepartment(index, 'up')}
+                        disabled={index === 0}
+                        className="p-1 rounded hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed"
+                      >
+                        <ChevronUp className="w-4 h-4 text-gray-600" />
+                      </button>
+                      <button
+                        onClick={() => moveDepartment(index, 'down')}
+                        disabled={index === config.departmentOrder.length - 1}
+                        className="p-1 rounded hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed"
+                      >
+                        <ChevronDown className="w-4 h-4 text-gray-600" />
+                      </button>
+                    </div>
+                  </div>
+                )
+              })}
             </div>
           </div>
 
@@ -199,107 +323,6 @@ export default function PullQueueConfigComponent() {
                 </div>
                 <div className="text-xs text-blue-700 mt-1">
                   Max Capacity
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Department Priority Order */}
-          <div className="bg-white rounded-xl shadow-sm border border-table-border p-6">
-            <div className="flex items-center justify-between mb-4 pb-3 border-b border-gray-200">
-              <div>
-                <h3 className="text-base font-semibold text-gray-900">
-                  Department Priority Order
-                </h3>
-                <p className="text-xs text-gray-500 mt-1">
-                  Drag departments to reorder priority. Top = highest priority.
-                </p>
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              {config.departmentOrder.map((dept, index) => {
-                const deptInfo = AVAILABLE_DEPARTMENTS.find(d => d.code === dept)
-                return (
-                  <div
-                    key={dept}
-                    draggable
-                    onDragStart={() => handleDragStart(index)}
-                    onDragOver={(e) => handleDragOver(e, index)}
-                    onDragEnd={handleDragEnd}
-                    className={`group flex items-center justify-between p-4 border-2 rounded-lg cursor-move transition-all ${
-                      draggedIndex === index
-                        ? 'border-primary bg-primary-light shadow-lg'
-                        : 'border-gray-200 bg-white hover:border-primary hover:shadow-md'
-                    }`}
-                  >
-                    <div className="flex items-center space-x-4">
-                      <GripVertical className="w-5 h-5 text-gray-400 group-hover:text-primary" />
-                      <div className="flex items-center space-x-3">
-                        <div className="flex items-center justify-center w-8 h-8 rounded-full bg-primary text-white text-sm font-semibold">
-                          {index + 1}
-                        </div>
-                        <div>
-                          <div className="text-sm font-medium text-gray-900">
-                            {deptInfo?.name || dept}
-                          </div>
-                          <div className="text-xs text-gray-500">
-                            Priority Level {index + 1}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <button
-                        onClick={() => moveDepartment(index, 'up')}
-                        disabled={index === 0}
-                        className="p-1 rounded hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed"
-                      >
-                        <ChevronUp className="w-4 h-4 text-gray-600" />
-                      </button>
-                      <button
-                        onClick={() => moveDepartment(index, 'down')}
-                        disabled={index === config.departmentOrder.length - 1}
-                        className="p-1 rounded hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed"
-                      >
-                        <ChevronDown className="w-4 h-4 text-gray-600" />
-                      </button>
-                    </div>
-                  </div>
-                )
-              })}
-            </div>
-          </div>
-
-          {/* TAT Safety Window */}
-          <div className="bg-white rounded-xl shadow-sm border border-table-border p-6">
-            <h3 className="text-base font-semibold text-gray-900 mb-4 pb-3 border-b border-gray-200">
-              TAT Safety Window
-            </h3>
-            <div className="flex items-center space-x-4">
-              <div className="flex-1">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Safety Window (hours)
-                </label>
-                <p className="text-xs text-gray-500 mb-3">
-                  Items due within this window will override all other priorities to prevent missed TAT deadlines
-                </p>
-                <input
-                  type="number"
-                  min="1"
-                  max="72"
-                  value={config.tatSafetyWindowHours}
-                  onChange={(e) => setConfig({ ...config, tatSafetyWindowHours: parseInt(e.target.value) || 1 })}
-                  className="w-32 px-3 py-2 border border-gray-300 rounded-md focus:ring-primary focus:border-primary"
-                />
-                <span className="ml-2 text-sm text-gray-600">hours</span>
-              </div>
-              <div className="flex-shrink-0 px-6 py-4 bg-amber-50 border border-amber-200 rounded-lg">
-                <div className="text-2xl font-bold text-amber-600">
-                  {config.tatSafetyWindowHours}h
-                </div>
-                <div className="text-xs text-amber-700 mt-1">
-                  Safety Window
                 </div>
               </div>
             </div>
