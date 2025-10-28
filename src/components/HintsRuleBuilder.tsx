@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { X, Plus, Trash2, Save } from 'lucide-react'
+import { Plus, Trash2, Save } from 'lucide-react'
 import {
   Rule,
   StandardFieldCriteria,
@@ -101,56 +101,48 @@ export default function HintsRuleBuilder({ rule, onClose, onSave }: HintsRuleBui
   }
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto bg-gray-900 bg-opacity-50">
-      <div className="flex items-start justify-center min-h-screen px-4 pt-4 pb-20">
-        <div className="relative bg-white rounded-lg shadow-xl w-full max-w-6xl my-8">
-          {/* Header */}
-          <div className="sticky top-0 z-10 bg-white border-b border-gray-200 px-6 py-4 rounded-t-lg">
-            <div className="flex items-center justify-between">
-              <div>
-                <h2 className="text-xl font-semibold text-gray-900">
-                  {rule ? 'Edit Hints Rule' : 'Create Hints Rule'}
-                </h2>
-                <p className="text-sm text-gray-600 mt-1">
-                  Configure hints/messages to display to users
-                </p>
-              </div>
-              <div className="flex items-center space-x-3">
-                <button
-                  onClick={handleSave}
-                  disabled={saving}
-                  className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary hover:bg-primary-hover disabled:opacity-50"
-                >
-                  <Save className="w-4 h-4 mr-2" />
-                  {saving ? 'Saving...' : 'Save Rule'}
-                </button>
-                <button
-                  onClick={onClose}
-                  className="p-2 text-gray-400 hover:text-gray-500 hover:bg-gray-100 rounded-md"
-                >
-                  <X className="w-5 h-5" />
-                </button>
+    <div className="flex flex-col h-full">
+      {/* Header */}
+      <div className="px-6 py-4 border-b border-gray-200">
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-xl font-semibold text-gray-900">
+              {rule ? 'Edit Hints Rule' : 'Create Hints Rule'}
+            </h2>
+            <p className="text-sm text-gray-600 mt-1">
+              Configure hints/messages to display to users
+            </p>
+          </div>
+          <div className="flex items-center space-x-3">
+            <button
+              onClick={handleSave}
+              disabled={saving}
+              className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary hover:bg-primary-hover disabled:opacity-50"
+            >
+              <Save className="w-4 h-4 mr-2" />
+              {saving ? 'Saving...' : 'Save Rule'}
+            </button>
+          </div>
+        </div>
+
+        {errors.length > 0 && (
+          <div className="mt-4 bg-red-50 border border-red-200 rounded-md p-3">
+            <div className="flex">
+              <div className="flex-1">
+                <h3 className="text-sm font-medium text-red-800">Validation Errors:</h3>
+                <ul className="mt-2 text-sm text-red-700 list-disc list-inside">
+                  {errors.map((error, idx) => (
+                    <li key={idx}>{error}</li>
+                  ))}
+                </ul>
               </div>
             </div>
-
-            {errors.length > 0 && (
-              <div className="mt-4 bg-red-50 border border-red-200 rounded-md p-3">
-                <div className="flex">
-                  <div className="flex-1">
-                    <h3 className="text-sm font-medium text-red-800">Validation Errors:</h3>
-                    <ul className="mt-2 text-sm text-red-700 list-disc list-inside">
-                      {errors.map((error, idx) => (
-                        <li key={idx}>{error}</li>
-                      ))}
-                    </ul>
-                  </div>
-                </div>
-              </div>
-            )}
           </div>
+        )}
+      </div>
 
-          {/* Content */}
-          <div className="px-6 py-6 space-y-6 max-h-[calc(100vh-200px)] overflow-y-auto">
+      {/* Content */}
+      <div className="flex-1 overflow-y-auto px-6 py-6 space-y-6">
             {/* Basic Info */}
             <div className="bg-white rounded-xl shadow-sm border border-table-border p-6">
               <h4 className="text-base font-semibold text-gray-900 mb-6 pb-3 border-b border-gray-200">
@@ -384,8 +376,6 @@ export default function HintsRuleBuilder({ rule, onClose, onSave }: HintsRuleBui
                 </div>
               </div>
             </div>
-          </div>
-        </div>
       </div>
     </div>
   )

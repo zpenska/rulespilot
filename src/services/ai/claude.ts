@@ -3,6 +3,7 @@ import { Rule, StandardFieldCriteria, CustomFieldCriteria, RuleActions, RuleType
 import AI_KNOWLEDGE_BASE from '../../config/aiKnowledgeBase'
 import AI_KNOWLEDGE_WORKFLOW from '../../config/aiKnowledgeWorkflow'
 import AI_KNOWLEDGE_TAT from '../../config/aiKnowledgeTAT'
+import AI_KNOWLEDGE_HINTS from '../../config/aiKnowledgeHints'
 
 const anthropic = new Anthropic({
   apiKey: import.meta.env.VITE_ANTHROPIC_API_KEY,
@@ -16,8 +17,12 @@ function getKnowledgeBase(ruleType: RuleType): string {
       return AI_KNOWLEDGE_WORKFLOW + '\n\n' + AI_KNOWLEDGE_BASE // Include base + workflow-specific
     case 'tat':
       return AI_KNOWLEDGE_TAT // TAT-specific only (different structure)
+    case 'hints':
+      return AI_KNOWLEDGE_HINTS + '\n\n' + AI_KNOWLEDGE_BASE // Include base + hints-specific
     case 'pullQueue':
       return AI_KNOWLEDGE_BASE // Pull Queue is configuration, not rules
+    case 'skills':
+      return AI_KNOWLEDGE_BASE // Skills are definitions, not AI-generated
     default:
       return AI_KNOWLEDGE_BASE
   }

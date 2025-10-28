@@ -19,11 +19,15 @@ import {
 import PullQueueConfig from './PullQueueConfig'
 import TATConfig from './TATConfig'
 import SkillsManager from './SkillsManager'
+import SkillForm from './SkillForm'
 import RuleBuilder from './RuleBuilder'
 import HintsRuleBuilder from './HintsRuleBuilder'
 import AIAssistant from './AIAssistant'
 import GlobalWorkflowViewer from './GlobalWorkflowViewer'
 import BranchingWorkflowBuilder from './BranchingWorkflowBuilder'
+import { SkillDefinition } from '../types/rules'
+import { doc, getDoc } from 'firebase/firestore'
+import { db } from '../config/firebase'
 
 type TabFilter = 'all' | 'active' | 'inactive'
 
@@ -53,6 +57,8 @@ export default function RulesTable({ currentRuleType, onRuleTypeChange }: RulesT
   // Check what view we're in based on URL
   const [editingRule, setEditingRule] = useState<Rule | null>(null)
   const [ruleBuilderLoading, setRuleBuilderLoading] = useState(false)
+  const [editingSkill, setEditingSkill] = useState<SkillDefinition | null>(null)
+  const [skillFormLoading, setSkillFormLoading] = useState(false)
 
   const isCreatingNew = routeSuffix === 'new'
   const isEditingRule = routeSuffix?.startsWith('edit/') && ruleId
@@ -60,10 +66,11 @@ export default function RulesTable({ currentRuleType, onRuleTypeChange }: RulesT
   const isViewerView = routeSuffix === 'viewer'
   const isBranchingView = routeSuffix === 'branching'
   const showRuleBuilder = isCreatingNew || isEditingRule
+  const showSkillForm = currentRuleType === 'skills' && (isCreatingNew || isEditingRule)
 
   // Load rule for editing
   useEffect(() => {
-    if (isEditingRule && ruleId) {
+    if (isEditingRule && ruleId && currentRuleType !== 'skills') {
       setRuleBuilderLoading(true)
       getRule(ruleId)
         .then(setEditingRule)
@@ -72,7 +79,25 @@ export default function RulesTable({ currentRuleType, onRuleTypeChange }: RulesT
     } else {
       setEditingRule(null)
     }
-  }, [isEditingRule, ruleId])
+  }, [isEditingRule, ruleId, currentRuleType])
+
+  // Load skill for editing
+  useEffect(() => {
+    if (isEditingRule && ruleId && currentRuleType === 'skills') {
+      setSkillFormLoading(true)
+      const skillRef = doc(db, 'skills', ruleId)
+      getDoc(skillRef)
+        .then((snapshot) => {
+          if (snapshot.exists()) {
+            setEditingSkill({ id: snapshot.id, ...snapshot.data() } as SkillDefinition)
+          }
+        })
+        .catch(console.error)
+        .finally(() => setSkillFormLoading(false))
+    } else {
+      setEditingSkill(null)
+    }
+  }, [isEditingRule, ruleId, currentRuleType])
 
   // Handle click outside to close dropdown
   useEffect(() => {
@@ -461,6 +486,20 @@ export default function RulesTable({ currentRuleType, onRuleTypeChange }: RulesT
                 onClose={() => navigate(`/${currentRuleType}`)}
                 onSave={() => navigate(`/${currentRuleType}`)}
               />
+            </div>
+          ) : showSkillForm ? (
+            <div className="bg-white rounded-b-xl">
+              {skillFormLoading ? (
+                <div className="flex items-center justify-center p-8">
+                  <div className="text-gray-500">Loading skill...</div>
+                </div>
+              ) : (
+                <SkillForm
+                  skill={editingSkill}
+                  onClose={() => navigate(`/${currentRuleType}`)}
+                  onSave={() => navigate(`/${currentRuleType}`)}
+                />
+              )}
             </div>
           ) : showRuleBuilder ? (
             <div className="bg-white rounded-b-xl">

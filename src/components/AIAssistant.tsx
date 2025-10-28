@@ -36,6 +36,18 @@ export default function AIAssistant({ onRuleGenerated, onClose }: AIAssistantPro
           'Urgent requests require 24-hour turnaround with 4-hour clinical threshold',
           'Medicare Advantage members get 14 business days ending at 5PM',
         ]
+      case 'hints':
+        return [
+          'Show red alert for high-risk members on member demographics',
+          'Display yellow warning for out-of-network providers',
+          'Alert reviewers when diagnosis codes typically require prior authorization',
+          'Remind reviewers about expedited timelines for urgent requests',
+        ]
+      case 'skills':
+        return [
+          // Skills are created manually, not via AI
+          'Skills are managed manually in the Skills Management table. Use the "Add New Skill" button to create skill definitions.',
+        ]
       default:
         return []
     }

@@ -1,26 +1,35 @@
 import { useState, useEffect } from 'react'
-import { Plus, X, Trash2, Edit2 } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
+import { Plus, Trash2, Edit2, Power, PowerOff } from 'lucide-react'
 import { SkillDefinition } from '../types/rules'
-import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc } from 'firebase/firestore'
+import { collection, getDocs, deleteDoc, doc, updateDoc } from 'firebase/firestore'
 import { db } from '../config/firebase'
 
-export default function SkillsManager() {
-  const [skills, setSkills] = useState<SkillDefinition[]>([])
-  const [showDialog, setShowDialog] = useState(false)
-  const [editingSkill, setEditingSkill] = useState<SkillDefinition | null>(null)
-  const [loading, setLoading] = useState(true)
+type TabFilter = 'all' | 'active' | 'inactive'
 
-  // Form state
-  const [skillName, setSkillName] = useState('')
-  const [description, setDescription] = useState('')
-  const [diagnosisInput, setDiagnosisInput] = useState('')
-  const [diagnosisCodes, setDiagnosisCodes] = useState<string[]>([])
-  const [serviceInput, setServiceInput] = useState('')
-  const [serviceCodes, setServiceCodes] = useState<string[]>([])
+export default function SkillsManager() {
+  const navigate = useNavigate()
+  const [skills, setSkills] = useState<SkillDefinition[]>([])
+  const [filteredSkills, setFilteredSkills] = useState<SkillDefinition[]>([])
+  const [activeTab, setActiveTab] = useState<TabFilter>('all')
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     loadSkills()
   }, [])
+
+  useEffect(() => {
+    // Filter skills based on active tab
+    let filtered = skills
+
+    if (activeTab === 'active') {
+      filtered = filtered.filter((s) => s.active)
+    } else if (activeTab === 'inactive') {
+      filtered = filtered.filter((s) => !s.active)
+    }
+
+    setFilteredSkills(filtered)
+  }, [skills, activeTab])
 
   const loadSkills = async () => {
     try {
@@ -38,90 +47,17 @@ export default function SkillsManager() {
     }
   }
 
-  const handleOpenDialog = (skill?: SkillDefinition) => {
-    if (skill) {
-      setEditingSkill(skill)
-      setSkillName(skill.skillName)
-      setDescription(skill.description)
-      setDiagnosisCodes(skill.diagnosisCodes)
-      setServiceCodes(skill.serviceCodes)
-    } else {
-      resetForm()
-    }
-    setShowDialog(true)
-  }
-
-  const resetForm = () => {
-    setEditingSkill(null)
-    setSkillName('')
-    setDescription('')
-    setDiagnosisInput('')
-    setDiagnosisCodes([])
-    setServiceInput('')
-    setServiceCodes([])
-  }
-
-  const handleCloseDialog = () => {
-    setShowDialog(false)
-    resetForm()
-  }
-
-  const handleAddDiagnosisCode = () => {
-    const code = diagnosisInput.trim()
-    if (code && !diagnosisCodes.includes(code)) {
-      setDiagnosisCodes([...diagnosisCodes, code])
-      setDiagnosisInput('')
-    }
-  }
-
-  const handleRemoveDiagnosisCode = (code: string) => {
-    setDiagnosisCodes(diagnosisCodes.filter(c => c !== code))
-  }
-
-  const handleAddServiceCode = () => {
-    const code = serviceInput.trim()
-    if (code && !serviceCodes.includes(code)) {
-      setServiceCodes([...serviceCodes, code])
-      setServiceInput('')
-    }
-  }
-
-  const handleRemoveServiceCode = (code: string) => {
-    setServiceCodes(serviceCodes.filter(c => c !== code))
-  }
-
-  const handleSaveSkill = async () => {
-    if (!skillName.trim()) {
-      alert('Skill name is required')
-      return
-    }
-
-    const skillData = {
-      skillName: skillName.trim(),
-      description: description.trim(),
-      diagnosisCodes,
-      serviceCodes,
-      active: true,
-      updatedAt: new Date().toISOString(),
-    }
-
+  const handleToggleStatus = async (skill: SkillDefinition) => {
     try {
-      if (editingSkill) {
-        // Update existing skill
-        const skillRef = doc(db, 'skills', editingSkill.id)
-        await updateDoc(skillRef, skillData)
-      } else {
-        // Create new skill
-        await addDoc(collection(db, 'skills'), {
-          ...skillData,
-          createdAt: new Date().toISOString(),
-        })
-      }
+      const skillRef = doc(db, 'skills', skill.id)
+      await updateDoc(skillRef, {
+        active: !skill.active,
+        updatedAt: new Date().toISOString(),
+      })
       await loadSkills()
-      handleCloseDialog()
     } catch (error) {
-      console.error('Error saving skill:', error)
-      alert('Error saving skill. Please try again.')
+      console.error('Error toggling skill status:', error)
+      alert('Error updating skill status. Please try again.')
     }
   }
 
@@ -137,284 +73,201 @@ export default function SkillsManager() {
     }
   }
 
-  return (
-    <>
-      {/* Content within the white rounded box */}
-      <div className="bg-white rounded-b-xl px-6 py-4">
-        {/* Header with Add Button */}
-        <div className="flex items-center justify-between mb-6">
-          <div>
-            <h2 className="text-xl font-semibold text-gray-900">Skills Management</h2>
-            <p className="text-sm text-gray-600 mt-1">Manage skills and map them to diagnosis and service codes</p>
-          </div>
-          <button
-            onClick={() => handleOpenDialog()}
-            className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary hover:bg-primary-hover"
-          >
-            <Plus className="w-4 h-4 mr-2" />
-            Add New Skill
-          </button>
-        </div>
+  const activeCount = skills.filter((s) => s.active).length
+  const inactiveCount = skills.filter((s) => !s.active).length
 
-        {/* Table Container */}
-        {loading ? (
-          <div className="flex items-center justify-center h-64">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
-          </div>
-        ) : skills.length === 0 ? (
-          <div className="flex flex-col items-center justify-center h-64 text-gray-500 border border-gray-200 rounded-lg">
-            <p className="text-lg font-medium">No skills found</p>
-            <p className="text-sm mt-2">Click "Add New Skill" to create your first skill</p>
-          </div>
-        ) : (
-          <div className="rounded-lg border border-table-border bg-white shadow-sm overflow-hidden">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Skill Name
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Description
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Diagnosis Codes
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Service Codes
-                  </th>
-                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Actions
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {skills.map((skill) => (
-                  <tr key={skill.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm font-medium text-gray-900">{skill.skillName}</div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="text-sm text-gray-600">{skill.description || '-'}</div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="flex flex-wrap gap-1">
-                        {skill.diagnosisCodes.length === 0 ? (
-                          <span className="text-sm text-gray-400">None</span>
-                        ) : (
-                          skill.diagnosisCodes.map((code) => (
-                            <span
-                              key={code}
-                              className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800"
-                            >
-                              {code}
-                            </span>
-                          ))
-                        )}
-                      </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="flex flex-wrap gap-1">
-                        {skill.serviceCodes.length === 0 ? (
-                          <span className="text-sm text-gray-400">None</span>
-                        ) : (
-                          skill.serviceCodes.map((code) => (
-                            <span
-                              key={code}
-                              className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800"
-                            >
-                              {code}
-                            </span>
-                          ))
-                        )}
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+  return (
+    <div className="bg-white rounded-b-xl px-6 py-4">
+      {/* Header with Add Button */}
+      <div className="flex items-center justify-between mb-6">
+        <div>
+          <h2 className="text-xl font-semibold text-gray-900">Skills Management</h2>
+          <p className="text-sm text-gray-600 mt-1">Manage skills and map them to diagnosis and service codes</p>
+        </div>
+        <button
+          onClick={() => navigate('/skills/new')}
+          className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary hover:bg-primary-hover"
+        >
+          <Plus className="w-4 h-4 mr-2" />
+          Add New Skill
+        </button>
+      </div>
+
+      {/* Filter Tabs */}
+      <div className="flex items-center space-x-1 mb-4 bg-gray-100 rounded-lg p-1 w-fit">
+        <button
+          onClick={() => setActiveTab('all')}
+          className={`inline-flex items-center space-x-2 px-4 py-2 text-sm font-medium rounded-md transition-colors ${
+            activeTab === 'all'
+              ? 'bg-white text-gray-900 shadow-sm'
+              : 'text-gray-700 hover:bg-gray-50'
+          }`}
+        >
+          <span>All</span>
+          <span className={`inline-flex items-center justify-center min-w-[20px] h-5 px-1.5 rounded-full text-xs font-semibold ${
+            activeTab === 'all' ? 'bg-primary text-white' : 'bg-gray-300 text-gray-700'
+          }`}>
+            {skills.length}
+          </span>
+        </button>
+        <button
+          onClick={() => setActiveTab('active')}
+          className={`inline-flex items-center space-x-2 px-4 py-2 text-sm font-medium rounded-md transition-colors ${
+            activeTab === 'active'
+              ? 'bg-white text-gray-900 shadow-sm'
+              : 'text-gray-700 hover:bg-gray-50'
+          }`}
+        >
+          <span>Active</span>
+          <span className={`inline-flex items-center justify-center min-w-[20px] h-5 px-1.5 rounded-full text-xs font-semibold ${
+            activeTab === 'active' ? 'bg-primary text-white' : 'bg-gray-300 text-gray-700'
+          }`}>
+            {activeCount}
+          </span>
+        </button>
+        <button
+          onClick={() => setActiveTab('inactive')}
+          className={`inline-flex items-center space-x-2 px-4 py-2 text-sm font-medium rounded-md transition-colors ${
+            activeTab === 'inactive'
+              ? 'bg-white text-gray-900 shadow-sm'
+              : 'text-gray-700 hover:bg-gray-50'
+          }`}
+        >
+          <span>Inactive</span>
+          <span className={`inline-flex items-center justify-center min-w-[20px] h-5 px-1.5 rounded-full text-xs font-semibold ${
+            activeTab === 'inactive' ? 'bg-primary text-white' : 'bg-gray-300 text-gray-700'
+          }`}>
+            {inactiveCount}
+          </span>
+        </button>
+      </div>
+
+      {/* Table Container */}
+      {loading ? (
+        <div className="flex items-center justify-center h-64">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+        </div>
+      ) : filteredSkills.length === 0 ? (
+        <div className="flex flex-col items-center justify-center h-64 text-gray-500 border border-gray-200 rounded-lg">
+          <p className="text-lg font-medium">No skills found</p>
+          <p className="text-sm mt-2">
+            {activeTab === 'all'
+              ? 'Click "Add New Skill" to create your first skill'
+              : `No ${activeTab} skills found`
+            }
+          </p>
+        </div>
+      ) : (
+        <div className="rounded-lg border border-table-border bg-white shadow-sm overflow-hidden">
+          <table className="min-w-full divide-y divide-gray-200">
+            <thead className="bg-gray-50">
+              <tr>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Skill Name
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Description
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Diagnosis Codes
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Service Codes
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Status
+                </th>
+                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Actions
+                </th>
+              </tr>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+              {filteredSkills.map((skill) => (
+                <tr key={skill.id} className="hover:bg-gray-50">
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="text-sm font-medium text-gray-900">{skill.skillName}</div>
+                  </td>
+                  <td className="px-6 py-4">
+                    <div className="text-sm text-gray-600">{skill.description || '-'}</div>
+                  </td>
+                  <td className="px-6 py-4">
+                    <div className="flex flex-wrap gap-1">
+                      {skill.diagnosisCodes.length === 0 ? (
+                        <span className="text-sm text-gray-400">None</span>
+                      ) : (
+                        skill.diagnosisCodes.map((code) => (
+                          <span
+                            key={code}
+                            className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800"
+                          >
+                            {code}
+                          </span>
+                        ))
+                      )}
+                    </div>
+                  </td>
+                  <td className="px-6 py-4">
+                    <div className="flex flex-wrap gap-1">
+                      {skill.serviceCodes.length === 0 ? (
+                        <span className="text-sm text-gray-400">None</span>
+                      ) : (
+                        skill.serviceCodes.map((code) => (
+                          <span
+                            key={code}
+                            className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800"
+                          >
+                            {code}
+                          </span>
+                        ))
+                      )}
+                    </div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <button
+                      onClick={() => handleToggleStatus(skill)}
+                      className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${
+                        skill.active
+                          ? 'bg-green-100 text-green-800'
+                          : 'bg-gray-100 text-gray-600'
+                      }`}
+                    >
+                      {skill.active ? 'Active' : 'Inactive'}
+                    </button>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                    <div className="flex items-center justify-end space-x-2">
                       <button
-                        onClick={() => handleOpenDialog(skill)}
-                        className="text-primary hover:text-primary-hover mr-4"
+                        onClick={() => handleToggleStatus(skill)}
+                        className={`p-1.5 rounded ${
+                          skill.active
+                            ? 'text-gray-600 hover:text-gray-800 hover:bg-gray-100'
+                            : 'text-green-600 hover:text-green-800 hover:bg-green-50'
+                        }`}
+                        title={skill.active ? 'Deactivate' : 'Activate'}
+                      >
+                        {skill.active ? <PowerOff className="w-4 h-4" /> : <Power className="w-4 h-4" />}
+                      </button>
+                      <button
+                        onClick={() => navigate(`/skills/edit/${skill.id}`)}
+                        className="text-primary hover:text-primary-hover p-1.5 rounded hover:bg-primary-light"
                       >
                         <Edit2 className="w-4 h-4" />
                       </button>
                       <button
                         onClick={() => handleDeleteSkill(skill.id)}
-                        className="text-red-600 hover:text-red-800"
+                        className="text-red-600 hover:text-red-800 p-1.5 rounded hover:bg-red-50"
                       >
                         <Trash2 className="w-4 h-4" />
                       </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </div>
-
-      {/* Add/Edit Skill Dialog */}
-      {showDialog && (
-        <div className="fixed inset-0 z-50 overflow-y-auto">
-          <div className="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
-            <div className="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75" onClick={handleCloseDialog} />
-
-            <div className="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl sm:w-full">
-              <div className="bg-white px-6 py-5">
-                <div className="flex items-center justify-between mb-6">
-                  <div>
-                    <h3 className="text-lg font-semibold text-gray-900">
-                      {editingSkill ? 'Edit Skill' : 'Add New Skill'}
-                    </h3>
-                    <p className="text-sm text-gray-600 mt-1">
-                      Create a new skill and map it to relevant diagnoses
-                    </p>
-                  </div>
-                  <button onClick={handleCloseDialog} className="text-gray-400 hover:text-gray-500">
-                    <X className="w-6 h-6" />
-                  </button>
-                </div>
-
-                <div className="space-y-6">
-                  {/* Skill Name */}
-                  <div>
-                    <label className="block text-sm font-medium text-gray-900 mb-2">
-                      Skill Name <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                      type="text"
-                      value={skillName}
-                      onChange={(e) => setSkillName(e.target.value)}
-                      placeholder="e.g., Prior Authorization Review"
-                      className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-primary focus:border-primary"
-                    />
-                  </div>
-
-                  {/* Description */}
-                  <div>
-                    <label className="block text-sm font-medium text-gray-900 mb-2">
-                      Description
-                    </label>
-                    <textarea
-                      value={description}
-                      onChange={(e) => setDescription(e.target.value)}
-                      placeholder="Describe what this skill does..."
-                      rows={3}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-primary focus:border-primary"
-                    />
-                  </div>
-
-                  {/* Map Diagnosis Codes */}
-                  <div>
-                    <label className="block text-sm font-medium text-gray-900 mb-2">
-                      Map Diagnosis Codes
-                    </label>
-                    <div className="flex gap-2 mb-3">
-                      <input
-                        type="text"
-                        value={diagnosisInput}
-                        onChange={(e) => setDiagnosisInput(e.target.value)}
-                        onKeyDown={(e) => {
-                          if (e.key === 'Enter') {
-                            e.preventDefault()
-                            handleAddDiagnosisCode()
-                          }
-                        }}
-                        placeholder="Enter diagnosis code (e.g., E11.9)"
-                        className="flex-1 px-4 py-2 border border-gray-300 rounded-md focus:ring-primary focus:border-primary"
-                      />
-                      <button
-                        onClick={handleAddDiagnosisCode}
-                        className="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary-hover"
-                      >
-                        <Plus className="w-4 h-4" />
-                      </button>
                     </div>
-                    {diagnosisCodes.length > 0 && (
-                      <div className="flex flex-wrap gap-2 p-3 bg-gray-50 rounded-md border border-gray-200">
-                        {diagnosisCodes.map((code) => (
-                          <div
-                            key={code}
-                            className="inline-flex items-center bg-blue-100 rounded px-3 py-1.5 text-sm font-medium text-blue-800"
-                          >
-                            <span>{code}</span>
-                            <button
-                              onClick={() => handleRemoveDiagnosisCode(code)}
-                              className="ml-2 text-blue-600 hover:text-blue-800"
-                            >
-                              <X className="w-3 h-3" />
-                            </button>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Map Service Codes */}
-                  <div>
-                    <label className="block text-sm font-medium text-gray-900 mb-2">
-                      Map Service Codes (Optional)
-                    </label>
-                    <div className="flex gap-2 mb-3">
-                      <input
-                        type="text"
-                        value={serviceInput}
-                        onChange={(e) => setServiceInput(e.target.value)}
-                        onKeyDown={(e) => {
-                          if (e.key === 'Enter') {
-                            e.preventDefault()
-                            handleAddServiceCode()
-                          }
-                        }}
-                        placeholder="Enter service code (e.g., 99213)"
-                        className="flex-1 px-4 py-2 border border-gray-300 rounded-md focus:ring-primary focus:border-primary"
-                      />
-                      <button
-                        onClick={handleAddServiceCode}
-                        className="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary-hover"
-                      >
-                        <Plus className="w-4 h-4" />
-                      </button>
-                    </div>
-                    {serviceCodes.length > 0 && (
-                      <div className="flex flex-wrap gap-2 p-3 bg-gray-50 rounded-md border border-gray-200">
-                        {serviceCodes.map((code) => (
-                          <div
-                            key={code}
-                            className="inline-flex items-center bg-green-100 rounded px-3 py-1.5 text-sm font-medium text-green-800"
-                          >
-                            <span>{code}</span>
-                            <button
-                              onClick={() => handleRemoveServiceCode(code)}
-                              className="ml-2 text-green-600 hover:text-green-800"
-                            >
-                              <X className="w-3 h-3" />
-                            </button>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                {/* Dialog Actions */}
-                <div className="mt-8 flex items-center justify-end space-x-3">
-                  <button
-                    onClick={handleCloseDialog}
-                    className="px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 border border-gray-300 rounded-md"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    onClick={handleSaveSkill}
-                    className="px-6 py-2 text-sm font-medium text-white bg-primary hover:bg-primary-hover rounded-md"
-                  >
-                    {editingSkill ? 'Update Skill' : 'Add Skill'}
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       )}
-    </>
+    </div>
   )
 }
