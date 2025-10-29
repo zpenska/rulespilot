@@ -367,28 +367,12 @@ export default function RulesTable({ currentRuleType, onRuleTypeChange }: RulesT
                   className="inline-flex items-center px-3 py-1.5 text-sm font-medium text-primary hover:text-primary-hover"
                 >
                   <Settings className="w-4 h-4 mr-1.5" />
-                  Rules Settings
+                  Import/Export
                 </button>
 
                 {showSettingsDropdown && (
                   <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg border border-gray-200 z-10">
                     <div className="py-1">
-                      {/* TAT-specific option */}
-                      {currentRuleType === 'tat' && (
-                        <>
-                          <button
-                            onClick={() => {
-                              setShowTATConfig(true)
-                              setShowSettingsDropdown(false)
-                            }}
-                            className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center space-x-2"
-                          >
-                            <Settings className="w-4 h-4" />
-                            <span>TAT Pause Settings</span>
-                          </button>
-                          <div className="border-t border-gray-100"></div>
-                        </>
-                      )}
                       <button
                         onClick={() => {
                           handleImportRules()
@@ -580,15 +564,28 @@ export default function RulesTable({ currentRuleType, onRuleTypeChange }: RulesT
                 </button>
               </div>
 
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-                <input
-                  type="text"
-                  placeholder="Search by Code, Name..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-9 pr-3 py-1.5 border border-gray-300 rounded text-sm focus:ring-primary focus:border-primary w-64"
-                />
+              <div className="flex items-center space-x-3">
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                  <input
+                    type="text"
+                    placeholder="Search by Code, Name..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="pl-9 pr-3 py-1.5 border border-gray-300 rounded text-sm focus:ring-primary focus:border-primary w-64"
+                  />
+                </div>
+
+                {/* TAT Pause Settings button - only shown on TAT page */}
+                {currentRuleType === 'tat' && (
+                  <button
+                    onClick={() => setShowTATConfig(true)}
+                    className="inline-flex items-center px-3 py-1.5 text-sm font-medium text-primary hover:text-primary-hover"
+                  >
+                    <Settings className="w-4 h-4 mr-1.5" />
+                    TAT Pause Settings
+                  </button>
+                )}
               </div>
             </div>
 
