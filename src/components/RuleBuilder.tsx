@@ -44,6 +44,8 @@ interface RuleBuilderProps {
 
 export default function RuleBuilder({ rule, onClose, onSave }: RuleBuilderProps) {
   const [viewMode, setViewMode] = useState<'form' | 'visual'>('form')
+  const [code, setCode] = useState(rule?.code || '')
+  const [ruleName, setRuleName] = useState(rule?.ruleName || '')
   const [ruleDesc, setRuleDesc] = useState(rule?.ruleDesc || '')
   const [weight, setWeight] = useState<number | undefined>(rule?.weight)
   const [activationDate, setActivationDate] = useState(rule?.activationDate || '')
@@ -140,6 +142,8 @@ export default function RuleBuilder({ rule, onClose, onSave }: RuleBuilderProps)
 
     // Prepare rule data based on type
     const ruleData: Record<string, unknown> = {
+      code,
+      ruleName,
       ruleDesc,
       ruleType,
       standardFieldCriteria: standardCriteria,
@@ -252,6 +256,8 @@ export default function RuleBuilder({ rule, onClose, onSave }: RuleBuilderProps)
         <div className="flex-1 overflow-hidden">
           <RuleFlowBuilder
             rule={{
+              code,
+              ruleName,
               ruleDesc,
               ruleType: currentRuleType,
               standardFieldCriteria: standardCriteria,
@@ -284,9 +290,35 @@ export default function RuleBuilder({ rule, onClose, onSave }: RuleBuilderProps)
               Rule Information
             </h4>
             <div className="grid grid-cols-2 gap-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Rule Code <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  value={code}
+                  onChange={(e) => setCode(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-primary focus:border-primary"
+                  placeholder="Enter a Rule Code (3-100 symbols)"
+                  maxLength={100}
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Rule Name <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  value={ruleName}
+                  onChange={(e) => setRuleName(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-primary focus:border-primary"
+                  placeholder="Enter a Rule Name"
+                  maxLength={200}
+                />
+              </div>
               <div className="col-span-2">
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Rule Description *
+                  Rule Description (Optional)
                 </label>
                 <textarea
                   value={ruleDesc}

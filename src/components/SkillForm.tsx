@@ -14,6 +14,7 @@ interface SkillFormProps {
 type InputMode = 'manual' | 'ai'
 
 export default function SkillForm({ skill, onClose, onSave }: SkillFormProps) {
+  const [code, setCode] = useState('')
   const [skillName, setSkillName] = useState('')
   const [description, setDescription] = useState('')
   const [diagnosisCodes, setDiagnosisCodes] = useState<string[]>([])
@@ -36,6 +37,7 @@ export default function SkillForm({ skill, onClose, onSave }: SkillFormProps) {
 
   useEffect(() => {
     if (skill) {
+      setCode(skill.code || '')
       setSkillName(skill.skillName)
       setDescription(skill.description)
       setDiagnosisCodes(skill.diagnosisCodes)
@@ -152,6 +154,7 @@ export default function SkillForm({ skill, onClose, onSave }: SkillFormProps) {
     }
 
     const skillData = {
+      code: code.trim() || undefined,
       skillName: skillName.trim(),
       description: description.trim(),
       diagnosisCodes,
@@ -218,18 +221,35 @@ export default function SkillForm({ skill, onClose, onSave }: SkillFormProps) {
               Basic Information
             </h4>
 
-          {/* Skill Name */}
-          <div>
-            <label className="block text-sm font-medium text-gray-900 mb-2">
-              Skill Name <span className="text-red-500">*</span>
-            </label>
-            <input
-              type="text"
-              value={skillName}
-              onChange={(e) => setSkillName(e.target.value)}
-              placeholder="e.g., Prior Authorization Review"
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-primary focus:border-primary"
-            />
+          <div className="grid grid-cols-2 gap-4 mb-4">
+            {/* Skill Code */}
+            <div>
+              <label className="block text-sm font-medium text-gray-900 mb-2">
+                Skill Code (Optional)
+              </label>
+              <input
+                type="text"
+                value={code}
+                onChange={(e) => setCode(e.target.value)}
+                placeholder="e.g., SKILL-001"
+                maxLength={100}
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-primary focus:border-primary"
+              />
+            </div>
+
+            {/* Skill Name */}
+            <div>
+              <label className="block text-sm font-medium text-gray-900 mb-2">
+                Skill Name <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="text"
+                value={skillName}
+                onChange={(e) => setSkillName(e.target.value)}
+                placeholder="e.g., Prior Authorization Review"
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-primary focus:border-primary"
+              />
+            </div>
           </div>
 
           {/* Description */}

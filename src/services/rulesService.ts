@@ -25,13 +25,6 @@ const RULES_COLLECTION = 'rules'
  */
 
 /**
- * Generate a unique rule code
- */
-const generateRuleCode = (): string => {
-  return `RULE${nanoid(8).toUpperCase()}`
-}
-
-/**
  * Remove undefined fields from an object
  */
 const removeUndefinedFields = <T extends Record<string, any>>(obj: T): Record<string, any> => {
@@ -60,11 +53,10 @@ export const createRule = async (rule: Omit<Rule, 'id' | 'createdAt' | 'updatedA
   const newRule: Rule = {
     ...rule,
     id,
-    code: rule.code || generateRuleCode(),
     atoms,
     createdAt: now,
     updatedAt: now,
-  }
+  } as Rule
 
   // Remove undefined fields before saving to Firestore
   const cleanedRule = removeUndefinedFields(newRule)
@@ -224,8 +216,8 @@ export const cloneRule = async (id: string): Promise<Rule> => {
 
   const clonedRule: Omit<Rule, 'id' | 'createdAt' | 'updatedAt'> = {
     ...original,
-    ruleDesc: `${original.ruleDesc} (Copy)`,
-    code: generateRuleCode(),
+    code: `${original.code}-COPY`,
+    ruleName: `${original.ruleName} (Copy)`,
     status: 'inactive', // Cloned rules start as inactive
   }
 
@@ -311,7 +303,7 @@ export const exportTATRuleToJSON = (rule: Rule): TATRuleExport => {
     holidayDates: rule.tatParameters.holidayDates,
     holidayCategory: rule.tatParameters.holidayCategory ?? null,
     clinicalsRequestedResponseThresholdHours: rule.tatParameters.clinicalsRequestedResponseThresholdHours ?? null,
-    ruleDesc: rule.ruleDesc,
+    ruleDesc: rule.ruleName,
     customFieldCriteria: customFieldCriteria && customFieldCriteria.length > 0 ? customFieldCriteria : null,
     isActive: rule.status === 'active',
     weight: rule.weight ?? 100,
@@ -365,7 +357,7 @@ export const exportWorkflowRuleToJSON = (rule: Rule): RuleExport => {
   }))
 
   const exported: RuleExport = {
-    ruleDesc: rule.ruleDesc,
+    ruleDesc: rule.ruleName,
     standardFieldCriteria,
     isActive: rule.status === 'active',
     weight: rule.weight ?? 100, // Default weight to 100 if not set
@@ -720,7 +712,8 @@ export const searchRules = async (searchTerm: string): Promise<Rule[]> => {
   return allRules.filter(
     (rule) =>
       rule.code?.toLowerCase().includes(term) ||
-      rule.ruleDesc.toLowerCase().includes(term) ||
+      rule.ruleName?.toLowerCase().includes(term) ||
+      rule.ruleDesc?.toLowerCase().includes(term) ||
       rule.category?.toLowerCase().includes(term)
   )
 }

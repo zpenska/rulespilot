@@ -313,11 +313,34 @@ export const validateActions = (actions?: RuleActions): ValidationError[] => {
 export const validateRule = (rule: Partial<Rule>): ValidationError[] => {
   const errors: ValidationError[] = []
 
-  // Validate rule description
-  if (!rule.ruleDesc || rule.ruleDesc.trim() === '') {
+  // Validate rule code
+  if (!rule.code || rule.code.trim() === '') {
     errors.push({
-      field: 'ruleDesc',
-      message: 'Rule description is required',
+      field: 'code',
+      message: 'Rule code is required',
+    })
+  } else if (rule.code.length < 3 || rule.code.length > 100) {
+    errors.push({
+      field: 'code',
+      message: 'Rule code must be between 3 and 100 characters',
+    })
+  } else if (!/^[a-zA-Z0-9_-]+$/.test(rule.code)) {
+    errors.push({
+      field: 'code',
+      message: 'Rule code can only contain letters, numbers, underscores, and hyphens',
+    })
+  }
+
+  // Validate rule name
+  if (!rule.ruleName || rule.ruleName.trim() === '') {
+    errors.push({
+      field: 'ruleName',
+      message: 'Rule name is required',
+    })
+  } else if (rule.ruleName.length > 200) {
+    errors.push({
+      field: 'ruleName',
+      message: 'Rule name must be 200 characters or less',
     })
   }
 

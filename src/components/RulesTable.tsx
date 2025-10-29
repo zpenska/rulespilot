@@ -170,7 +170,8 @@ export default function RulesTable({ currentRuleType, onRuleTypeChange }: RulesT
       filtered = filtered.filter(
         (r) =>
           r.code?.toLowerCase().includes(term) ||
-          r.ruleDesc.toLowerCase().includes(term)
+          r.ruleName?.toLowerCase().includes(term) ||
+          r.ruleDesc?.toLowerCase().includes(term)
       )
     }
 
@@ -367,6 +368,8 @@ export default function RulesTable({ currentRuleType, onRuleTypeChange }: RulesT
 
   const handleViewJSON = (rule: Rule) => {
     const json = {
+      code: rule.code,
+      ruleName: rule.ruleName,
       ruleDesc: rule.ruleDesc,
       standardFieldCriteria: rule.standardFieldCriteria,
       customFieldCriteria: rule.customFieldCriteria,
@@ -806,7 +809,7 @@ export default function RulesTable({ currentRuleType, onRuleTypeChange }: RulesT
                             {rule.code}
                           </td>
                           <td className="px-3 py-2 text-sm text-gray-600 max-w-md truncate">
-                            {rule.ruleDesc}
+                            {rule.ruleName}
                           </td>
                           <td className="px-3 py-2 text-sm text-gray-600">
                             {rule.weight ?? '-'}
@@ -835,12 +838,37 @@ export default function RulesTable({ currentRuleType, onRuleTypeChange }: RulesT
                                 )}
                                 {rule.actions.close && (
                                   <span className="inline-flex px-2 py-0.5 rounded text-sm font-medium bg-red-50 text-red-600">
-                                    Close/Discharge Request
+                                    Close/Discharge
                                   </span>
                                 )}
                                 {rule.actions.generateLetters && (
                                   <span className="inline-flex px-2 py-0.5 rounded text-sm font-medium bg-green-50 text-green-600">
                                     Letter ({rule.actions.generateLetters.length})
+                                  </span>
+                                )}
+                                {rule.actions.createTask && (
+                                  <span className="inline-flex px-2 py-0.5 rounded text-sm font-medium bg-indigo-50 text-indigo-600">
+                                    Create Task
+                                  </span>
+                                )}
+                                {rule.actions.createAppealTasks && rule.actions.createAppealTasks.length > 0 && (
+                                  <span className="inline-flex px-2 py-0.5 rounded text-sm font-medium bg-purple-50 text-purple-600">
+                                    Appeal Task ({rule.actions.createAppealTasks.length})
+                                  </span>
+                                )}
+                                {rule.actions.createCMReferral && (
+                                  <span className="inline-flex px-2 py-0.5 rounded text-sm font-medium bg-blue-50 text-blue-600">
+                                    CM Referral
+                                  </span>
+                                )}
+                                {rule.actions.transferOwnership && (
+                                  <span className="inline-flex px-2 py-0.5 rounded text-sm font-medium bg-cyan-50 text-cyan-600">
+                                    Transfer Ownership
+                                  </span>
+                                )}
+                                {rule.actions.createProgram && (
+                                  <span className="inline-flex px-2 py-0.5 rounded text-sm font-medium bg-teal-50 text-teal-600">
+                                    Create Program
                                   </span>
                                 )}
                               </div>

@@ -246,9 +246,10 @@ export interface TATParameters {
 // Main Rule structure - matches exact JSON requirements
 export interface Rule {
   id: string
-  code?: string  // For table display
+  code: string  // Required: Rule Code (3-100 symbols)
+  ruleName: string  // Required: Rule Name
+  ruleDesc?: string  // Optional: Rule Description
   ruleType: RuleType  // Type of rule: workflow, tat, pullQueue, hints, or skills
-  ruleDesc: string
   standardFieldCriteria: StandardFieldCriteria[]
   customFieldCriteria: CustomFieldCriteria[]
   weight?: number
@@ -373,6 +374,7 @@ export interface ValidationError {
 // Skills Definition - for skills management
 export interface SkillDefinition {
   id: string
+  code?: string  // Optional: Skill Code
   skillName: string
   description: string
   diagnosisCodes: string[]
