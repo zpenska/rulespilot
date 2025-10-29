@@ -874,19 +874,39 @@ export default function RulesTable({ currentRuleType, onRuleTypeChange }: RulesT
                               </div>
                             ) : rule.hints ? (
                               <div className="flex flex-wrap gap-0.5">
-                                {rule.hints.displayLocation && (
-                                  <span className="inline-flex px-1 py-0.5 rounded text-[10px] font-normal bg-purple-50 text-purple-600">
-                                    {rule.hints.displayLocation.replace(/_/g, ' ')}
-                                  </span>
-                                )}
-                                {rule.hints.context && rule.hints.context.map((ctx, idx) => {
-                                  const shortName = ctx === 'MEMBER_DEMOGRAPHICS' ? 'Member' :
-                                                   ctx === 'PROVIDER_DEMOGRAPHICS' ? 'Provider' :
-                                                   ctx === 'BUSINESS_ENTERPRISE_CATEGORIES' ? 'Business' :
-                                                   ctx;
+                                {rule.hints.displayLocation && (() => {
+                                  const label = rule.hints.displayLocation === 'MEMBER' ? 'Member' :
+                                               rule.hints.displayLocation === 'PROVIDER' ? 'Provider' :
+                                               rule.hints.displayLocation === 'SERVICES' ? 'Services' :
+                                               rule.hints.displayLocation === 'DIAGNOSIS' ? 'Diagnosis' :
+                                               rule.hints.displayLocation;
+                                  const colors = label === 'Member' ? 'bg-blue-50 text-blue-600' :
+                                                label === 'Provider' ? 'bg-green-50 text-green-600' :
+                                                label === 'Services' ? 'bg-purple-50 text-purple-600' :
+                                                label === 'Diagnosis' ? 'bg-orange-50 text-orange-600' :
+                                                'bg-gray-50 text-gray-600';
                                   return (
-                                    <span key={idx} className="inline-flex px-1 py-0.5 rounded text-[10px] font-normal bg-blue-50 text-blue-600">
-                                      {shortName}
+                                    <span className={`inline-flex px-1 py-0.5 rounded text-[10px] font-normal ${colors}`}>
+                                      {label}
+                                    </span>
+                                  );
+                                })()}
+                                {rule.hints.context && rule.hints.context.map((ctx, idx) => {
+                                  const label = ctx === 'MEMBER_DEMOGRAPHICS' ? 'Member' :
+                                               ctx === 'PROVIDER_DEMOGRAPHICS' ? 'Provider' :
+                                               ctx === 'BUSINESS_ENTERPRISE_CATEGORIES' ? 'Business' :
+                                               ctx === 'SERVICES' ? 'Services' :
+                                               ctx === 'DIAGNOSIS' ? 'Diagnosis' :
+                                               ctx;
+                                  const colors = label === 'Member' ? 'bg-blue-50 text-blue-600' :
+                                                label === 'Provider' ? 'bg-green-50 text-green-600' :
+                                                label === 'Services' ? 'bg-purple-50 text-purple-600' :
+                                                label === 'Diagnosis' ? 'bg-orange-50 text-orange-600' :
+                                                label === 'Business' ? 'bg-yellow-50 text-yellow-600' :
+                                                'bg-gray-50 text-gray-600';
+                                  return (
+                                    <span key={idx} className={`inline-flex px-1 py-0.5 rounded text-[10px] font-normal ${colors}`}>
+                                      {label}
                                     </span>
                                   );
                                 })}
