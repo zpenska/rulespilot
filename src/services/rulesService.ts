@@ -368,49 +368,14 @@ export const exportWorkflowRuleToJSON = (rule: Rule): RuleExport => {
     exported.customFieldCriteria = customFieldCriteria
   }
 
-  // Only include actions if they exist - map internal names to API names
+  // Include hintsAction if this is a hints rule
+  if (rule.hints) {
+    (exported as any).hintsAction = rule.hints
+  }
+
+  // Include actions if they exist - pass through as-is (no field renaming)
   if (rule.actions && Object.keys(rule.actions).length > 0) {
-    const mappedActions: any = {}
-
-    // Map departmentRouting -> reassign
-    if (rule.actions.departmentRouting) {
-      mappedActions.reassign = rule.actions.departmentRouting
-    }
-
-    // Map generateLetters (keep same name)
-    if (rule.actions.generateLetters && rule.actions.generateLetters.length > 0) {
-      mappedActions.generateLetters = rule.actions.generateLetters
-    }
-
-    // Map close (keep same name)
-    if (rule.actions.close) {
-      mappedActions.close = rule.actions.close
-    }
-
-    // Map createTask -> createTasks (plural)
-    if (rule.actions.createTask) {
-      mappedActions.createTasks = [rule.actions.createTask]
-    }
-
-    // Map createAppealTasks (keep same name)
-    if (rule.actions.createAppealTasks && rule.actions.createAppealTasks.length > 0) {
-      mappedActions.createAppealTasks = rule.actions.createAppealTasks
-    }
-
-    // Map transferOwnership (keep same name)
-    if (rule.actions.transferOwnership) {
-      mappedActions.transferOwnership = rule.actions.transferOwnership
-    }
-
-    // Map createCMReferral (keep same name)
-    if (rule.actions.createCMReferral) {
-      mappedActions.createCMReferral = rule.actions.createCMReferral
-    }
-
-    // Only add actions if there are any
-    if (Object.keys(mappedActions).length > 0) {
-      exported.actions = mappedActions
-    }
+    exported.actions = rule.actions
   }
 
   // Include workflow-specific fields
@@ -516,12 +481,7 @@ export const exportTATRulesForTab = async (): Promise<DueDateRulesExport> => {
  * Export global rules and skills (Workflow + Hints + Skills in one JSON)
  * TAT is excluded as it has a different format
  */
-export const exportGlobalRulesAndSkills = async (): Promise<{
-  type: string
-  workflow: RuleExport[]
-  hints: RuleExport[]
-  skills: any[]
-}> => {
+export const exportGlobalRulesAndSkills = async (): Promise<Array<any>> => {
   // Get all rules
   const allRules = await getAllRules()
 
@@ -535,55 +495,113 @@ export const exportGlobalRulesAndSkills = async (): Promise<{
     .filter(r => r.ruleType === 'hints')
     .map(exportWorkflowRuleToJSON)
 
-  // Export skills
-  const skillsData = await exportSkills()
+  // Combine workflow and hints rules into a single rules array
+  const allExportedRules = [...workflowRules, ...hintsRules]
 
-  return {
-    type: 'GLOBAL_RULES_EXPORT',
-    workflow: workflowRules,
-    hints: hintsRules,
-    skills: skillsData,
+  // Return array format with AUTO_WORKFLOW_RULES catalog
+  const catalogs: Array<any> = []
+
+  // Add AUTO_WORKFLOW_RULES catalog if there are any rules
+  if (allExportedRules.length > 0) {
+    catalogs.push({
+      type: 'AUTO_WORKFLOW_RULES',
+      rules: allExportedRules,
+    })
   }
+
+  return catalogs
 }
 
 /**
- * Import global rules and skills from GLOBAL_RULES_EXPORT format
+ * Import global rules and skills from AUTO_WORKFLOW_RULES format or legacy GLOBAL_RULES_EXPORT format
  */
-export const importGlobalRulesAndSkills = async (data: {
-  type: string
-  workflow: RuleExport[]
-  hints: RuleExport[]
-  skills: any[]
-}): Promise<{
+export const importGlobalRulesAndSkills = async (data: any): Promise<{
   workflowCount: number
   hintsCount: number
   skillsCount: number
 }> => {
-  if (data.type !== 'GLOBAL_RULES_EXPORT') {
-    throw new Error('Invalid format: expected GLOBAL_RULES_EXPORT')
-  }
+  // Check if data is in new array format or old object format
+  const isNewFormat = Array.isArray(data)
 
-  // Import workflow rules
-  const workflowRulesWithType = data.workflow.map((r: any) => ({
-    ...r,
-    ruleType: 'workflow',
-  }))
-  const workflowImported = await importRulesFromJSON(workflowRulesWithType)
+  if (isNewFormat) {
+    // New format: array of catalogs
+    let workflowCount = 0
+    let hintsCount = 0
+    let skillsCount = 0
 
-  // Import hints rules
-  const hintsRulesWithType = data.hints.map((r: any) => ({
-    ...r,
-    ruleType: 'hints',
-  }))
-  const hintsImported = await importRulesFromJSON(hintsRulesWithType)
+    for (const catalog of data) {
+      if (catalog.type === 'AUTO_WORKFLOW_RULES' && catalog.rules) {
+        // Import rules from AUTO_WORKFLOW_RULES catalog
+        // Separate workflow and hints rules based on whether they have hints property
+        const workflowRulesData: any[] = []
+        const hintsRulesData: any[] = []
 
-  // Import skills
-  const skillsImported = await importSkills(data.skills)
+        for (const rule of catalog.rules) {
+          if (rule.hints) {
+            // This is a hints rule
+            hintsRulesData.push({
+              ...rule,
+              ruleType: 'hints',
+            })
+          } else {
+            // This is a workflow rule (has actions or neither)
+            workflowRulesData.push({
+              ...rule,
+              ruleType: 'workflow',
+            })
+          }
+        }
 
-  return {
-    workflowCount: workflowImported.length,
-    hintsCount: hintsImported.length,
-    skillsCount: skillsImported,
+        // Import workflow rules
+        if (workflowRulesData.length > 0) {
+          const imported = await importRulesFromJSON(workflowRulesData)
+          workflowCount += imported.length
+        }
+
+        // Import hints rules
+        if (hintsRulesData.length > 0) {
+          const imported = await importRulesFromJSON(hintsRulesData)
+          hintsCount += imported.length
+        }
+      }
+    }
+
+    return {
+      workflowCount,
+      hintsCount,
+      skillsCount,
+    }
+  } else {
+    // Old format: object with workflow, hints, skills properties
+    if (data.type !== 'GLOBAL_RULES_EXPORT') {
+      throw new Error('Invalid format: expected GLOBAL_RULES_EXPORT or array format')
+    }
+
+    // Import workflow rules
+    const workflowRulesWithType = data.workflow.map((r: any) => ({
+      ...r,
+      ruleType: 'workflow',
+    }))
+    const workflowImported = await importRulesFromJSON(workflowRulesWithType)
+
+    // Import hints rules
+    const hintsRulesWithType = data.hints.map((r: any) => ({
+      ...r,
+      ruleType: 'hints',
+    }))
+    const hintsImported = await importRulesFromJSON(hintsRulesWithType)
+
+    // Import skills if present
+    let skillsImported = 0
+    if (data.skills) {
+      skillsImported = await importSkills(data.skills)
+    }
+
+    return {
+      workflowCount: workflowImported.length,
+      hintsCount: hintsImported.length,
+      skillsCount: skillsImported,
+    }
   }
 }
 
