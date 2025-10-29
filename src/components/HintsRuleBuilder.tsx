@@ -163,65 +163,67 @@ export default function HintsRuleBuilder({ rule, onClose, onSave }: HintsRuleBui
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Rule Description *
                   </label>
-                  <input
-                    type="text"
+                  <textarea
                     value={ruleDesc}
                     onChange={(e) => setRuleDesc(e.target.value)}
-                    placeholder="Describe this hint rule..."
+                    rows={2}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-primary focus:border-primary"
+                    placeholder="Describe what this rule does..."
                   />
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Weight (Priority)
+                    </label>
+                    <input
+                      type="number"
+                      value={weight || ''}
+                      onChange={(e) =>
+                        setWeight(e.target.value ? parseInt(e.target.value) : undefined)
+                      }
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-primary focus:border-primary"
+                      placeholder="Higher weight = higher priority"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Atoms (Criteria Count)
+                    </label>
+                    <input
+                      type="number"
+                      value={atoms}
+                      disabled
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50 text-gray-600 cursor-not-allowed"
+                      title="Auto-calculated from number of criteria fields"
+                    />
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Active From
+                    </label>
+                    <input
+                      type="date"
+                      value={activationDate}
+                      onChange={(e) => setActivationDate(e.target.value)}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-primary focus:border-primary"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Active Through
+                    </label>
+                    <input
+                      type="date"
+                      value={expirationDate}
+                      onChange={(e) => setExpirationDate(e.target.value)}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-primary focus:border-primary"
+                    />
+                  </div>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Weight
-                  </label>
-                  <input
-                    type="number"
-                    value={weight || ''}
-                    onChange={(e) => setWeight(parseInt(e.target.value) || undefined)}
-                    placeholder="0"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-primary focus:border-primary"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Atoms (Criteria Count)
-                  </label>
-                  <input
-                    type="number"
-                    value={atoms}
-                    disabled
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50 text-gray-600 cursor-not-allowed"
-                    title="Auto-calculated from number of criteria fields"
-                  />
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-6">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Active From
-                  </label>
-                  <input
-                    type="date"
-                    value={activationDate}
-                    onChange={(e) => setActivationDate(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-primary focus:border-primary"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Active Through
-                  </label>
-                  <input
-                    type="date"
-                    value={expirationDate}
-                    onChange={(e) => setExpirationDate(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-primary focus:border-primary"
-                  />
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-6">
-                <div className="col-span-2">
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Status
                   </label>
