@@ -782,13 +782,13 @@ export default function RulesTable({ currentRuleType, onRuleTypeChange }: RulesT
                     <colgroup>
                       <col style={{ width: '3%' }} />
                       <col style={{ width: '8%' }} />
-                      <col style={{ width: '11%' }} />
-                      <col style={{ width: '33%' }} />
-                      <col style={{ width: '6%' }} />
-                      <col style={{ width: '6%' }} />
-                      <col style={{ width: '20%' }} />
-                      <col style={{ width: '8%' }} />
+                      <col style={{ width: '10%' }} />
+                      <col style={{ width: '37%' }} />
                       <col style={{ width: '5%' }} />
+                      <col style={{ width: '5%' }} />
+                      <col style={{ width: '15%' }} />
+                      <col style={{ width: '8%' }} />
+                      <col style={{ width: '9%' }} />
                     </colgroup>
                     <thead className="bg-bg-light sticky top-0">
                       <tr>

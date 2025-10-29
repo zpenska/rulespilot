@@ -105,6 +105,11 @@ export const sampleRules: Record<string, Rule> = {
     standardFieldCriteria: [sampleStandardCriteria.memberState],
     customFieldCriteria: [],
     status: 'active',
+    actions: {
+      departmentRouting: {
+        departmentCode: 'DEPT_PA',
+      },
+    },
     createdAt: '2024-01-01T00:00:00Z',
     updatedAt: '2024-01-01T00:00:00Z',
   },
@@ -131,6 +136,15 @@ export const sampleRules: Record<string, Rule> = {
     weight: 100,
     status: 'active',
     category: 'Medicare Authorization',
+    actions: {
+      generateLetters: [
+        { letterName: 'Medicare Approval Letter' },
+        { letterName: 'Provider Notification' },
+      ],
+      departmentRouting: {
+        departmentCode: 'DEPT_MEDICARE',
+      },
+    },
     createdAt: '2024-01-01T00:00:00Z',
     updatedAt: '2024-01-01T00:00:00Z',
   },
@@ -143,6 +157,17 @@ export const sampleRules: Record<string, Rule> = {
     customFieldCriteria: [sampleCustomCriteria.memberRiskScore, sampleCustomCriteria.requestPriority],
     weight: 150,
     status: 'active',
+    actions: {
+      createTask: {
+        taskType: 'High Risk Review',
+        taskReason: 'Member Risk Assessment',
+        daysUntilDue: 3,
+        taskOwner: 'Dept: RISK_MGMT',
+      },
+      departmentRouting: {
+        departmentCode: 'DEPT_HIGHRISK',
+      },
+    },
     createdAt: '2024-01-01T00:00:00Z',
     updatedAt: '2024-01-01T00:00:00Z',
   },
@@ -154,6 +179,11 @@ export const sampleRules: Record<string, Rule> = {
     standardFieldCriteria: [sampleStandardCriteria.requestType],
     customFieldCriteria: [],
     status: 'inactive',
+    actions: {
+      close: {
+        dispositionCode: 'CLOSED_AUTO',
+      },
+    },
     createdAt: '2024-01-01T00:00:00Z',
     updatedAt: '2024-01-01T00:00:00Z',
   },
