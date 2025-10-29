@@ -874,9 +874,16 @@ export default function RulesTable({ currentRuleType, onRuleTypeChange }: RulesT
                               </div>
                             ) : rule.hints ? (
                               <div className="flex flex-wrap gap-0.5">
-                                <span className="inline-flex px-1 py-0.5 rounded text-[10px] font-normal bg-yellow-50 text-yellow-600">
-                                  Hints
-                                </span>
+                                {rule.hints.displayLocation && (
+                                  <span className="inline-flex px-1 py-0.5 rounded text-[10px] font-normal bg-purple-50 text-purple-600">
+                                    {rule.hints.displayLocation.replace(/_/g, ' ')}
+                                  </span>
+                                )}
+                                {rule.hints.context && rule.hints.context.map((ctx, idx) => (
+                                  <span key={idx} className="inline-flex px-1 py-0.5 rounded text-[10px] font-normal bg-blue-50 text-blue-600">
+                                    {ctx.replace(/_/g, ' ')}
+                                  </span>
+                                ))}
                               </div>
                             ) : (
                               '-'
