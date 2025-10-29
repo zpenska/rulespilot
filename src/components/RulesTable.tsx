@@ -820,11 +820,11 @@ export default function RulesTable({ currentRuleType, onRuleTypeChange }: RulesT
                           <td className="px-3 py-2 text-sm text-gray-500">
                             {rule.ruleType === 'tat' && rule.tatParameters ? (
                               <div className="flex flex-wrap gap-0.5">
-                                <span className="inline-flex px-1.5 py-0.5 rounded text-xs font-normal bg-teal-50 text-teal-700">
+                                <span className="inline-flex px-1 py-0.5 rounded text-[10px] font-normal bg-teal-50 text-teal-700">
                                   {rule.tatParameters.units} {rule.tatParameters.unitsOfMeasure.replace('_', ' ')}
                                 </span>
                                 {rule.tatParameters.dueTime && (
-                                  <span className="inline-flex px-1.5 py-0.5 rounded text-xs font-normal bg-cyan-50 text-cyan-700">
+                                  <span className="inline-flex px-1 py-0.5 rounded text-[10px] font-normal bg-cyan-50 text-cyan-700">
                                     Due: {rule.tatParameters.dueTime}
                                   </span>
                                 )}
@@ -832,49 +832,49 @@ export default function RulesTable({ currentRuleType, onRuleTypeChange }: RulesT
                             ) : rule.actions ? (
                               <div className="flex flex-wrap gap-0.5">
                                 {rule.actions.departmentRouting && (
-                                  <span className="inline-flex px-1.5 py-0.5 rounded text-xs font-normal bg-orange-50 text-orange-600">
+                                  <span className="inline-flex px-1 py-0.5 rounded text-[10px] font-normal bg-orange-50 text-orange-600">
                                     Dept Routing
                                   </span>
                                 )}
                                 {rule.actions.close && (
-                                  <span className="inline-flex px-1.5 py-0.5 rounded text-xs font-normal bg-red-50 text-red-600">
+                                  <span className="inline-flex px-1 py-0.5 rounded text-[10px] font-normal bg-red-50 text-red-600">
                                     Close
                                   </span>
                                 )}
                                 {rule.actions.generateLetters && (
-                                  <span className="inline-flex px-1.5 py-0.5 rounded text-xs font-normal bg-green-50 text-green-600">
+                                  <span className="inline-flex px-1 py-0.5 rounded text-[10px] font-normal bg-green-50 text-green-600">
                                     Letter ({rule.actions.generateLetters.length})
                                   </span>
                                 )}
                                 {rule.actions.createTask && (
-                                  <span className="inline-flex px-1.5 py-0.5 rounded text-xs font-normal bg-indigo-50 text-indigo-600">
+                                  <span className="inline-flex px-1 py-0.5 rounded text-[10px] font-normal bg-indigo-50 text-indigo-600">
                                     Task
                                   </span>
                                 )}
                                 {rule.actions.createAppealTasks && rule.actions.createAppealTasks.length > 0 && (
-                                  <span className="inline-flex px-1.5 py-0.5 rounded text-xs font-normal bg-purple-50 text-purple-600">
+                                  <span className="inline-flex px-1 py-0.5 rounded text-[10px] font-normal bg-purple-50 text-purple-600">
                                     Appeal ({rule.actions.createAppealTasks.length})
                                   </span>
                                 )}
                                 {rule.actions.createCMReferral && (
-                                  <span className="inline-flex px-1.5 py-0.5 rounded text-xs font-normal bg-blue-50 text-blue-600">
+                                  <span className="inline-flex px-1 py-0.5 rounded text-[10px] font-normal bg-blue-50 text-blue-600">
                                     CM Referral
                                   </span>
                                 )}
                                 {rule.actions.transferOwnership && (
-                                  <span className="inline-flex px-1.5 py-0.5 rounded text-xs font-normal bg-cyan-50 text-cyan-600">
+                                  <span className="inline-flex px-1 py-0.5 rounded text-[10px] font-normal bg-cyan-50 text-cyan-600">
                                     Transfer
                                   </span>
                                 )}
                                 {rule.actions.createProgram && (
-                                  <span className="inline-flex px-1.5 py-0.5 rounded text-xs font-normal bg-teal-50 text-teal-600">
+                                  <span className="inline-flex px-1 py-0.5 rounded text-[10px] font-normal bg-teal-50 text-teal-600">
                                     Program
                                   </span>
                                 )}
                               </div>
                             ) : rule.hints ? (
                               <div className="flex flex-wrap gap-0.5">
-                                <span className="inline-flex px-1.5 py-0.5 rounded text-xs font-normal bg-yellow-50 text-yellow-600">
+                                <span className="inline-flex px-1 py-0.5 rounded text-[10px] font-normal bg-yellow-50 text-yellow-600">
                                   Hints
                                 </span>
                               </div>

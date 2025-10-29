@@ -299,11 +299,13 @@ export const exportTATRuleToJSON = (rule: Rule): TATRuleExport => {
   }
 
   const exported: TATRuleExport = {
+    code: rule.code,
+    ruleName: rule.ruleName,
+    ruleDesc: rule.ruleDesc,
     sourceDateTimeField: rule.tatParameters.sourceDateTimeField,
     holidayDates: rule.tatParameters.holidayDates,
     holidayCategory: rule.tatParameters.holidayCategory ?? null,
     clinicalsRequestedResponseThresholdHours: rule.tatParameters.clinicalsRequestedResponseThresholdHours ?? null,
-    ruleDesc: rule.ruleName,
     customFieldCriteria: customFieldCriteria && customFieldCriteria.length > 0 ? customFieldCriteria : null,
     isActive: rule.status === 'active',
     weight: rule.weight ?? 100,
@@ -357,7 +359,9 @@ export const exportWorkflowRuleToJSON = (rule: Rule): RuleExport => {
   }))
 
   const exported: RuleExport = {
-    ruleDesc: rule.ruleName,
+    code: rule.code,
+    ruleName: rule.ruleName,
+    ruleDesc: rule.ruleDesc,
     standardFieldCriteria,
     isActive: rule.status === 'active',
     weight: rule.weight ?? 100, // Default weight to 100 if not set
@@ -610,8 +614,11 @@ export const importRulesFromJSON = async (jsonData: RuleExport[]): Promise<Rule[
   for (const ruleData of jsonData) {
     try {
       // Convert RuleExport to Rule format
+      // For backwards compatibility: if code/ruleName not present, fall back to ruleDesc
       const ruleToCreate: Partial<Rule> = {
         ruleType: 'workflow',
+        code: ruleData.code || ruleData.ruleDesc || '',
+        ruleName: ruleData.ruleName || ruleData.ruleDesc || '',
         ruleDesc: ruleData.ruleDesc,
         standardFieldCriteria: ruleData.standardFieldCriteria || [],
         customFieldCriteria: ruleData.customFieldCriteria || [],
@@ -627,7 +634,7 @@ export const importRulesFromJSON = async (jsonData: RuleExport[]): Promise<Rule[
       const createdRule = await createRule(ruleToCreate as Rule)
       importedRules.push(createdRule)
     } catch (error) {
-      console.error('Error importing rule:', ruleData.ruleDesc, error)
+      console.error('Error importing rule:', ruleData.ruleName || ruleData.ruleDesc, error)
       // Continue with other rules even if one fails
     }
   }
@@ -659,8 +666,11 @@ export const importTATRulesFromJSON = async (jsonData: TATRuleExport[]): Promise
       }))
 
       // Convert TATRuleExport to Rule format
+      // For backwards compatibility: if code/ruleName not present, fall back to ruleDesc
       const ruleToCreate: Partial<Rule> = {
         ruleType: 'tat',
+        code: ruleData.code || ruleData.ruleDesc || '',
+        ruleName: ruleData.ruleName || ruleData.ruleDesc || '',
         ruleDesc: ruleData.ruleDesc,
         standardFieldCriteria,
         customFieldCriteria: customFieldCriteria || [],
@@ -685,7 +695,7 @@ export const importTATRulesFromJSON = async (jsonData: TATRuleExport[]): Promise
       const createdRule = await createRule(ruleToCreate as Rule)
       importedRules.push(createdRule)
     } catch (error) {
-      console.error('Error importing TAT rule:', ruleData.ruleDesc, error)
+      console.error('Error importing TAT rule:', ruleData.ruleName || ruleData.ruleDesc, error)
       // Continue with other rules even if one fails
     }
   }

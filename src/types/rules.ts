@@ -270,7 +270,9 @@ export interface Rule {
 
 // For JSON export (without UI metadata) - Workflow Rules
 export interface RuleExport {
-  ruleDesc: string
+  code?: string
+  ruleName?: string
+  ruleDesc?: string
   standardFieldCriteria: StandardFieldCriteria[]
   customFieldCriteria?: CustomFieldCriteria[]
   isActive: boolean
@@ -297,11 +299,13 @@ export interface TATCustomFieldCriteria {
 
 // For JSON export (without UI metadata) - TAT Rules
 export interface TATRuleExport {
+  code?: string
+  ruleName?: string
+  ruleDesc?: string
   sourceDateTimeField: SourceDateTimeField
   holidayDates?: string[]
   holidayCategory?: string | null
   clinicalsRequestedResponseThresholdHours?: number | null
-  ruleDesc: string
   customFieldCriteria?: TATCustomFieldCriteria[] | null
   isActive: boolean
   weight: number
