@@ -503,7 +503,7 @@ export default function RulesTable({ currentRuleType, onRuleTypeChange }: RulesT
               )}
             </div>
           ) : showRuleBuilder ? (
-            <div className="bg-white rounded-b-xl h-[calc(100vh-12rem)]">
+            <div className="bg-white rounded-b-xl">
               {ruleBuilderLoading ? (
                 <div className="flex items-center justify-center p-8">
                   <div className="text-gray-500">Loading rule...</div>

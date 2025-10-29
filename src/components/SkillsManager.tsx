@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Plus, Trash2, Edit2, Power, PowerOff } from 'lucide-react'
+import { Search, Trash2, Edit2, Power, PowerOff } from 'lucide-react'
 import { SkillDefinition } from '../types/rules'
 import { collection, getDocs, deleteDoc, doc, updateDoc } from 'firebase/firestore'
 import { db } from '../config/firebase'
@@ -12,6 +12,7 @@ export default function SkillsManager() {
   const [skills, setSkills] = useState<SkillDefinition[]>([])
   const [filteredSkills, setFilteredSkills] = useState<SkillDefinition[]>([])
   const [activeTab, setActiveTab] = useState<TabFilter>('all')
+  const [searchTerm, setSearchTerm] = useState('')
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -19,7 +20,7 @@ export default function SkillsManager() {
   }, [])
 
   useEffect(() => {
-    // Filter skills based on active tab
+    // Filter skills based on active tab and search term
     let filtered = skills
 
     if (activeTab === 'active') {
@@ -28,8 +29,18 @@ export default function SkillsManager() {
       filtered = filtered.filter((s) => !s.active)
     }
 
+    // Apply search filter
+    if (searchTerm) {
+      filtered = filtered.filter((s) =>
+        s.skillName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        s.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        s.diagnosisCodes.some(code => code.toLowerCase().includes(searchTerm.toLowerCase())) ||
+        s.serviceCodes.some(code => code.toLowerCase().includes(searchTerm.toLowerCase()))
+      )
+    }
+
     setFilteredSkills(filtered)
-  }, [skills, activeTab])
+  }, [skills, activeTab, searchTerm])
 
   const loadSkills = async () => {
     try {
@@ -78,7 +89,7 @@ export default function SkillsManager() {
 
   return (
     <div className="bg-white rounded-b-xl px-6 py-4">
-      {/* Filter Tabs and Add Button */}
+      {/* Filter Tabs and Search */}
       <div className="flex items-center justify-between mb-4">
         <div className="inline-flex border border-gray-300 rounded-lg overflow-hidden">
         <button
@@ -128,13 +139,16 @@ export default function SkillsManager() {
         </button>
         </div>
 
-        <button
-          onClick={() => navigate('/skills/new')}
-          className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary hover:bg-primary-hover"
-        >
-          <Plus className="w-4 h-4 mr-2" />
-          Add New Skill
-        </button>
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+          <input
+            type="text"
+            placeholder="Search by Name, Code..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="pl-9 pr-3 py-1.5 border border-gray-300 rounded text-sm focus:ring-primary focus:border-primary w-64"
+          />
+        </div>
       </div>
 
       {/* Table Container */}
@@ -146,8 +160,10 @@ export default function SkillsManager() {
         <div className="flex flex-col items-center justify-center h-64 text-gray-500 border border-gray-200 rounded-lg">
           <p className="text-lg font-medium">No skills found</p>
           <p className="text-sm mt-2">
-            {activeTab === 'all'
-              ? 'Click "Add New Skill" to create your first skill'
+            {searchTerm
+              ? 'Try adjusting your search'
+              : activeTab === 'all'
+              ? 'Click "New Rule" to create your first skill'
               : `No ${activeTab} skills found`
             }
           </p>
