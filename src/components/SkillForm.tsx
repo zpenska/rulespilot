@@ -18,6 +18,8 @@ export default function SkillForm({ skill, onClose, onSave }: SkillFormProps) {
   const [description, setDescription] = useState('')
   const [diagnosisCodes, setDiagnosisCodes] = useState<string[]>([])
   const [serviceCodes, setServiceCodes] = useState<string[]>([])
+  const [activationDate, setActivationDate] = useState('')
+  const [expirationDate, setExpirationDate] = useState('')
   const [saving, setSaving] = useState(false)
 
   // Mode states for diagnosis and service inputs
@@ -38,6 +40,8 @@ export default function SkillForm({ skill, onClose, onSave }: SkillFormProps) {
       setDescription(skill.description)
       setDiagnosisCodes(skill.diagnosisCodes)
       setServiceCodes(skill.serviceCodes)
+      setActivationDate(skill.activationDate || '')
+      setExpirationDate(skill.expirationDate || '')
     }
   }, [skill])
 
@@ -152,6 +156,8 @@ export default function SkillForm({ skill, onClose, onSave }: SkillFormProps) {
       description: description.trim(),
       diagnosisCodes,
       serviceCodes,
+      activationDate: activationDate || undefined,
+      expirationDate: expirationDate || undefined,
       active: true,
       updatedAt: new Date().toISOString(),
     }
@@ -204,8 +210,14 @@ export default function SkillForm({ skill, onClose, onSave }: SkillFormProps) {
       </div>
 
       {/* Content */}
-      <div className="flex-1 overflow-auto px-6 py-6">
-        <div className="max-w-3xl space-y-6">
+      <div className="flex-1 overflow-auto bg-bg-light">
+        <div className="max-w-6xl mx-auto px-6 py-6">
+          {/* Basic Information */}
+          <div className="bg-white rounded-xl shadow-sm border border-table-border p-4 mb-4">
+            <h4 className="text-sm font-semibold text-gray-900 mb-3 pb-2 border-b border-gray-200">
+              Basic Information
+            </h4>
+
           {/* Skill Name */}
           <div>
             <label className="block text-sm font-medium text-gray-900 mb-2">
@@ -234,12 +246,40 @@ export default function SkillForm({ skill, onClose, onSave }: SkillFormProps) {
             />
           </div>
 
-          {/* Map Diagnosis Codes */}
-          <div>
-            <label className="block text-sm font-medium text-gray-900 mb-2">
-              Map Diagnosis Codes
-            </label>
+          {/* Active Dates */}
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-900 mb-2">
+                Active From
+              </label>
+              <input
+                type="date"
+                value={activationDate}
+                onChange={(e) => setActivationDate(e.target.value)}
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-primary focus:border-primary"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-900 mb-2">
+                Active Through
+              </label>
+              <input
+                type="date"
+                value={expirationDate}
+                onChange={(e) => setExpirationDate(e.target.value)}
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-primary focus:border-primary"
+              />
+            </div>
+          </div>
+          </div>
 
+          {/* Diagnosis Codes */}
+          <div className="bg-white rounded-xl shadow-sm border border-table-border p-4 mb-4">
+            <h4 className="text-sm font-semibold text-gray-900 mb-3 pb-2 border-b border-gray-200">
+              Map Diagnosis Codes
+            </h4>
+
+          <div>
             {/* Mode Toggle */}
             <div className="flex gap-1 mb-3 p-1 bg-gray-100 rounded-lg w-fit">
               <button
@@ -336,13 +376,15 @@ export default function SkillForm({ skill, onClose, onSave }: SkillFormProps) {
               </div>
             )}
           </div>
+          </div>
 
-          {/* Map Service Codes */}
-          <div>
-            <label className="block text-sm font-medium text-gray-900 mb-2">
+          {/* Service Codes */}
+          <div className="bg-white rounded-xl shadow-sm border border-table-border p-4 mb-4">
+            <h4 className="text-sm font-semibold text-gray-900 mb-3 pb-2 border-b border-gray-200">
               Map Service Codes (Optional)
-            </label>
+            </h4>
 
+          <div>
             {/* Mode Toggle */}
             <div className="flex gap-1 mb-3 p-1 bg-gray-100 rounded-lg w-fit">
               <button
@@ -438,6 +480,7 @@ export default function SkillForm({ skill, onClose, onSave }: SkillFormProps) {
                 ))}
               </div>
             )}
+          </div>
           </div>
         </div>
       </div>
