@@ -46,6 +46,7 @@ export default function RuleBuilder({ rule, onClose, onSave }: RuleBuilderProps)
   const [ruleDesc, setRuleDesc] = useState(rule?.ruleDesc || '')
   const [weight, setWeight] = useState<number | undefined>(rule?.weight)
   const [activationDate, setActivationDate] = useState(rule?.activationDate || '')
+  const [expirationDate, setExpirationDate] = useState(rule?.expirationDate || '')
   const [status, setStatus] = useState<'active' | 'inactive'>(rule?.status || 'inactive')
   const [standardCriteria, setStandardCriteria] = useState<StandardFieldCriteria[]>(
     rule?.standardFieldCriteria || []
@@ -145,6 +146,7 @@ export default function RuleBuilder({ rule, onClose, onSave }: RuleBuilderProps)
       weight,
       atoms,
       activationDate,
+      expirationDate,
       status,
     }
 
@@ -315,16 +317,29 @@ export default function RuleBuilder({ rule, onClose, onSave }: RuleBuilderProps)
                   />
                 </div>
               </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Activation Date
-                </label>
-                <input
-                  type="date"
-                  value={activationDate}
-                  onChange={(e) => setActivationDate(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-primary focus:border-primary"
-                />
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Active From
+                  </label>
+                  <input
+                    type="date"
+                    value={activationDate}
+                    onChange={(e) => setActivationDate(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-primary focus:border-primary"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Active Through
+                  </label>
+                  <input
+                    type="date"
+                    value={expirationDate}
+                    onChange={(e) => setExpirationDate(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-primary focus:border-primary"
+                  />
+                </div>
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">

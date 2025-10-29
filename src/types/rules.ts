@@ -221,7 +221,8 @@ export interface Rule {
   customFieldCriteria: CustomFieldCriteria[]
   weight?: number
   atoms?: number  // Auto-calculated count of criteria fields
-  activationDate?: string  // YYYY-MM-DD format
+  activationDate?: string  // YYYY-MM-DD format (from date)
+  expirationDate?: string  // YYYY-MM-DD format (through date, optional)
   status: 'active' | 'inactive'
   category?: string
   actions?: RuleActions  // Only for workflow rules
@@ -344,6 +345,8 @@ export interface SkillDefinition {
   diagnosisCodes: string[]
   serviceCodes: string[]
   active: boolean
+  activationDate?: string  // YYYY-MM-DD format (from date)
+  expirationDate?: string  // YYYY-MM-DD format (through date, optional)
   createdAt: string
   updatedAt: string
 }

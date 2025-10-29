@@ -648,12 +648,12 @@ export default function RulesTable({ currentRuleType, onRuleTypeChange }: RulesT
                 ) : filteredRules.length === 0 ? (
                   <div className="flex items-center justify-center h-64">
                     <div className="text-center">
-                      <p className="text-gray-500">No rules found</p>
+                      <p className="text-gray-500">No {currentRuleType === 'hints' ? 'hints' : 'rules'} found</p>
                       <button
                         onClick={() => navigate(`/${currentRuleType}/new`)}
                         className="mt-4 text-primary hover:text-primary-hover"
                       >
-                        Create your first rule
+                        Create your first {currentRuleType === 'hints' ? 'hint' : 'rule'}
                       </button>
                     </div>
                   </div>

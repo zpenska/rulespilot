@@ -158,15 +158,23 @@ export default function SkillsManager() {
         </div>
       ) : filteredSkills.length === 0 ? (
         <div className="flex flex-col items-center justify-center h-64 text-gray-500 border border-gray-200 rounded-lg">
-          <p className="text-lg font-medium">No skills found</p>
-          <p className="text-sm mt-2">
-            {searchTerm
-              ? 'Try adjusting your search'
-              : activeTab === 'all'
-              ? 'Click "New Rule" to create your first skill'
-              : `No ${activeTab} skills found`
-            }
-          </p>
+          <div className="text-center">
+            <p className="text-gray-500">No skills found</p>
+            {!searchTerm && activeTab === 'all' && (
+              <button
+                onClick={() => navigate('/skills/new')}
+                className="mt-4 text-primary hover:text-primary-hover"
+              >
+                Create your first skill
+              </button>
+            )}
+            {searchTerm && (
+              <p className="text-sm mt-2">Try adjusting your search</p>
+            )}
+            {!searchTerm && activeTab !== 'all' && (
+              <p className="text-sm mt-2">No {activeTab} skills found</p>
+            )}
+          </div>
         </div>
       ) : (
         <div className="rounded-lg border border-table-border bg-white shadow-sm overflow-hidden">
