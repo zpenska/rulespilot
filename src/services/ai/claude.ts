@@ -1,5 +1,5 @@
 import Anthropic from '@anthropic-ai/sdk'
-import { Rule, StandardFieldCriteria, CustomFieldCriteria, RuleActions, RuleType, TATParameters } from '../../types/rules'
+import { Rule, StandardFieldCriteria, CustomFieldCriteria, RuleActions, RuleType, TATParameters, HintsAction } from '../../types/rules'
 import AI_KNOWLEDGE_BASE from '../../config/aiKnowledgeBase'
 import AI_KNOWLEDGE_WORKFLOW from '../../config/aiKnowledgeWorkflow'
 import AI_KNOWLEDGE_TAT from '../../config/aiKnowledgeTAT'
@@ -34,6 +34,7 @@ export interface AIRuleGeneration {
   customFieldCriteria: CustomFieldCriteria[]
   weight?: number
   actions?: RuleActions
+  hints?: HintsAction
   tatParameters?: TATParameters
 }
 

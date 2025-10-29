@@ -43,47 +43,62 @@ interface RuleBuilderProps {
 }
 
 export default function RuleBuilder({ rule, onClose, onSave }: RuleBuilderProps) {
+  const currentRuleType = useRulesStore((state) => state.currentRuleType)
+  const aiGeneratedDraft = useRulesStore((state) => state.aiGeneratedDraft)
+  const clearAiGeneratedDraft = useRulesStore((state) => state.clearAiGeneratedDraft)
+
+  // Use AI draft if creating new rule and draft exists
+  const initialData = !rule && aiGeneratedDraft ? aiGeneratedDraft : rule
+
   const [viewMode, setViewMode] = useState<'form' | 'visual'>('form')
-  const [code, setCode] = useState(rule?.code || '')
-  const [ruleDesc, setRuleDesc] = useState(rule?.ruleDesc || '')
-  const [weight, setWeight] = useState<number | undefined>(rule?.weight)
-  const [activationDate, setActivationDate] = useState(rule?.activationDate || '')
-  const [expirationDate, setExpirationDate] = useState(rule?.expirationDate || '')
-  const [status, setStatus] = useState<'active' | 'inactive'>(rule?.status || 'inactive')
+  const [code, setCode] = useState(initialData?.code || '')
+  const [ruleDesc, setRuleDesc] = useState(initialData?.ruleDesc || '')
+  const [weight, setWeight] = useState<number | undefined>(initialData?.weight)
+  const [activationDate, setActivationDate] = useState(initialData?.activationDate || '')
+  const [expirationDate, setExpirationDate] = useState(initialData?.expirationDate || '')
+  const [status, setStatus] = useState<'active' | 'inactive'>(initialData?.status || 'inactive')
   const [standardCriteria, setStandardCriteria] = useState<StandardFieldCriteria[]>(
-    rule?.standardFieldCriteria || []
+    initialData?.standardFieldCriteria || []
   )
   const [customCriteria, setCustomCriteria] = useState<CustomFieldCriteria[]>(
-    rule?.customFieldCriteria || []
+    initialData?.customFieldCriteria || []
   )
-  const [actions, setActions] = useState<RuleActions>(rule?.actions || {})
+  const [actions, setActions] = useState<RuleActions>(initialData?.actions || {})
   const [errors, setErrors] = useState<string[]>([])
 
   // Calculate atoms automatically from criteria
   const atoms = calculateAtoms({ standardFieldCriteria: standardCriteria, customFieldCriteria: customCriteria })
   const [saving, setSaving] = useState(false)
-  const currentRuleType = useRulesStore((state) => state.currentRuleType)
+
+  // Clear AI draft when component unmounts or when we navigate away
+  useEffect(() => {
+    return () => {
+      if (!rule && aiGeneratedDraft) {
+        clearAiGeneratedDraft()
+      }
+    }
+  }, [rule, aiGeneratedDraft, clearAiGeneratedDraft])
 
   // Workflow-specific state (only for workflow rules)
-  const [triggerEvents, setTriggerEvents] = useState<TriggerEvent[]>(rule?.triggerEvents || [])
+  const [triggerEvents, setTriggerEvents] = useState<TriggerEvent[]>(initialData?.triggerEvents || [])
   const [requestTypeFilter, setRequestTypeFilter] = useState<RequestTypeFilter>(
-    rule?.requestTypeFilter || null
+    initialData?.requestTypeFilter || null
   )
-  const [fireOnce, setFireOnce] = useState<boolean>(rule?.fireOnce || false)
+  const [fireOnce, setFireOnce] = useState<boolean>(initialData?.fireOnce || false)
 
   // TAT-specific state
   const [tatParameters, setTatParameters] = useState<TATParameters>({
-    sourceDateTimeField: rule?.tatParameters?.sourceDateTimeField || 'NOTIFICATION_DATE_TIME',
-    units: rule?.tatParameters?.units || 72,
-    unitsOfMeasure: rule?.tatParameters?.unitsOfMeasure || 'HOURS',
-    dueTime: rule?.tatParameters?.dueTime || null,
-    holidayDates: rule?.tatParameters?.holidayDates || [],
-    holidayCategory: rule?.tatParameters?.holidayCategory || null,
-    holidayOffset: rule?.tatParameters?.holidayOffset || null,
-    clinicalsRequestedResponseThresholdHours: rule?.tatParameters?.clinicalsRequestedResponseThresholdHours || null,
-    dateOperator: rule?.tatParameters?.dateOperator || null,
-    autoExtend: rule?.tatParameters?.autoExtend || false,
-    extendStatusReason: rule?.tatParameters?.extendStatusReason || null,
+    sourceDateTimeField: initialData?.tatParameters?.sourceDateTimeField || 'NOTIFICATION_DATE_TIME',
+    units: initialData?.tatParameters?.units || 72,
+    unitsOfMeasure: initialData?.tatParameters?.unitsOfMeasure || 'HOURS',
+    dueTime: initialData?.tatParameters?.dueTime || null,
+    holidayDates: initialData?.tatParameters?.holidayDates || [],
+    holidayCategory: initialData?.tatParameters?.holidayCategory || null,
+    holidayOffset: initialData?.tatParameters?.holidayOffset || null,
+    clinicalsRequestedResponseThresholdHours: initialData?.tatParameters?.clinicalsRequestedResponseThresholdHours || null,
+    dateOperator: initialData?.tatParameters?.dateOperator || null,
+    autoExtend: initialData?.tatParameters?.autoExtend || false,
+    extendStatusReason: initialData?.tatParameters?.extendStatusReason || null,
   })
   const [holidayDateInput, setHolidayDateInput] = useState('')
 

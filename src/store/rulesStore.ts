@@ -6,6 +6,7 @@ interface RulesState {
   ruleGroups: RuleGroup[]
   selectedRuleId: string | null
   currentRuleType: RuleType
+  aiGeneratedDraft: Partial<Rule> | null
   setRules: (rules: Rule[]) => void
   setRuleGroups: (groups: RuleGroup[]) => void
   addRule: (rule: Rule) => void
@@ -13,6 +14,8 @@ interface RulesState {
   deleteRule: (id: string) => void
   selectRule: (id: string | null) => void
   setCurrentRuleType: (ruleType: RuleType) => void
+  setAiGeneratedDraft: (draft: Partial<Rule> | null) => void
+  clearAiGeneratedDraft: () => void
   addRuleGroup: (group: RuleGroup) => void
   updateRuleGroup: (id: string, updates: Partial<RuleGroup>) => void
   deleteRuleGroup: (id: string) => void
@@ -23,6 +26,7 @@ export const useRulesStore = create<RulesState>((set) => ({
   ruleGroups: [],
   selectedRuleId: null,
   currentRuleType: 'workflow',
+  aiGeneratedDraft: null,
 
   setRules: (rules) => set({ rules }),
 
@@ -54,6 +58,16 @@ export const useRulesStore = create<RulesState>((set) => ({
   setCurrentRuleType: (ruleType) =>
     set(() => ({
       currentRuleType: ruleType,
+    })),
+
+  setAiGeneratedDraft: (draft) =>
+    set(() => ({
+      aiGeneratedDraft: draft,
+    })),
+
+  clearAiGeneratedDraft: () =>
+    set(() => ({
+      aiGeneratedDraft: null,
     })),
 
   addRuleGroup: (group) =>

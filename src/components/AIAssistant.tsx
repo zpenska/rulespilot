@@ -14,6 +14,7 @@ export default function AIAssistant({ onRuleGenerated, onClose }: AIAssistantPro
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const currentRuleType = useRulesStore((state) => state.currentRuleType)
+  const setAiGeneratedDraft = useRulesStore((state) => state.setAiGeneratedDraft)
 
   // Context-aware suggestions based on rule type
   const suggestions = useMemo(() => {
@@ -61,15 +62,23 @@ export default function AIAssistant({ onRuleGenerated, onClose }: AIAssistantPro
 
     try {
       const generated = await generateRuleFromNaturalLanguage(input, currentRuleType)
-      onRuleGenerated({
+      const draftRule: Partial<Rule> = {
         ruleDesc: generated.ruleDesc,
         standardFieldCriteria: generated.standardFieldCriteria,
         customFieldCriteria: generated.customFieldCriteria,
         weight: generated.weight,
         actions: currentRuleType === 'tat' ? undefined : generated.actions,
+        hints: currentRuleType === 'hints' ? generated.hints : undefined,
         tatParameters: currentRuleType === 'tat' ? generated.tatParameters : undefined,
         status: 'inactive',
-      })
+        ruleType: currentRuleType,
+      }
+
+      // Save draft to store so the builder can use it
+      setAiGeneratedDraft(draftRule)
+
+      // Call the callback which will navigate to the builder
+      onRuleGenerated(draftRule)
       setInput('')
     } catch (err) {
       console.error('Error generating rule:', err)
@@ -84,85 +93,108 @@ export default function AIAssistant({ onRuleGenerated, onClose }: AIAssistantPro
   }
 
   return (
-    <div className="p-6">
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center space-x-2">
-          <Sparkles className="w-5 h-5 text-primary" />
-          <h3 className="text-lg font-semibold text-gray-900">AI Assistant</h3>
+    <div className="p-8">
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center space-x-3">
+          <div className="p-2 bg-primary-light rounded-lg">
+            <Sparkles className="w-6 h-6 text-primary" />
+          </div>
+          <div>
+            <h3 className="text-xl font-semibold text-gray-900">AI Assistant</h3>
+            <p className="text-sm text-gray-500">Generate rules using natural language</p>
+          </div>
         </div>
         {onClose && (
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-500"
+            className="text-gray-400 hover:text-gray-600 transition-colors"
+            aria-label="Close AI Assistant"
           >
             <X className="w-5 h-5" />
           </button>
         )}
       </div>
 
-      <div className="mb-4">
-        <p className="text-sm text-gray-600 mb-3">
-          Describe the rule you want to create in natural language, and I'll generate it for you.
-        </p>
-
+      <div className="mb-6">
         {/* Suggestions */}
-        <div className="mb-4">
-          <p className="text-sm font-medium text-gray-700 mb-2">Try these examples:</p>
-          <div className="space-y-2">
-            {suggestions.map((suggestion, index) => (
+        {suggestions.length > 0 && suggestions[0] !== 'Skills are managed manually in the Skills Management table. Use the "Add New Skill" button to create skill definitions.' && (
+          <div className="mb-6">
+            <p className="text-sm font-medium text-gray-700 mb-3">Try these examples:</p>
+            <div className="space-y-2">
+              {suggestions.map((suggestion, index) => (
+                <button
+                  key={index}
+                  onClick={() => handleSuggestionClick(suggestion)}
+                  className="block w-full text-left px-4 py-3 text-sm text-primary bg-primary-light/50 hover:bg-primary hover:text-white rounded-lg transition-all duration-200 border border-transparent hover:border-primary"
+                >
+                  {suggestion}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Skills message */}
+        {currentRuleType === 'skills' && (
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 text-center">
+            <p className="text-sm text-blue-800">
+              Skills are managed manually in the Skills Management table. Use the <strong>"Add New Skill"</strong> button to create skill definitions.
+            </p>
+          </div>
+        )}
+
+        {/* Input - only show if not skills */}
+        {currentRuleType !== 'skills' && (
+          <>
+            <div className="relative">
+              <textarea
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                onKeyPress={(e) => {
+                  if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault()
+                    handleGenerate()
+                  }
+                }}
+                rows={4}
+                className="w-full px-4 py-3 pr-14 text-sm border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary resize-none transition-all"
+                placeholder="E.g., Create a rule for members in Pennsylvania..."
+                disabled={loading}
+              />
               <button
-                key={index}
-                onClick={() => handleSuggestionClick(suggestion)}
-                className="block w-full text-left px-3 py-2 text-sm text-primary bg-primary-light hover:bg-primary hover:text-white rounded transition-colors"
+                onClick={handleGenerate}
+                disabled={loading || !input.trim()}
+                className="absolute bottom-3 right-3 p-2.5 bg-primary text-white rounded-lg hover:bg-primary-hover disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm hover:shadow-md"
+                aria-label="Generate rule"
               >
-                {suggestion}
+                {loading ? (
+                  <Loader className="w-5 h-5 animate-spin" />
+                ) : (
+                  <Send className="w-5 h-5" />
+                )}
               </button>
-            ))}
-          </div>
-        </div>
+            </div>
 
-        {/* Input */}
-        <div className="relative">
-          <textarea
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyPress={(e) => {
-              if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault()
-                handleGenerate()
-              }
-            }}
-            rows={4}
-            className="w-full px-3 py-2.5 pr-12 text-sm border border-gray-300 rounded focus:ring-primary focus:border-primary resize-none"
-            placeholder="E.g., Create a rule for members in Pennsylvania..."
-            disabled={loading}
-          />
-          <button
-            onClick={handleGenerate}
-            disabled={loading || !input.trim()}
-            className="absolute bottom-2 right-2 p-2 bg-primary text-white rounded hover:bg-primary-hover disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {loading ? (
-              <Loader className="w-4 h-4 animate-spin" />
-            ) : (
-              <Send className="w-4 h-4" />
+            {/* Error */}
+            {error && (
+              <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-lg">
+                <p className="text-sm text-red-700">{error}</p>
+              </div>
             )}
-          </button>
-        </div>
-
-        {/* Error */}
-        {error && (
-          <div className="mt-3 text-sm text-red-600">
-            {error}
-          </div>
+          </>
         )}
       </div>
 
-      <div className="border-t border-gray-200 pt-4 mt-4">
-        <p className="text-sm text-gray-500">
-          <strong>Tip:</strong> Be specific about field names, operators, and values. The AI understands all standard fields and operators.
-        </p>
-      </div>
+      {currentRuleType !== 'skills' && (
+        <div className="border-t border-gray-200 pt-5 mt-6">
+          <div className="flex items-start space-x-2">
+            <span className="text-sm font-semibold text-gray-700">Tip:</span>
+            <p className="text-sm text-gray-600">
+              Be specific about field names, operators, and values. The AI understands all standard fields and operators.
+            </p>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

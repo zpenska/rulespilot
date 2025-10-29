@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Plus, Trash2, Save } from 'lucide-react'
 import {
   Rule,
@@ -18,6 +18,7 @@ import {
 import { validateRule } from '../services/validationService'
 import { createRule, updateRule } from '../services/rulesService'
 import { calculateAtoms } from '../utils/ruleUtils'
+import { useRulesStore } from '../store/rulesStore'
 
 interface HintsRuleBuilderProps {
   rule?: Rule | null
@@ -26,24 +27,39 @@ interface HintsRuleBuilderProps {
 }
 
 export default function HintsRuleBuilder({ rule, onClose, onSave }: HintsRuleBuilderProps) {
-  const [code, setCode] = useState(rule?.code || '')
-  const [ruleDesc, setRuleDesc] = useState(rule?.ruleDesc || '')
-  const [weight, setWeight] = useState<number | undefined>(rule?.weight)
-  const [activationDate, setActivationDate] = useState(rule?.activationDate || '')
-  const [expirationDate, setExpirationDate] = useState(rule?.expirationDate || '')
-  const [status, setStatus] = useState<'active' | 'inactive'>(rule?.status || 'inactive')
+  const aiGeneratedDraft = useRulesStore((state) => state.aiGeneratedDraft)
+  const clearAiGeneratedDraft = useRulesStore((state) => state.clearAiGeneratedDraft)
+
+  // Use AI draft if creating new rule and draft exists
+  const initialData = !rule && aiGeneratedDraft ? aiGeneratedDraft : rule
+
+  const [code, setCode] = useState(initialData?.code || '')
+  const [ruleDesc, setRuleDesc] = useState(initialData?.ruleDesc || '')
+  const [weight, setWeight] = useState<number | undefined>(initialData?.weight)
+  const [activationDate, setActivationDate] = useState(initialData?.activationDate || '')
+  const [expirationDate, setExpirationDate] = useState(initialData?.expirationDate || '')
+  const [status, setStatus] = useState<'active' | 'inactive'>(initialData?.status || 'inactive')
   const [standardCriteria, setStandardCriteria] = useState<StandardFieldCriteria[]>(
-    rule?.standardFieldCriteria || []
+    initialData?.standardFieldCriteria || []
   )
   const [customCriteria] = useState<CustomFieldCriteria[]>(
-    rule?.customFieldCriteria || []
+    initialData?.customFieldCriteria || []
   )
-  const [hints, setHints] = useState<HintsAction>(rule?.hints || { message: '' })
+  const [hints, setHints] = useState<HintsAction>(initialData?.hints || { message: '' })
   const [errors, setErrors] = useState<string[]>([])
 
   // Calculate atoms automatically from criteria
   const atoms = calculateAtoms({ standardFieldCriteria: standardCriteria, customFieldCriteria: customCriteria })
   const [saving, setSaving] = useState(false)
+
+  // Clear AI draft when component unmounts or when we navigate away
+  useEffect(() => {
+    return () => {
+      if (!rule && aiGeneratedDraft) {
+        clearAiGeneratedDraft()
+      }
+    }
+  }, [rule, aiGeneratedDraft, clearAiGeneratedDraft])
 
   const handleAddStandardCriteria = () => {
     setStandardCriteria([
