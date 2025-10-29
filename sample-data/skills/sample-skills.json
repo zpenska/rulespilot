@@ -1,5 +1,6 @@
 [
   {
+    "code": "CARDIO_SPEC",
     "skillName": "Cardiology",
     "skillCode": "CARDIO_SPEC",
     "description": "Cardiovascular diseases including ischemic heart disease, arrhythmias, and heart failure",
@@ -9,6 +10,7 @@
     "active": true
   },
   {
+    "code": "ORTHO_SPEC",
     "skillName": "Orthopedics",
     "skillCode": "ORTHO_SPEC",
     "description": "Musculoskeletal conditions including arthropathies, joint disorders, and bone diseases",
@@ -18,6 +20,7 @@
     "active": true
   },
   {
+    "code": "ONCO_SPEC",
     "skillName": "Oncology",
     "skillCode": "ONCO_SPEC",
     "description": "Malignant neoplasms and cancer treatment including chemotherapy and radiation",
@@ -27,6 +30,7 @@
     "active": true
   },
   {
+    "code": "ENDO_SPEC",
     "skillName": "Endocrinology",
     "skillCode": "ENDO_SPEC",
     "description": "Endocrine disorders including diabetes mellitus, thyroid disorders, and metabolic conditions",
@@ -36,6 +40,7 @@
     "active": true
   },
   {
+    "code": "NEPHRO_SPEC",
     "skillName": "Nephrology",
     "skillCode": "NEPHRO_SPEC",
     "description": "Kidney diseases including chronic kidney disease, acute renal failure, and dialysis",
@@ -45,6 +50,7 @@
     "active": true
   },
   {
+    "code": "PULMO_SPEC",
     "skillName": "Pulmonology",
     "skillCode": "PULMO_SPEC",
     "description": "Respiratory diseases including COPD, asthma, and sleep apnea",
@@ -54,6 +60,7 @@
     "active": true
   },
   {
+    "code": "NEURO_SPEC",
     "skillName": "Neurology",
     "skillCode": "NEURO_SPEC",
     "description": "Nervous system disorders including epilepsy, multiple sclerosis, and neuropathies",
@@ -63,6 +70,7 @@
     "active": true
   },
   {
+    "code": "GI_SPEC",
     "skillName": "Gastroenterology",
     "skillCode": "GI_SPEC",
     "description": "Digestive system disorders including IBD, liver disease, and GI cancers",
@@ -72,6 +80,7 @@
     "active": true
   },
   {
+    "code": "RHEUM_SPEC",
     "skillName": "Rheumatology",
     "skillCode": "RHEUM_SPEC",
     "description": "Autoimmune and inflammatory diseases including rheumatoid arthritis and lupus",
@@ -81,6 +90,7 @@
     "active": true
   },
   {
+    "code": "DERM_SPEC",
     "skillName": "Dermatology",
     "skillCode": "DERM_SPEC",
     "description": "Skin disorders including infections, inflammatory conditions, and skin cancers",
@@ -90,6 +100,7 @@
     "active": true
   },
   {
+    "code": "PSYCH_SPEC",
     "skillName": "Psychiatry",
     "skillCode": "PSYCH_SPEC",
     "description": "Mental health disorders including depression, anxiety, bipolar disorder, and schizophrenia",
@@ -99,6 +110,7 @@
     "active": true
   },
   {
+    "code": "OB_SPEC",
     "skillName": "Obstetrics",
     "skillCode": "OB_SPEC",
     "description": "Pregnancy, childbirth, and postpartum care including high-risk pregnancies",
@@ -108,6 +120,7 @@
     "active": true
   },
   {
+    "code": "PEDS_SPEC",
     "skillName": "Pediatrics",
     "skillCode": "PEDS_SPEC",
     "description": "Pediatric care including neonatal conditions, developmental disorders, and childhood illnesses",
@@ -117,6 +130,7 @@
     "active": true
   },
   {
+    "code": "PT_SPEC",
     "skillName": "Physical Therapy",
     "skillCode": "PT_SPEC",
     "description": "Rehabilitation services including therapeutic exercises, manual therapy, and functional training",
@@ -126,6 +140,7 @@
     "active": true
   },
   {
+    "code": "RAD_IMAGING",
     "skillName": "Radiology - Advanced Imaging",
     "skillCode": "RAD_IMAGING",
     "description": "Advanced diagnostic imaging including CT, MRI, and nuclear medicine",
@@ -135,6 +150,7 @@
     "active": true
   },
   {
+    "code": "PAIN_MGMT",
     "skillName": "Pain Management",
     "skillCode": "PAIN_MGMT",
     "description": "Chronic pain treatment including injections, nerve blocks, and interventional procedures",
@@ -144,6 +160,7 @@
     "active": true
   },
   {
+    "code": "SLEEP_MED",
     "skillName": "Sleep Medicine",
     "skillCode": "SLEEP_MED",
     "description": "Sleep disorders including sleep apnea, insomnia, and narcolepsy",
@@ -153,6 +170,7 @@
     "active": true
   },
   {
+    "code": "BARIATRIC_SURG",
     "skillName": "Bariatric Surgery",
     "skillCode": "BARIATRIC_SURG",
     "description": "Weight loss surgery including gastric bypass, sleeve gastrectomy, and lap band procedures",
@@ -162,6 +180,7 @@
     "active": true
   },
   {
+    "code": "BEHAVIORAL_SA",
     "skillName": "Behavioral Health - Substance Abuse",
     "skillCode": "BEHAVIORAL_SA",
     "description": "Substance abuse treatment including alcohol, opioid, and drug dependency programs",
@@ -171,6 +190,7 @@
     "active": true
   },
   {
+    "code": "HOME_HEALTH",
     "skillName": "Home Health Services",
     "skillCode": "HOME_HEALTH",
     "description": "In-home medical care including skilled nursing, home health aide services, and therapy",

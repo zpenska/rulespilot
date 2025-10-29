@@ -2,7 +2,9 @@
   "type": "AUTO_WORKFLOW_RULES",
   "rules": [
     {
-      "ruleDesc": "Orthopedic Surgery Prior Authorization - High-Cost Procedures",
+      "code": "ORTHO-SURG-001",
+      "ruleName": "Orthopedic Surgery Prior Authorization - High-Cost Procedures",
+      "ruleDesc": "Routes high-cost orthopedic surgeries for clinical review",
       "standardFieldCriteria": [
         {
           "operator": "IN",
@@ -35,7 +37,9 @@
       }
     },
     {
-      "ruleDesc": "Advanced Imaging Pre-Auth - CT and MRI Scans",
+      "code": "IMAGING-CT-MRI-001",
+      "ruleName": "Advanced Imaging Pre-Auth - CT and MRI Scans",
+      "ruleDesc": "Requires medical director review for high-cost imaging procedures",
       "standardFieldCriteria": [
         {
           "operator": "IN",
@@ -66,7 +70,9 @@
       }
     },
     {
-      "ruleDesc": "Cardiology Specialty Referral Routing",
+      "code": "CARDIO-REF-001",
+      "ruleName": "Cardiology Specialty Referral Routing",
+      "ruleDesc": "Routes cardiology referrals to specialist team for PA, NJ, DE",
       "standardFieldCriteria": [
         {
           "operator": "IN",
@@ -94,7 +100,9 @@
       }
     },
     {
-      "ruleDesc": "Emergency Services Auto-Approval",
+      "code": "EMERG-AUTO-001",
+      "ruleName": "Emergency Services Auto-Approval",
+      "ruleDesc": "Auto-approves emergency service requests",
       "standardFieldCriteria": [
         {
           "operator": "IN",
@@ -119,7 +127,9 @@
       }
     },
     {
-      "ruleDesc": "Durable Medical Equipment - Wheelchairs and Hospital Beds",
+      "code": "DME-EQUIP-001",
+      "ruleName": "Durable Medical Equipment - Wheelchairs and Hospital Beds",
+      "ruleDesc": "Requires DME verification for wheelchairs and hospital beds",
       "standardFieldCriteria": [
         {
           "operator": "IN",
@@ -147,7 +157,9 @@
       }
     },
     {
-      "ruleDesc": "Home Health Services - Skilled Nursing",
+      "code": "HOME-HEALTH-001",
+      "ruleName": "Home Health Services - Skilled Nursing",
+      "ruleDesc": "Creates CM referral and task for seniors requiring home health",
       "standardFieldCriteria": [
         {
           "operator": "IN",
@@ -183,7 +195,9 @@
       }
     },
     {
-      "ruleDesc": "Organ Transplant Services - High Complexity",
+      "code": "TRANSPLANT-001",
+      "ruleName": "Organ Transplant Services - High Complexity",
+      "ruleDesc": "Routes organ transplant cases to specialized committee review",
       "standardFieldCriteria": [
         {
           "operator": "IN",
@@ -221,7 +235,9 @@
       }
     },
     {
-      "ruleDesc": "Mental Health Outpatient Therapy - Multiple Sessions",
+      "code": "MENTAL-HEALTH-001",
+      "ruleName": "Mental Health Outpatient Therapy - Multiple Sessions",
+      "ruleDesc": "Requires behavioral health review and provider credential verification for extended therapy",
       "standardFieldCriteria": [
         {
           "operator": "IN",
@@ -254,7 +270,9 @@
       }
     },
     {
-      "ruleDesc": "Inpatient Hospital Admission Review",
+      "code": "INPATIENT-ADMIT-001",
+      "ruleName": "Inpatient Hospital Admission Review",
+      "ruleDesc": "Concurrent review required for multi-day inpatient hospital stays",
       "standardFieldCriteria": [
         {
           "operator": "IN",
@@ -287,7 +305,9 @@
       }
     },
     {
-      "ruleDesc": "Experimental/Investigational Treatment Review",
+      "code": "EXPERIMENTAL-001",
+      "ruleName": "Experimental/Investigational Treatment Review",
+      "ruleDesc": "Medical policy review required for experimental or investigational treatments",
       "standardFieldCriteria": [
         {
           "operator": "IN",

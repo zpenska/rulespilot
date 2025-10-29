@@ -1,11 +1,13 @@
 {
   "rules": [
     {
+      "code": "TAT-OUTPATIENT-001",
+      "ruleName": "Standard Outpatient Prior Authorization - 14 Calendar Days",
+      "ruleDesc": "Sets standard turnaround time for routine outpatient prior authorization requests",
       "sourceDateTimeField": "NOTIFICATION_DATE_TIME",
       "holidayDates": [],
       "holidayCategory": null,
       "clinicalsRequestedResponseThresholdHours": null,
-      "ruleDesc": "Standard Outpatient Prior Authorization - 14 Calendar Days",
       "customFieldCriteria": null,
       "isActive": true,
       "weight": 100,
@@ -28,11 +30,13 @@
       "extendStatusReason": null
     },
     {
+      "code": "TAT-URGENT-001",
+      "ruleName": "Urgent Review - 72 Hours from Receipt",
+      "ruleDesc": "Establishes 72-hour turnaround time for urgent review requests",
       "sourceDateTimeField": "RECEIPT_DATE_TIME",
       "holidayDates": [],
       "holidayCategory": null,
       "clinicalsRequestedResponseThresholdHours": 48,
-      "ruleDesc": "Urgent Review - 72 Hours from Receipt",
       "customFieldCriteria": null,
       "isActive": true,
       "weight": 200,
@@ -51,11 +55,13 @@
       "extendStatusReason": null
     },
     {
+      "code": "TAT-EXPEDITED-001",
+      "ruleName": "Expedited Review - 24 Hours Skip Holidays",
+      "ruleDesc": "Defines 24-hour turnaround for expedited and emergency requests with holiday offset",
       "sourceDateTimeField": "RECEIVED_DATE_TIME",
       "holidayDates": ["20250704", "20250901", "20251225", "20260101"],
       "holidayCategory": "FEDERAL_HOLIDAYS",
       "clinicalsRequestedResponseThresholdHours": null,
-      "ruleDesc": "Expedited Review - 24 Hours Skip Holidays",
       "customFieldCriteria": null,
       "isActive": true,
       "weight": 250,
@@ -74,11 +80,13 @@
       "extendStatusReason": null
     },
     {
+      "code": "TAT-RETRO-001",
+      "ruleName": "Retrospective Review - 30 Calendar Days with Holiday Offset",
+      "ruleDesc": "Sets 30-day turnaround time for retrospective reviews with holiday adjustments",
       "sourceDateTimeField": "REQUEST_DATE_TIME",
       "holidayDates": ["20250704", "20250901", "20251128", "20251225", "20260101"],
       "holidayCategory": "SKIPHDAY_CTGY_1",
       "clinicalsRequestedResponseThresholdHours": null,
-      "ruleDesc": "Retrospective Review - 30 Calendar Days with Holiday Offset",
       "customFieldCriteria": null,
       "isActive": true,
       "weight": 120,
@@ -97,11 +105,13 @@
       "extendStatusReason": null
     },
     {
+      "code": "TAT-RECON-001",
+      "ruleName": "Reconsideration Appeal - 30 Calendar Days from Status Change",
+      "ruleDesc": "Establishes 30-day turnaround for reconsideration appeals with auto-extension capability",
       "sourceDateTimeField": "STATUS_CHANGE_DATE_TIME",
       "holidayDates": [],
       "holidayCategory": null,
       "clinicalsRequestedResponseThresholdHours": null,
-      "ruleDesc": "Reconsideration Appeal - 30 Calendar Days from Status Change",
       "customFieldCriteria": null,
       "isActive": true,
       "weight": 180,
@@ -124,11 +134,13 @@
       "extendStatusReason": "PENDING_DOCUMENTATION"
     },
     {
+      "code": "TAT-CONCURRENT-001",
+      "ruleName": "Concurrent Review - 1 Business Day by 5pm",
+      "ruleDesc": "Defines 1 business day turnaround for inpatient concurrent reviews",
       "sourceDateTimeField": "NOTIFICATION_DATE_TIME",
       "holidayDates": [],
       "holidayCategory": null,
       "clinicalsRequestedResponseThresholdHours": null,
-      "ruleDesc": "Concurrent Review - 1 Business Day by 5pm",
       "customFieldCriteria": null,
       "isActive": true,
       "weight": 220,
@@ -151,11 +163,13 @@
       "extendStatusReason": null
     },
     {
+      "code": "TAT-POST-SERVICE-001",
+      "ruleName": "Post-Service Review - 60 Calendar Days",
+      "ruleDesc": "Sets 60-day turnaround time for post-service retrospective reviews",
       "sourceDateTimeField": "REQUEST_DATE_TIME",
       "holidayDates": [],
       "holidayCategory": null,
       "clinicalsRequestedResponseThresholdHours": null,
-      "ruleDesc": "Post-Service Review - 60 Calendar Days",
       "customFieldCriteria": null,
       "isActive": true,
       "weight": 110,
@@ -178,11 +192,13 @@
       "extendStatusReason": null
     },
     {
+      "code": "TAT-APPEAL-001",
+      "ruleName": "Appeal Response - 30 Days with Auto-Extend for Missing Docs",
+      "ruleDesc": "Establishes 30-day turnaround for appeals with auto-extension when clinicals requested",
       "sourceDateTimeField": "NOTIFICATION_DATE_TIME",
       "holidayDates": ["20250704", "20250901", "20251225", "20260101"],
       "holidayCategory": "FEDERAL_HOLIDAYS",
       "clinicalsRequestedResponseThresholdHours": 72,
-      "ruleDesc": "Appeal Response - 30 Days with Auto-Extend for Missing Docs",
       "customFieldCriteria": null,
       "isActive": true,
       "weight": 190,

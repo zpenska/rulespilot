@@ -1,6 +1,8 @@
 [
   {
-    "ruleDesc": "Missing Clinical Documentation Alert - High-Risk Procedures",
+    "code": "HINT-DOCS-001",
+    "ruleName": "Missing Clinical Documentation Alert - High-Risk Procedures",
+    "ruleDesc": "Alerts reviewers when high-risk procedures lack required clinical documentation",
     "standardFieldCriteria": [
       {
         "operator": "IN",
@@ -23,7 +25,9 @@
     }
   },
   {
-    "ruleDesc": "Prior Authorization History Warning - Recent Denial",
+    "code": "HINT-HISTORY-001",
+    "ruleName": "Prior Authorization History Warning - Recent Denial",
+    "ruleDesc": "Warns reviewers about members with recent denials or partial approvals",
     "standardFieldCriteria": [
       {
         "operator": "IN",
@@ -54,7 +58,9 @@
     }
   },
   {
-    "ruleDesc": "High-Risk Member Alert - Multiple Chronic Conditions",
+    "code": "HINT-RISK-001",
+    "ruleName": "High-Risk Member Alert - Multiple Chronic Conditions",
+    "ruleDesc": "Identifies high-risk members with multiple chronic conditions requiring care coordination",
     "standardFieldCriteria": [
       {
         "operator": "IN",
@@ -85,7 +91,9 @@
     }
   },
   {
-    "ruleDesc": "Provider Network Status - Out of Network",
+    "code": "HINT-NETWORK-001",
+    "ruleName": "Provider Network Status - Out of Network",
+    "ruleDesc": "Alerts when specialist providers are out-of-network for benefit verification",
     "standardFieldCriteria": [
       {
         "operator": "IN",
@@ -112,7 +120,9 @@
     }
   },
   {
-    "ruleDesc": "Duplicate Request Warning - Similar Request in Last 30 Days",
+    "code": "HINT-DUPLICATE-001",
+    "ruleName": "Duplicate Request Warning - Similar Request in Last 30 Days",
+    "ruleDesc": "Detects potential duplicate authorization requests to prevent duplicate approvals",
     "standardFieldCriteria": [
       {
         "operator": "IN",
@@ -138,7 +148,9 @@
     }
   },
   {
-    "ruleDesc": "State-Specific Requirements - Pennsylvania Mandated Benefits",
+    "code": "HINT-STATE-PA-001",
+    "ruleName": "State-Specific Requirements - Pennsylvania Mandated Benefits",
+    "ruleDesc": "Enforces Pennsylvania state-mandated benefit coverage requirements",
     "standardFieldCriteria": [
       {
         "operator": "IN",
@@ -161,7 +173,9 @@
     }
   },
   {
-    "ruleDesc": "Billing Code Mismatch Alert - Diagnosis and Procedure Inconsistency",
+    "code": "HINT-CODING-001",
+    "ruleName": "Billing Code Mismatch Alert - Diagnosis and Procedure Inconsistency",
+    "ruleDesc": "Identifies inconsistencies between diagnosis and procedure codes",
     "standardFieldCriteria": [
       {
         "operator": "IN",
