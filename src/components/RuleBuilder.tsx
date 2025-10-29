@@ -202,9 +202,9 @@ export default function RuleBuilder({ rule, onClose, onSave }: RuleBuilderProps)
   }
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col h-full">
       {/* Header - Inline style without modal appearance */}
-      <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
+      <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between flex-shrink-0">
         <h3 className="text-lg font-medium text-gray-900">
           {rule ? 'Edit Rule' : 'Create New Rule'}
         </h3>
@@ -253,7 +253,7 @@ export default function RuleBuilder({ rule, onClose, onSave }: RuleBuilderProps)
           />
         </div>
       ) : (
-        <div className="overflow-y-auto bg-bg-light max-h-[calc(100vh-16rem)]">
+        <div className="flex-1 overflow-y-auto bg-bg-light">
           <div className="max-w-6xl mx-auto px-6 py-6">
           {/* Errors */}
           {errors.length > 0 && (
