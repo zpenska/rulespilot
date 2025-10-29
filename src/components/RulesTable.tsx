@@ -8,8 +8,6 @@ import {
   bulkUpdateStatus,
   bulkDeleteRules,
   cloneRule,
-  exportAllRulesToJSON,
-  exportActiveRulesToJSON,
   exportWorkflowRulesForTab,
   exportHintsRulesForTab,
   exportTATRulesForTab,
@@ -229,16 +227,6 @@ export default function RulesTable({ currentRuleType, onRuleTypeChange }: RulesT
       await bulkDeleteRules(Array.from(selectedRules))
       setSelectedRules(new Set())
     }
-  }
-
-  const handleExportAll = async () => {
-    const data = await exportAllRulesToJSON()
-    downloadJSON(data, 'all-rules.json')
-  }
-
-  const handleExportActive = async () => {
-    const data = await exportActiveRulesToJSON()
-    downloadJSON(data, 'active-rules.json')
   }
 
   const handleExportGlobal = async () => {
@@ -503,30 +491,6 @@ export default function RulesTable({ currentRuleType, onRuleTypeChange }: RulesT
                         <Download className="w-4 h-4" />
                         <span>Export Global (Workflow/Hints/Skills)</span>
                       </button>
-
-                      <div className="border-t border-gray-100 my-1"></div>
-
-                      {/* Additional Export Options */}
-                      <button
-                        onClick={() => {
-                          handleExportAll()
-                          setShowSettingsDropdown(false)
-                        }}
-                        className="w-full text-left px-4 py-2 text-sm text-gray-600 hover:bg-gray-50 flex items-center space-x-2"
-                      >
-                        <Download className="w-4 h-4" />
-                        <span>Export All Rules</span>
-                      </button>
-                      <button
-                        onClick={() => {
-                          handleExportActive()
-                          setShowSettingsDropdown(false)
-                        }}
-                        className="w-full text-left px-4 py-2 text-sm text-gray-600 hover:bg-gray-50 flex items-center space-x-2"
-                      >
-                        <Download className="w-4 h-4" />
-                        <span>Export Active (All Types)</span>
-                      </button>
                     </div>
                   </div>
                 )}
@@ -740,21 +704,6 @@ export default function RulesTable({ currentRuleType, onRuleTypeChange }: RulesT
                   >
                     <Trash2 className="w-3 h-3 mr-1" />
                     Delete
-                  </button>
-                  <div className="flex-1" />
-                  <button
-                    onClick={handleExportAll}
-                    className="inline-flex items-center px-3 py-1 border border-gray-300 rounded text-xs text-gray-700 hover:bg-gray-50"
-                  >
-                    <Download className="w-3 h-3 mr-1" />
-                    Export All
-                  </button>
-                  <button
-                    onClick={handleExportActive}
-                    className="inline-flex items-center px-3 py-1 border border-gray-300 rounded text-xs text-gray-700 hover:bg-gray-50"
-                  >
-                    <Download className="w-3 h-3 mr-1" />
-                    Export Active
                   </button>
                 </div>
               )}
