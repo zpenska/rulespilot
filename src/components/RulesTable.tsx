@@ -20,6 +20,8 @@ import {
   isTATRuleFormat,
   subscribeToRules,
   getRule,
+  exportSkills,
+  importSkills,
 } from '../services/rulesService'
 import PullQueueConfig from './PullQueueConfig'
 import TATConfig from './TATConfig'
@@ -241,6 +243,15 @@ export default function RulesTable({ currentRuleType, onRuleTypeChange }: RulesT
     downloadJSON(data, 'global-rules.json')
   }
 
+  const handleExportSkills = async () => {
+    const data = await exportSkills()
+    downloadJSON(data, 'skills.json')
+  }
+
+  const handleImportSkills = () => {
+    fileInputRef.current?.click()
+  }
+
   const handleExportTabRules = async () => {
     let data: unknown
     let filename: string
@@ -288,6 +299,23 @@ export default function RulesTable({ currentRuleType, onRuleTypeChange }: RulesT
           `- ${result.hintsCount} Hints rules\n` +
           `- ${result.skillsCount} Skills`
         )
+
+        // Reset file input
+        if (fileInputRef.current) {
+          fileInputRef.current.value = ''
+        }
+        return
+      }
+
+      // Handle Skills import
+      if (currentRuleType === 'skills') {
+        if (!Array.isArray(jsonData)) {
+          alert('Invalid JSON format. Expected an array of skills.')
+          return
+        }
+
+        const importedCount = await importSkills(jsonData)
+        alert(`Successfully imported ${importedCount} skills`)
 
         // Reset file input
         if (fileInputRef.current) {
@@ -450,24 +478,24 @@ export default function RulesTable({ currentRuleType, onRuleTypeChange }: RulesT
                       <div className="border-t border-gray-100"></div>
                       <button
                         onClick={() => {
-                          handleImportRules()
+                          currentRuleType === 'skills' ? handleImportSkills() : handleImportRules()
                           setShowSettingsDropdown(false)
                         }}
                         className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center space-x-2"
                       >
                         <Upload className="w-4 h-4" />
-                        <span>Import {currentRuleType === 'workflow' ? 'Workflow' : currentRuleType === 'hints' ? 'Hints' : currentRuleType === 'tat' ? 'TAT' : ''} Rules</span>
+                        <span>Import {currentRuleType === 'workflow' ? 'Workflow' : currentRuleType === 'hints' ? 'Hints' : currentRuleType === 'tat' ? 'TAT' : currentRuleType === 'skills' ? 'Skills' : ''} {currentRuleType === 'skills' ? '' : 'Rules'}</span>
                       </button>
                       <div className="border-t border-gray-100"></div>
                       <button
                         onClick={() => {
-                          handleExportTabRules()
+                          currentRuleType === 'skills' ? handleExportSkills() : handleExportTabRules()
                           setShowSettingsDropdown(false)
                         }}
                         className="w-full text-left px-4 py-2 text-sm font-medium text-primary hover:bg-gray-50 flex items-center space-x-2"
                       >
                         <Download className="w-4 h-4" />
-                        <span>Export {currentRuleType === 'workflow' ? 'Workflow' : currentRuleType === 'hints' ? 'Hints' : currentRuleType === 'tat' ? 'TAT' : ''} Rules</span>
+                        <span>Export {currentRuleType === 'workflow' ? 'Workflow' : currentRuleType === 'hints' ? 'Hints' : currentRuleType === 'tat' ? 'TAT' : currentRuleType === 'skills' ? 'Skills' : ''} {currentRuleType === 'skills' ? '' : 'Rules'}</span>
                       </button>
                       <div className="border-t border-gray-100"></div>
                       <button

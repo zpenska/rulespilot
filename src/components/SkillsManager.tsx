@@ -1,10 +1,9 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Search, Trash2, Edit2, Power, PowerOff, Download, Upload, Settings } from 'lucide-react'
+import { Search, Trash2, Edit2, Power, PowerOff } from 'lucide-react'
 import { SkillDefinition } from '../types/rules'
 import { collection, getDocs, deleteDoc, doc, updateDoc } from 'firebase/firestore'
 import { db } from '../config/firebase'
-import { exportSkills, importSkills } from '../services/rulesService'
 
 type TabFilter = 'all' | 'active' | 'inactive'
 
@@ -15,8 +14,6 @@ export default function SkillsManager() {
   const [activeTab, setActiveTab] = useState<TabFilter>('all')
   const [searchTerm, setSearchTerm] = useState('')
   const [loading, setLoading] = useState(true)
-  const [showSettingsDropdown, setShowSettingsDropdown] = useState(false)
-  const fileInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     loadSkills()
@@ -87,54 +84,6 @@ export default function SkillsManager() {
     }
   }
 
-  const handleExportSkills = async () => {
-    try {
-      const skillsData = await exportSkills()
-      const dataStr = JSON.stringify(skillsData, null, 2)
-      const dataBlob = new Blob([dataStr], { type: 'application/json' })
-      const url = URL.createObjectURL(dataBlob)
-      const link = document.createElement('a')
-      link.href = url
-      link.download = 'skills.json'
-      link.click()
-      URL.revokeObjectURL(url)
-    } catch (error) {
-      console.error('Error exporting skills:', error)
-      alert('Failed to export skills')
-    }
-  }
-
-  const handleImportSkills = () => {
-    fileInputRef.current?.click()
-  }
-
-  const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0]
-    if (!file) return
-
-    try {
-      const fileContent = await file.text()
-      const skillsData = JSON.parse(fileContent)
-
-      if (!Array.isArray(skillsData)) {
-        alert('Invalid JSON format. Expected an array of skills.')
-        return
-      }
-
-      const importedCount = await importSkills(skillsData)
-      await loadSkills()
-      alert(`Successfully imported ${importedCount} skills`)
-    } catch (error) {
-      console.error('Error importing skills:', error)
-      alert('Failed to import skills. Please check the file format.')
-    } finally {
-      // Reset file input
-      if (fileInputRef.current) {
-        fileInputRef.current.value = ''
-      }
-    }
-  }
-
   const activeCount = skills.filter((s) => s.active).length
   const inactiveCount = skills.filter((s) => !s.active).length
 
@@ -191,54 +140,6 @@ export default function SkillsManager() {
         </div>
 
         <div className="flex items-center space-x-3">
-          {/* Import/Export Dropdown */}
-          <div className="relative">
-            <button
-              onClick={() => setShowSettingsDropdown(!showSettingsDropdown)}
-              className="inline-flex items-center px-3 py-1.5 text-sm font-medium text-primary hover:text-primary-hover border border-gray-300 rounded"
-            >
-              <Settings className="w-4 h-4 mr-1.5" />
-              Import/Export
-            </button>
-
-            {showSettingsDropdown && (
-              <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg border border-gray-200 z-10">
-                <div className="py-1">
-                  <button
-                    onClick={() => {
-                      handleImportSkills()
-                      setShowSettingsDropdown(false)
-                    }}
-                    className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center space-x-2"
-                  >
-                    <Upload className="w-4 h-4" />
-                    <span>Import Skills</span>
-                  </button>
-                  <div className="border-t border-gray-100"></div>
-                  <button
-                    onClick={() => {
-                      handleExportSkills()
-                      setShowSettingsDropdown(false)
-                    }}
-                    className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center space-x-2"
-                  >
-                    <Download className="w-4 h-4" />
-                    <span>Export Skills</span>
-                  </button>
-                </div>
-              </div>
-            )}
-
-            {/* Hidden file input for importing */}
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept=".json"
-              onChange={handleFileChange}
-              className="hidden"
-            />
-          </div>
-
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
             <input
