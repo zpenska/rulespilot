@@ -608,15 +608,16 @@ export const isTATRuleFormat = (rule: any): boolean => {
 /**
  * Import workflow rules from JSON
  */
-export const importRulesFromJSON = async (jsonData: RuleExport[]): Promise<Rule[]> => {
+export const importRulesFromJSON = async (jsonData: any[]): Promise<Rule[]> => {
   const importedRules: Rule[] = []
 
   for (const ruleData of jsonData) {
     try {
       // Convert RuleExport to Rule format
       // For backwards compatibility: if code/ruleName not present, fall back to ruleDesc
+      // Use ruleType from data if present, otherwise default to 'workflow'
       const ruleToCreate: Partial<Rule> = {
-        ruleType: 'workflow',
+        ruleType: ruleData.ruleType || 'workflow',
         code: ruleData.code || ruleData.ruleDesc || '',
         ruleName: ruleData.ruleName || ruleData.ruleDesc || '',
         ruleDesc: ruleData.ruleDesc,
@@ -625,6 +626,7 @@ export const importRulesFromJSON = async (jsonData: RuleExport[]): Promise<Rule[
         weight: ruleData.weight,
         status: ruleData.isActive ? 'active' : 'inactive',
         actions: ruleData.actions,
+        hints: ruleData.hintsAction,
         triggerEvents: ruleData.triggerEvents,
         requestTypeFilter: ruleData.requestTypeFilter,
         fireOnce: ruleData.fireOnce,

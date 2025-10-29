@@ -100,7 +100,8 @@ export const sampleRules: Record<string, Rule> = {
   simpleRule: {
     id: 'test-rule-1',
     code: 'RULE001',
-    ruleDesc: 'Members in Pennsylvania',
+    ruleName: 'Pennsylvania Members Rule',
+    ruleDesc: 'Routes members in Pennsylvania to PA department',
     ruleType: 'workflow',
     standardFieldCriteria: [sampleStandardCriteria.memberState],
     customFieldCriteria: [],
@@ -116,7 +117,8 @@ export const sampleRules: Record<string, Rule> = {
   complexRule: {
     id: 'test-rule-2',
     code: 'RULE002',
-    ruleDesc: 'Medicare members over 65 in PA with orthopedic providers',
+    ruleName: 'Medicare Orthopedic Providers - PA Seniors',
+    ruleDesc: 'Routes Medicare members over 65 in PA with orthopedic providers for specialized review',
     ruleType: 'workflow',
     standardFieldCriteria: [
       {
@@ -151,7 +153,8 @@ export const sampleRules: Record<string, Rule> = {
   ruleWithCustomFields: {
     id: 'test-rule-3',
     code: 'RULE003',
-    ruleDesc: 'High-risk members with custom priority',
+    ruleName: 'High-Risk Member Priority Review',
+    ruleDesc: 'Creates tasks for high-risk members with custom priority flags',
     ruleType: 'workflow',
     standardFieldCriteria: [sampleStandardCriteria.memberState],
     customFieldCriteria: [sampleCustomCriteria.memberRiskScore, sampleCustomCriteria.requestPriority],
@@ -174,7 +177,8 @@ export const sampleRules: Record<string, Rule> = {
   inactiveRule: {
     id: 'test-rule-4',
     code: 'RULE004',
-    ruleDesc: 'Inactive test rule',
+    ruleName: 'Inactive Auto-Close Rule',
+    ruleDesc: 'Auto-closes specific request types (currently inactive)',
     ruleType: 'workflow',
     standardFieldCriteria: [sampleStandardCriteria.requestType],
     customFieldCriteria: [],
@@ -192,12 +196,18 @@ export const sampleRules: Record<string, Rule> = {
 // Expected JSON exports
 export const expectedExports: Record<string, RuleExport> = {
   simpleRule: {
-    ruleDesc: 'Members in Pennsylvania',
+    code: 'RULE001',
+    ruleName: 'Pennsylvania Members Rule',
+    ruleDesc: 'Routes members in Pennsylvania to PA department',
     standardFieldCriteria: [sampleStandardCriteria.memberState],
     customFieldCriteria: [],
+    isActive: true,
+    weight: 100,
   },
   complexRule: {
-    ruleDesc: 'Medicare members over 65 in PA with orthopedic providers',
+    code: 'RULE002',
+    ruleName: 'Medicare Orthopedic Providers - PA Seniors',
+    ruleDesc: 'Routes Medicare members over 65 in PA with orthopedic providers for specialized review',
     standardFieldCriteria: [
       {
         field: 'ENROLLMENT_PLAN',
@@ -213,6 +223,7 @@ export const expectedExports: Record<string, RuleExport> = {
       sampleStandardCriteria.providerSpecialty,
     ],
     customFieldCriteria: [],
+    isActive: true,
     weight: 100,
   },
 }
