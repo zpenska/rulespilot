@@ -46,7 +46,7 @@ interface RulesTableProps {
 
 export default function RulesTable({ currentRuleType, onRuleTypeChange }: RulesTableProps) {
   const navigate = useNavigate()
-  const { ruleId, '*': routeSuffix } = useParams<{ ruleId?: string; '*'?: string }>()
+  const { '*': routeSuffix } = useParams<{ '*'?: string }>()
   const [rules, setRules] = useState<Rule[]>([])
   const [filteredRules, setFilteredRules] = useState<Rule[]>([])
   const [selectedRules, setSelectedRules] = useState<Set<string>>(new Set())
@@ -68,8 +68,11 @@ export default function RulesTable({ currentRuleType, onRuleTypeChange }: RulesT
   const [editingSkill, setEditingSkill] = useState<SkillDefinition | null>(null)
   const [skillFormLoading, setSkillFormLoading] = useState(false)
 
+  // Extract ruleId from routeSuffix (e.g., "edit/abc123" -> "abc123")
+  const ruleId = routeSuffix?.startsWith('edit/') ? routeSuffix.slice(5) : undefined
+
   const isCreatingNew = routeSuffix === 'new'
-  const isEditingRule = routeSuffix?.startsWith('edit/') && ruleId
+  const isEditingRule = routeSuffix?.startsWith('edit/') && !!ruleId
   const isAIView = routeSuffix === 'ai'
   const isViewerView = routeSuffix === 'viewer'
   const isBranchingView = routeSuffix === 'branching'
