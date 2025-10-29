@@ -106,7 +106,7 @@ export default function HintsRuleBuilder({ rule, onClose, onSave }: HintsRuleBui
   }
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col">
       {/* Header */}
       <div className="px-6 py-4 border-b border-gray-200">
         <div className="flex items-center justify-between">
@@ -147,7 +147,7 @@ export default function HintsRuleBuilder({ rule, onClose, onSave }: HintsRuleBui
       </div>
 
       {/* Content */}
-      <div className="flex-1 overflow-y-auto px-6 py-6 space-y-6">
+      <div className="overflow-y-auto px-6 py-6 space-y-6 max-h-[calc(100vh-16rem)]">
             {/* Basic Info */}
             <div className="bg-white rounded-xl shadow-sm border border-table-border p-6">
               <h4 className="text-base font-semibold text-gray-900 mb-6 pb-3 border-b border-gray-200">

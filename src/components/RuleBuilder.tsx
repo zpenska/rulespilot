@@ -202,7 +202,7 @@ export default function RuleBuilder({ rule, onClose, onSave }: RuleBuilderProps)
   }
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col">
       {/* Header - Inline style without modal appearance */}
       <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
         <h3 className="text-lg font-medium text-gray-900">
@@ -253,7 +253,7 @@ export default function RuleBuilder({ rule, onClose, onSave }: RuleBuilderProps)
           />
         </div>
       ) : (
-        <div className="flex-1 overflow-y-auto bg-bg-light">
+        <div className="overflow-y-auto bg-bg-light max-h-[calc(100vh-16rem)]">
           <div className="max-w-6xl mx-auto px-6 py-6">
           {/* Errors */}
           {errors.length > 0 && (

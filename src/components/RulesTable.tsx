@@ -503,29 +503,23 @@ export default function RulesTable({ currentRuleType, onRuleTypeChange }: RulesT
               )}
             </div>
           ) : showRuleBuilder ? (
-            <div className="h-[calc(100vh-12rem)]">
+            <div className="bg-white rounded-b-xl">
               {ruleBuilderLoading ? (
-                <div className="flex items-center justify-center p-8 bg-white">
+                <div className="flex items-center justify-center p-8">
                   <div className="text-gray-500">Loading rule...</div>
                 </div>
               ) : currentRuleType === 'hints' ? (
-                // Use old builder for editing hints rules
-                <div className="bg-white rounded-b-xl">
-                  <HintsRuleBuilder
-                    rule={editingRule}
-                    onClose={() => navigate(`/${currentRuleType}`)}
-                    onSave={() => navigate(`/${currentRuleType}`)}
-                  />
-                </div>
+                <HintsRuleBuilder
+                  rule={editingRule}
+                  onClose={() => navigate(`/${currentRuleType}`)}
+                  onSave={() => navigate(`/${currentRuleType}`)}
+                />
               ) : (
-                // Use old builder for editing other rules
-                <div className="bg-white rounded-b-xl">
-                  <RuleBuilder
-                    rule={editingRule}
-                    onClose={() => navigate(`/${currentRuleType}`)}
-                    onSave={() => navigate(`/${currentRuleType}`)}
-                  />
-                </div>
+                <RuleBuilder
+                  rule={editingRule}
+                  onClose={() => navigate(`/${currentRuleType}`)}
+                  onSave={() => navigate(`/${currentRuleType}`)}
+                />
               )}
             </div>
           ) : currentRuleType === 'pullQueue' ? (
