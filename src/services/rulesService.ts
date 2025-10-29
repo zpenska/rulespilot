@@ -4,6 +4,7 @@ import {
   setDoc,
   getDoc,
   getDocs,
+  addDoc,
   deleteDoc,
   query,
   where,
@@ -375,9 +376,49 @@ export const exportWorkflowRuleToJSON = (rule: Rule): RuleExport => {
     exported.customFieldCriteria = customFieldCriteria
   }
 
-  // Only include actions if they exist
-  if (rule.actions) {
-    exported.actions = rule.actions
+  // Only include actions if they exist - map internal names to API names
+  if (rule.actions && Object.keys(rule.actions).length > 0) {
+    const mappedActions: any = {}
+
+    // Map departmentRouting -> reassign
+    if (rule.actions.departmentRouting) {
+      mappedActions.reassign = rule.actions.departmentRouting
+    }
+
+    // Map generateLetters (keep same name)
+    if (rule.actions.generateLetters && rule.actions.generateLetters.length > 0) {
+      mappedActions.generateLetters = rule.actions.generateLetters
+    }
+
+    // Map close (keep same name)
+    if (rule.actions.close) {
+      mappedActions.close = rule.actions.close
+    }
+
+    // Map createTask -> createTasks (plural)
+    if (rule.actions.createTask) {
+      mappedActions.createTasks = [rule.actions.createTask]
+    }
+
+    // Map createAppealTasks (keep same name)
+    if (rule.actions.createAppealTasks && rule.actions.createAppealTasks.length > 0) {
+      mappedActions.createAppealTasks = rule.actions.createAppealTasks
+    }
+
+    // Map transferOwnership (keep same name)
+    if (rule.actions.transferOwnership) {
+      mappedActions.transferOwnership = rule.actions.transferOwnership
+    }
+
+    // Map createCMReferral (keep same name)
+    if (rule.actions.createCMReferral) {
+      mappedActions.createCMReferral = rule.actions.createCMReferral
+    }
+
+    // Only add actions if there are any
+    if (Object.keys(mappedActions).length > 0) {
+      exported.actions = mappedActions
+    }
   }
 
   // Include workflow-specific fields
@@ -451,6 +492,106 @@ export const exportAsDueDateRules = async (
 
   return {
     rules: tatRules.map(exportTATRuleToJSON),
+  }
+}
+
+/**
+ * Export workflow rules for Workflow tab (tab-specific export)
+ */
+export const exportWorkflowRulesForTab = async (): Promise<AutoWorkflowRulesExport> => {
+  const rules = await getActiveRules('workflow')
+  return exportAsAutoWorkflowRules(rules)
+}
+
+/**
+ * Export hints rules for Hints tab (tab-specific export)
+ */
+export const exportHintsRulesForTab = async (): Promise<RuleExport[]> => {
+  const rules = await getAllRules()
+  const hintsRules = rules.filter(r => r.ruleType === 'hints')
+  return hintsRules.map(exportWorkflowRuleToJSON)
+}
+
+/**
+ * Export TAT rules for TAT tab (tab-specific export)
+ */
+export const exportTATRulesForTab = async (): Promise<DueDateRulesExport> => {
+  const rules = await getActiveRules('tat')
+  return exportAsDueDateRules(rules)
+}
+
+/**
+ * Export global rules and skills (Workflow + Hints + Skills in one JSON)
+ * TAT is excluded as it has a different format
+ */
+export const exportGlobalRulesAndSkills = async (): Promise<{
+  type: string
+  workflow: RuleExport[]
+  hints: RuleExport[]
+  skills: any[]
+}> => {
+  // Get all rules
+  const allRules = await getAllRules()
+
+  // Filter and export workflow rules
+  const workflowRules = allRules
+    .filter(r => r.ruleType === 'workflow')
+    .map(exportWorkflowRuleToJSON)
+
+  // Filter and export hints rules
+  const hintsRules = allRules
+    .filter(r => r.ruleType === 'hints')
+    .map(exportWorkflowRuleToJSON)
+
+  // Export skills
+  const skillsData = await exportSkills()
+
+  return {
+    type: 'GLOBAL_RULES_EXPORT',
+    workflow: workflowRules,
+    hints: hintsRules,
+    skills: skillsData,
+  }
+}
+
+/**
+ * Import global rules and skills from GLOBAL_RULES_EXPORT format
+ */
+export const importGlobalRulesAndSkills = async (data: {
+  type: string
+  workflow: RuleExport[]
+  hints: RuleExport[]
+  skills: any[]
+}): Promise<{
+  workflowCount: number
+  hintsCount: number
+  skillsCount: number
+}> => {
+  if (data.type !== 'GLOBAL_RULES_EXPORT') {
+    throw new Error('Invalid format: expected GLOBAL_RULES_EXPORT')
+  }
+
+  // Import workflow rules
+  const workflowRulesWithType = data.workflow.map((r: any) => ({
+    ...r,
+    ruleType: 'workflow',
+  }))
+  const workflowImported = await importRulesFromJSON(workflowRulesWithType)
+
+  // Import hints rules
+  const hintsRulesWithType = data.hints.map((r: any) => ({
+    ...r,
+    ruleType: 'hints',
+  }))
+  const hintsImported = await importRulesFromJSON(hintsRulesWithType)
+
+  // Import skills
+  const skillsImported = await importSkills(data.skills)
+
+  return {
+    workflowCount: workflowImported.length,
+    hintsCount: hintsImported.length,
+    skillsCount: skillsImported,
   }
 }
 
@@ -645,4 +786,53 @@ export const importAutoWorkflowRules = async (
   }
 
   return importRulesFromJSON(data.rules)
+}
+
+/**
+ * Export skills to JSON
+ */
+export const exportSkills = async (): Promise<any[]> => {
+  const skillsRef = collection(db, 'skills')
+  const snapshot = await getDocs(skillsRef)
+
+  return snapshot.docs.map(doc => {
+    const data = doc.data()
+    // Remove Firebase-specific fields for export
+    const { id, ...exportData } = { id: doc.id, ...data }
+    return exportData
+  })
+}
+
+/**
+ * Import skills from JSON
+ */
+export const importSkills = async (skillsData: Record<string, unknown>[]): Promise<number> => {
+  if (!db) {
+    console.warn('Firebase not configured')
+    return 0
+  }
+
+  const skillsRef = collection(db, 'skills')
+  let importedCount = 0
+
+  for (const skillData of skillsData) {
+    try {
+      // Add active flag if not present
+      const skillToCreate = {
+        ...skillData,
+        active: (skillData as { active?: boolean }).active !== undefined ? (skillData as { active?: boolean }).active : true,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      }
+
+      // Create new document with auto-generated ID
+      await addDoc(skillsRef, skillToCreate)
+      importedCount++
+    } catch (error) {
+      console.error('Error importing skill:', skillData.skillName, error)
+      // Continue with other skills even if one fails
+    }
+  }
+
+  return importedCount
 }

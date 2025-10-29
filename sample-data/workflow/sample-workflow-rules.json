@@ -1,0 +1,316 @@
+{
+  "type": "AUTO_WORKFLOW_RULES",
+  "rules": [
+    {
+      "ruleDesc": "Orthopedic Surgery Prior Authorization - High-Cost Procedures",
+      "standardFieldCriteria": [
+        {
+          "operator": "IN",
+          "field": "REQUEST_TYPE",
+          "values": ["OUTPATIENT"]
+        },
+        {
+          "operator": "IN",
+          "field": "SERVICE_CODE",
+          "values": ["27447", "29881", "23472"]
+        },
+        {
+          "operator": "BETWEEN",
+          "field": "MEMBER_AGE",
+          "values": ["18", "65"]
+        }
+      ],
+      "isActive": true,
+      "weight": 200,
+      "actions": {
+        "reassign": {
+          "departmentCode": "ORTHOREVIEW"
+        },
+        "createTasks": [{
+          "taskType": "CLINICAL_REVIEW",
+          "taskReason": "High-Cost Orthopedic Procedure",
+          "daysUntilDue": 3,
+          "taskOwner": "DEPT_ORTHO_CLINICALS"
+        }]
+      }
+    },
+    {
+      "ruleDesc": "Advanced Imaging Pre-Auth - CT and MRI Scans",
+      "standardFieldCriteria": [
+        {
+          "operator": "IN",
+          "field": "SERVICE_CODE",
+          "values": ["70450", "70551", "72148", "73721"]
+        },
+        {
+          "operator": "IN",
+          "field": "REQUEST_URGENCY",
+          "values": ["ROUTINE", "URGENT"]
+        }
+      ],
+      "isActive": true,
+      "weight": 180,
+      "actions": {
+        "reassign": {
+          "departmentCode": "RADIOLOGYREVIEW"
+        },
+        "createTasks": [{
+          "taskType": "MEDICAL_DIRECTOR_REVIEW",
+          "taskReason": "High-Cost Imaging Authorization",
+          "daysUntilDue": 2,
+          "taskOwner": "USER_MEDDIR01"
+        }],
+        "generateLetters": [{
+          "letterName": "Imaging Pre-Auth Pending"
+        }]
+      }
+    },
+    {
+      "ruleDesc": "Cardiology Specialty Referral Routing",
+      "standardFieldCriteria": [
+        {
+          "operator": "IN",
+          "field": "REQUEST_TYPE",
+          "values": ["REFERRAL"]
+        },
+        {
+          "operator": "IN",
+          "field": "PROVIDER_PRIMARY_SPECIALTY",
+          "providerRole": "SERVICING",
+          "values": ["CARDIOLOGY", "CARDIO"]
+        },
+        {
+          "operator": "IN",
+          "field": "MEMBER_STATE",
+          "values": ["PA", "NJ", "DE"]
+        }
+      ],
+      "isActive": true,
+      "weight": 150,
+      "actions": {
+        "reassign": {
+          "departmentCode": "CARDIO_SPECIALISTS"
+        }
+      }
+    },
+    {
+      "ruleDesc": "Emergency Services Auto-Approval",
+      "standardFieldCriteria": [
+        {
+          "operator": "IN",
+          "field": "REQUEST_URGENCY",
+          "values": ["EMERGENCY"]
+        },
+        {
+          "operator": "IN",
+          "field": "SERVICE_CODE",
+          "values": ["99281", "99282", "99283", "99284", "99285"]
+        }
+      ],
+      "isActive": true,
+      "weight": 250,
+      "actions": {
+        "close": {
+          "dispositionCode": "AUTO_APPROVED"
+        },
+        "generateLetters": [{
+          "letterName": "Emergency Service Approval"
+        }]
+      }
+    },
+    {
+      "ruleDesc": "Durable Medical Equipment - Wheelchairs and Hospital Beds",
+      "standardFieldCriteria": [
+        {
+          "operator": "IN",
+          "field": "REQUEST_HEALTHCARE_TYPE",
+          "values": ["DME"]
+        },
+        {
+          "operator": "IN",
+          "field": "SERVICE_CODE",
+          "values": ["E1130", "E1161", "E0292", "E0293"]
+        }
+      ],
+      "isActive": true,
+      "weight": 140,
+      "actions": {
+        "reassign": {
+          "departmentCode": "DME_REVIEW"
+        },
+        "createTasks": [{
+          "taskType": "DME_VERIFICATION",
+          "taskReason": "Verify Medical Necessity",
+          "daysUntilDue": 5,
+          "taskOwner": "DEPT_DME"
+        }]
+      }
+    },
+    {
+      "ruleDesc": "Home Health Services - Skilled Nursing",
+      "standardFieldCriteria": [
+        {
+          "operator": "IN",
+          "field": "REQUEST_TYPE",
+          "values": ["HOME_HEALTH"]
+        },
+        {
+          "operator": "IN",
+          "field": "SERVICE_CODE",
+          "values": ["99341", "99342", "99343", "99344", "99345"]
+        },
+        {
+          "operator": "GREATER_THAN_OR_EQUAL_TO",
+          "field": "MEMBER_AGE",
+          "values": ["65"]
+        }
+      ],
+      "isActive": true,
+      "weight": 170,
+      "actions": {
+        "createCMReferral": {
+          "programCode": "HOME_HEALTH_CM",
+          "sourceCode": "UM_AUTHORIZATION",
+          "severityCode": "MODERATE",
+          "ownerDepartmentCode": "CASE_MGMT"
+        },
+        "createTasks": [{
+          "taskType": "HOME_HEALTH_ASSESSMENT",
+          "taskReason": "Assess Home Environment",
+          "daysUntilDue": 7,
+          "taskOwner": "DEPT_HOMEHEALTH"
+        }]
+      }
+    },
+    {
+      "ruleDesc": "Organ Transplant Services - High Complexity",
+      "standardFieldCriteria": [
+        {
+          "operator": "IN",
+          "field": "REQUEST_TYPE",
+          "values": ["INPATIENT"]
+        },
+        {
+          "operator": "IN",
+          "field": "SERVICE_CODE",
+          "values": ["50360", "47135", "33935"]
+        }
+      ],
+      "isActive": true,
+      "weight": 300,
+      "actions": {
+        "reassign": {
+          "departmentCode": "TRANSPLANT_REVIEW"
+        },
+        "createAppealTasks": [{
+          "typeCode": "TRANSPLANT_COMMITTEE",
+          "priorityCode": "HIGH",
+          "reasonCode": "TRANSPLANT_REVIEW",
+          "units": "7",
+          "unitsUomCode": "DAYS",
+          "calculationField": "REQUEST_RECEIVED_DATE",
+          "ownerUserId": "USER_TRANSPLANT_COORD",
+          "description": "Multi-disciplinary transplant committee review required"
+        }],
+        "createCMReferral": {
+          "programCode": "TRANSPLANT_CARE",
+          "sourceCode": "UM_AUTHORIZATION",
+          "severityCode": "CRITICAL",
+          "ownerDepartmentCode": "TRANSPLANT_CM"
+        }
+      }
+    },
+    {
+      "ruleDesc": "Mental Health Outpatient Therapy - Multiple Sessions",
+      "standardFieldCriteria": [
+        {
+          "operator": "IN",
+          "field": "REQUEST_TYPE",
+          "values": ["OUTPATIENT"]
+        },
+        {
+          "operator": "IN",
+          "field": "SERVICE_CODE",
+          "values": ["90832", "90834", "90837"]
+        },
+        {
+          "operator": "GREATER_THAN",
+          "field": "SERVICE_REQUESTED_UNITS",
+          "values": ["10"]
+        }
+      ],
+      "isActive": true,
+      "weight": 130,
+      "actions": {
+        "reassign": {
+          "departmentCode": "BEHAVIORAL_HEALTH"
+        },
+        "createTasks": [{
+          "taskType": "THERAPIST_LICENSE_VERIFY",
+          "taskReason": "Verify Provider Credentials",
+          "daysUntilDue": 2,
+          "taskOwner": "DEPT_CREDENTIALING"
+        }]
+      }
+    },
+    {
+      "ruleDesc": "Inpatient Hospital Admission Review",
+      "standardFieldCriteria": [
+        {
+          "operator": "IN",
+          "field": "REQUEST_TYPE",
+          "values": ["INPATIENT"]
+        },
+        {
+          "operator": "IN",
+          "field": "REQUEST_STATUS",
+          "values": ["PENDING", "REVIEW"]
+        },
+        {
+          "operator": "GREATER_THAN",
+          "field": "SERVICE_REQUESTED_UNITS",
+          "values": ["3"]
+        }
+      ],
+      "isActive": true,
+      "weight": 190,
+      "actions": {
+        "reassign": {
+          "departmentCode": "INPATIENT_REVIEW"
+        },
+        "createTasks": [{
+          "taskType": "CONCURRENT_REVIEW",
+          "taskReason": "Multi-Day Inpatient Stay",
+          "daysUntilDue": 1,
+          "taskOwner": "DEPT_CONCURRENT"
+        }]
+      }
+    },
+    {
+      "ruleDesc": "Experimental/Investigational Treatment Review",
+      "standardFieldCriteria": [
+        {
+          "operator": "IN",
+          "field": "REQUEST_CLASSIFICATION",
+          "values": ["EXPERIMENTAL", "INVESTIGATIONAL"]
+        }
+      ],
+      "isActive": true,
+      "weight": 280,
+      "actions": {
+        "reassign": {
+          "departmentCode": "CLINICAL_POLICY"
+        },
+        "createTasks": [{
+          "taskType": "MEDICAL_POLICY_REVIEW",
+          "taskReason": "Experimental Treatment Evaluation",
+          "daysUntilDue": 10,
+          "taskOwner": "DEPT_MED_POLICY"
+        }],
+        "generateLetters": [{
+          "letterName": "Experimental Treatment Under Review"
+        }]
+      }
+    }
+  ]
+}

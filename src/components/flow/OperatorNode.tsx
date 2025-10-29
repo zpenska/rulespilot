@@ -4,7 +4,7 @@ import { Equal, X } from 'lucide-react'
 
 export interface OperatorNodeData {
   operator: string
-  [key: string]: any
+  [key: string]: unknown
 }
 
 function OperatorNode({ data }: NodeProps) {

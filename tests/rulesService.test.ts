@@ -13,7 +13,6 @@ import {
   searchRules,
 } from '../src/services/rulesService'
 import * as firestore from 'firebase/firestore'
-import { Rule } from '../src/types/rules'
 import { sampleRules, sampleStandardCriteria } from './testData'
 
 // Mock Firebase

@@ -114,6 +114,70 @@ export const FIELD_DEFINITIONS: Record<StandardFieldName, FieldDefinition> = {
     dictionaryKey: 'provider_set',
   },
 
+  // ==================== RECONSIDERATION FIELDS ====================
+  RECONSIDERATION_ALL_DOC_RECEIVED_DATE_TIME: {
+    name: 'RECONSIDERATION_ALL_DOC_RECEIVED_DATE_TIME',
+    category: 'Reconsideration',
+    dataType: 'DATE',
+    allowedOperators: ['VALUED', 'NOT_VALUED'],
+  },
+  RECONSIDERATION_DUE_DATE_REASON: {
+    name: 'RECONSIDERATION_DUE_DATE_REASON',
+    category: 'Reconsideration',
+    dataType: 'STRING',
+    allowedOperators: ['IN', 'NOT_IN'],
+    dictionaryKey: 'reconsideration_due_date_reason',
+  },
+  RECONSIDERATION_LEVEL: {
+    name: 'RECONSIDERATION_LEVEL',
+    category: 'Reconsideration',
+    dataType: 'STRING',
+    allowedOperators: ['IN', 'NOT_IN'],
+    dictionaryKey: 'reconsideration_level',
+  },
+  RECONSIDERATION_OF_TYPE: {
+    name: 'RECONSIDERATION_OF_TYPE',
+    category: 'Reconsideration',
+    dataType: 'STRING',
+    allowedOperators: ['IN', 'NOT_IN'],
+    dictionaryKey: 'reconsideration_of_type',
+  },
+  RECONSIDERATION_PROCESS_TYPE: {
+    name: 'RECONSIDERATION_PROCESS_TYPE',
+    category: 'Reconsideration',
+    dataType: 'STRING',
+    allowedOperators: ['IN', 'NOT_IN'],
+    dictionaryKey: 'reconsideration_process_type',
+  },
+  RECONSIDERATION_REQUESTER_TYPE: {
+    name: 'RECONSIDERATION_REQUESTER_TYPE',
+    category: 'Reconsideration',
+    dataType: 'STRING',
+    allowedOperators: ['IN', 'NOT_IN'],
+    dictionaryKey: 'reconsideration_requester_type',
+  },
+  RECONSIDERATION_STATUS: {
+    name: 'RECONSIDERATION_STATUS',
+    category: 'Reconsideration',
+    dataType: 'STRING',
+    allowedOperators: ['IN', 'NOT_IN'],
+    dictionaryKey: 'reconsideration_status',
+  },
+  RECONSIDERATION_TYPE: {
+    name: 'RECONSIDERATION_TYPE',
+    category: 'Reconsideration',
+    dataType: 'STRING',
+    allowedOperators: ['IN', 'NOT_IN'],
+    dictionaryKey: 'reconsideration_type',
+  },
+  RECONSIDERATION_URGENCY: {
+    name: 'RECONSIDERATION_URGENCY',
+    category: 'Reconsideration',
+    dataType: 'STRING',
+    allowedOperators: ['IN', 'NOT_IN'],
+    dictionaryKey: 'reconsideration_urgency',
+  },
+
   // ==================== REQUEST FIELDS ====================
   REQUEST_CLASSIFICATION: {
     name: 'REQUEST_CLASSIFICATION',
@@ -367,6 +431,7 @@ export const FIELD_CATEGORIES = [
   'Enrollment',
   'Member',
   'Provider',
+  'Reconsideration',
   'Request',
   'Review Outcome',
   'Service',

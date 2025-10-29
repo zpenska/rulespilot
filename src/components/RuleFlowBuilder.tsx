@@ -9,6 +9,7 @@ import {
   Connection,
   Node,
   Edge,
+  EdgeChange,
   useReactFlow,
   ReactFlowProvider,
   ConnectionLineType,
@@ -71,7 +72,7 @@ function RuleFlowBuilderInner({ rule, onNodesChange }: RuleFlowBuilderProps) {
   )
 
   const handleNodesChange = useCallback(
-    (changes: any) => {
+    (changes: unknown) => {
       onNodesChangeInternal(changes)
       if (onNodesChange) {
         // Notify parent of node changes
@@ -82,7 +83,7 @@ function RuleFlowBuilderInner({ rule, onNodesChange }: RuleFlowBuilderProps) {
   )
 
   const handleEdgesChange = useCallback(
-    (changes: any) => {
+    (changes: EdgeChange[]) => {
       onEdgesChangeInternal(changes)
       if (onNodesChange) {
         onNodesChange(nodes, edges)
@@ -91,7 +92,7 @@ function RuleFlowBuilderInner({ rule, onNodesChange }: RuleFlowBuilderProps) {
     [onEdgesChangeInternal, onNodesChange, nodes, edges]
   )
 
-  const onDragStart = (event: DragEvent, nodeType: string, nodeData: any = {}) => {
+  const onDragStart = (event: DragEvent, nodeType: string, nodeData: Record<string, unknown> = {}) => {
     event.dataTransfer.setData(
       'application/reactflow',
       JSON.stringify({ nodeType, ...nodeData })

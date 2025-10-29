@@ -5,7 +5,7 @@ import { Server } from 'lucide-react'
 export interface SourceSystemNodeData {
   values: string[]
   operator: string
-  [key: string]: any
+  [key: string]: unknown
 }
 
 function SourceSystemNode({ data }: NodeProps) {

@@ -21,7 +21,7 @@ export const parseCSV = (csvContent: string): DictionaryItem[] => {
 
     if (values.length === 0) continue
 
-    const item: any = {}
+    const item: Record<string, string | boolean> = {}
 
     headers.forEach((header, index) => {
       const cleanHeader = header.trim()
@@ -45,7 +45,7 @@ export const parseCSV = (csvContent: string): DictionaryItem[] => {
       item.code = values[0]?.trim() || ''
     }
     if (!item.description) {
-      item.description = values[1]?.trim() || item.code
+      item.description = values[1]?.trim() || (item.code as string)
     }
     if (item.active === undefined) {
       item.active = true

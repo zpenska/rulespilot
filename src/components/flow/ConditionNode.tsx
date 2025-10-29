@@ -16,8 +16,8 @@ function ConditionNode({ data }: NodeProps) {
   // Load dictionary options for the field
   useEffect(() => {
     const loadDictionary = async () => {
-      if (type === 'standard' && criteria) {
-        const fieldName = (criteria as any).field
+      if (type === 'standard' && criteria && 'field' in criteria) {
+        const fieldName = criteria.field
         const fieldDef = FIELD_DEFINITIONS[fieldName as keyof typeof FIELD_DEFINITIONS]
 
         if (fieldDef?.dictionaryKey) {
@@ -63,13 +63,14 @@ function ConditionNode({ data }: NodeProps) {
 
   const getFieldLabel = () => {
     if (!criteria) return 'New Condition'
-    if (type === 'standard') {
-      return (criteria as any).field || 'Select Field'
-    } else {
-      const assoc = (criteria as any).association || 'MEMBER'
-      const template = (criteria as any).templateId || 'template'
+    if (type === 'standard' && 'field' in criteria) {
+      return criteria.field || 'Select Field'
+    } else if ('association' in criteria) {
+      const assoc = criteria.association || 'MEMBER'
+      const template = criteria.templateId || 'template'
       return `${assoc}.${template}`
     }
+    return 'Select Field'
   }
 
   const getOperator = () => {
@@ -118,7 +119,7 @@ function ConditionNode({ data }: NodeProps) {
                 value={criteria?.operator || 'IN'}
                 onChange={(e) => {
                   if (criteria) {
-                    criteria.operator = e.target.value as any
+                    criteria.operator = e.target.value
                   }
                   setIsEditingOperator(false)
                 }}

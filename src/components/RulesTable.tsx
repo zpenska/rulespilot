@@ -10,6 +10,11 @@ import {
   cloneRule,
   exportAllRulesToJSON,
   exportActiveRulesToJSON,
+  exportWorkflowRulesForTab,
+  exportHintsRulesForTab,
+  exportTATRulesForTab,
+  exportGlobalRulesAndSkills,
+  importGlobalRulesAndSkills,
   importRulesFromJSON,
   importTATRulesFromJSON,
   isTATRuleFormat,
@@ -231,6 +236,37 @@ export default function RulesTable({ currentRuleType, onRuleTypeChange }: RulesT
     downloadJSON(data, 'active-rules.json')
   }
 
+  const handleExportGlobal = async () => {
+    const data = await exportGlobalRulesAndSkills()
+    downloadJSON(data, 'global-rules.json')
+  }
+
+  const handleExportTabRules = async () => {
+    let data: unknown
+    let filename: string
+
+    try {
+      if (currentRuleType === 'workflow') {
+        data = await exportWorkflowRulesForTab()
+        filename = 'workflow-rules.json'
+      } else if (currentRuleType === 'hints') {
+        data = await exportHintsRulesForTab()
+        filename = 'hints-rules.json'
+      } else if (currentRuleType === 'tat') {
+        data = await exportTATRulesForTab()
+        filename = 'tat-rules.json'
+      } else {
+        alert(`Export not supported for ${currentRuleType} tab`)
+        return
+      }
+
+      downloadJSON(data, filename)
+    } catch (error) {
+      console.error('Error exporting tab rules:', error)
+      alert('Failed to export rules')
+    }
+  }
+
   const handleImportRules = () => {
     fileInputRef.current?.click()
   }
@@ -243,6 +279,23 @@ export default function RulesTable({ currentRuleType, onRuleTypeChange }: RulesT
       const fileContent = await file.text()
       const jsonData = JSON.parse(fileContent)
 
+      // Check if it's a global export format
+      if (jsonData.type === 'GLOBAL_RULES_EXPORT') {
+        const result = await importGlobalRulesAndSkills(jsonData)
+        alert(
+          `Successfully imported Global Export:\n` +
+          `- ${result.workflowCount} Workflow rules\n` +
+          `- ${result.hintsCount} Hints rules\n` +
+          `- ${result.skillsCount} Skills`
+        )
+
+        // Reset file input
+        if (fileInputRef.current) {
+          fileInputRef.current.value = ''
+        }
+        return
+      }
+
       // Support both array format and AUTO_WORKFLOW_RULES format
       const rulesData = Array.isArray(jsonData) ? jsonData : jsonData.rules
 
@@ -251,9 +304,20 @@ export default function RulesTable({ currentRuleType, onRuleTypeChange }: RulesT
         return
       }
 
-      // Auto-detect rule type from JSON structure (don't rely on active tab)
+      // Auto-detect rule type from JSON structure
       const firstRule = rulesData[0]
       const isTAT = isTATRuleFormat(firstRule)
+
+      // Validate that imported data matches current tab
+      if (currentRuleType === 'tat' && !isTAT) {
+        alert('❌ Tab Mismatch: You are on the TAT tab, but this file contains Workflow/Hints rules.\n\nPlease switch to the Workflow or Hints tab to import this file.')
+        return
+      }
+
+      if ((currentRuleType === 'workflow' || currentRuleType === 'hints') && isTAT) {
+        alert('❌ Tab Mismatch: You are on the ' + currentRuleType.toUpperCase() + ' tab, but this file contains TAT rules.\n\nPlease switch to the TAT tab to import this file.')
+        return
+      }
 
       // Route to appropriate import function based on detected type
       let importedRules: Rule[]
@@ -261,9 +325,9 @@ export default function RulesTable({ currentRuleType, onRuleTypeChange }: RulesT
         // TAT rules - use TAT import which expects TATRuleExport format
         importedRules = await importTATRulesFromJSON(rulesData)
       } else {
-        // Workflow/Skills rules - add current rule type and use workflow import
-        const rulesWithType = rulesData.map((r: any) => ({
-          ...r,
+        // Workflow/Hints rules - add current rule type and use workflow import
+        const rulesWithType = rulesData.map((r: unknown) => ({
+          ...(r as Record<string, unknown>),
           ruleType: currentRuleType,
         }))
         importedRules = await importRulesFromJSON(rulesWithType)
@@ -309,7 +373,7 @@ export default function RulesTable({ currentRuleType, onRuleTypeChange }: RulesT
     }
   }
 
-  const downloadJSON = (data: any, filename: string) => {
+  const downloadJSON = (data: unknown, filename: string) => {
     const blob = new Blob([JSON.stringify(data, null, 2)], {
       type: 'application/json',
     })
@@ -371,8 +435,19 @@ export default function RulesTable({ currentRuleType, onRuleTypeChange }: RulesT
                 </button>
 
                 {showSettingsDropdown && (
-                  <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg border border-gray-200 z-10">
+                  <div className="absolute right-0 mt-2 w-56 bg-white rounded-md shadow-lg border border-gray-200 z-10">
                     <div className="py-1">
+                      <button
+                        onClick={() => {
+                          handleExportGlobal()
+                          setShowSettingsDropdown(false)
+                        }}
+                        className="w-full text-left px-4 py-2 text-sm font-medium text-primary hover:bg-gray-50 flex items-center space-x-2"
+                      >
+                        <Download className="w-4 h-4" />
+                        <span>Export Global (Workflow/Hints/Skills)</span>
+                      </button>
+                      <div className="border-t border-gray-100"></div>
                       <button
                         onClick={() => {
                           handleImportRules()
@@ -381,7 +456,18 @@ export default function RulesTable({ currentRuleType, onRuleTypeChange }: RulesT
                         className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center space-x-2"
                       >
                         <Upload className="w-4 h-4" />
-                        <span>Import Rules</span>
+                        <span>Import {currentRuleType === 'workflow' ? 'Workflow' : currentRuleType === 'hints' ? 'Hints' : currentRuleType === 'tat' ? 'TAT' : ''} Rules</span>
+                      </button>
+                      <div className="border-t border-gray-100"></div>
+                      <button
+                        onClick={() => {
+                          handleExportTabRules()
+                          setShowSettingsDropdown(false)
+                        }}
+                        className="w-full text-left px-4 py-2 text-sm font-medium text-primary hover:bg-gray-50 flex items-center space-x-2"
+                      >
+                        <Download className="w-4 h-4" />
+                        <span>Export {currentRuleType === 'workflow' ? 'Workflow' : currentRuleType === 'hints' ? 'Hints' : currentRuleType === 'tat' ? 'TAT' : ''} Rules</span>
                       </button>
                       <div className="border-t border-gray-100"></div>
                       <button
@@ -402,7 +488,7 @@ export default function RulesTable({ currentRuleType, onRuleTypeChange }: RulesT
                         className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center space-x-2"
                       >
                         <Download className="w-4 h-4" />
-                        <span>Export Active Rules</span>
+                        <span>Export Active (All Types)</span>
                       </button>
                     </div>
                   </div>
@@ -565,17 +651,6 @@ export default function RulesTable({ currentRuleType, onRuleTypeChange }: RulesT
               </div>
 
               <div className="flex items-center space-x-3">
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-                  <input
-                    type="text"
-                    placeholder="Search by Code, Name..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="pl-9 pr-3 py-1.5 border border-gray-300 rounded text-sm focus:ring-primary focus:border-primary w-64"
-                  />
-                </div>
-
                 {/* TAT Pause Settings button - only shown on TAT page */}
                 {currentRuleType === 'tat' && (
                   <button
@@ -586,6 +661,17 @@ export default function RulesTable({ currentRuleType, onRuleTypeChange }: RulesT
                     TAT Pause Settings
                   </button>
                 )}
+
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                  <input
+                    type="text"
+                    placeholder="Search by Code, Name..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="pl-9 pr-3 py-1.5 border border-gray-300 rounded text-sm focus:ring-primary focus:border-primary w-64"
+                  />
+                </div>
               </div>
             </div>
 
@@ -704,8 +790,12 @@ export default function RulesTable({ currentRuleType, onRuleTypeChange }: RulesT
                     </thead>
                     <tbody className="bg-white divide-y divide-table-border">
                       {filteredRules.map((rule) => (
-                        <tr key={rule.id} className="hover:bg-gray-50">
-                          <td className="px-4 py-3">
+                        <tr
+                          key={rule.id}
+                          className="hover:bg-gray-50 cursor-pointer"
+                          onClick={() => navigate(`/${currentRuleType}/edit/${rule.id}`)}
+                        >
+                          <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
                             <input
                               type="checkbox"
                               checked={selectedRules.has(rule.id)}
@@ -713,7 +803,7 @@ export default function RulesTable({ currentRuleType, onRuleTypeChange }: RulesT
                               className="rounded border-gray-300 text-primary focus:ring-primary"
                             />
                           </td>
-                          <td className="px-4 py-3">
+                          <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
                             <button
                               onClick={() => handleToggleStatus(rule)}
                               className={`inline-flex px-2.5 py-1 text-sm font-medium rounded-md ${
@@ -780,7 +870,7 @@ export default function RulesTable({ currentRuleType, onRuleTypeChange }: RulesT
                           <td className="px-4 py-3 text-sm text-gray-600">
                             {new Date(rule.updatedAt).toLocaleDateString()}
                           </td>
-                          <td className="px-4 py-3 text-sm font-medium">
+                          <td className="px-4 py-3 text-sm font-medium" onClick={(e) => e.stopPropagation()}>
                             <button
                               ref={(el) => (buttonRefs.current[rule.id] = el)}
                               onClick={() => handleToggleDropdown(rule.id)}

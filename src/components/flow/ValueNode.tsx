@@ -5,7 +5,7 @@ import { Hash, Calendar, Type } from 'lucide-react'
 export interface ValueNodeData {
   values: string[]
   dataType?: 'STRING' | 'INTEGER' | 'DATE'
-  [key: string]: any
+  [key: string]: unknown
 }
 
 function ValueNode({ data }: NodeProps) {

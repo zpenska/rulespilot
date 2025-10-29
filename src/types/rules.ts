@@ -24,6 +24,8 @@ export type StandardOperator =
   | 'LESS_THAN_OR_EQUAL_TO'
   | 'LESS_THAN'
   | 'BETWEEN'
+  | 'VALUED'
+  | 'NOT_VALUED'
 
 export type CustomOperator = 'IN' | 'NOT_IN'
 
@@ -48,6 +50,16 @@ export type StandardFieldName =
   | 'PROVIDER_PRIMARY_ADDRESS_STATE'
   | 'PROVIDER_PRIMARY_SPECIALTY'
   | 'PROVIDER_SET'
+  // Reconsideration Fields
+  | 'RECONSIDERATION_ALL_DOC_RECEIVED_DATE_TIME'
+  | 'RECONSIDERATION_DUE_DATE_REASON'
+  | 'RECONSIDERATION_LEVEL'
+  | 'RECONSIDERATION_OF_TYPE'
+  | 'RECONSIDERATION_PROCESS_TYPE'
+  | 'RECONSIDERATION_REQUESTER_TYPE'
+  | 'RECONSIDERATION_STATUS'
+  | 'RECONSIDERATION_TYPE'
+  | 'RECONSIDERATION_URGENCY'
   // Request Fields
   | 'REQUEST_CLASSIFICATION'
   | 'REQUEST_DIAGNOSIS_CODE'
@@ -166,8 +178,26 @@ export interface CreateTaskAction {
   autoClose?: boolean
 }
 
+export interface CreateAppealTaskAction {
+  typeCode: string
+  priorityCode: string
+  reasonCode: string
+  units: string
+  unitsUomCode: string
+  calculationField: string
+  ownerUserId: string
+  description: string
+}
+
 export interface TransferOwnershipAction {
   transferTo: string  // Dept or user code
+}
+
+export interface CreateCMReferralAction {
+  programCode: string
+  sourceCode: string
+  severityCode: string
+  ownerDepartmentCode: string
 }
 
 export interface CreateProgramAction {
@@ -180,8 +210,10 @@ export interface RuleActions {
   generateLetters?: GenerateLetterAction[]
   close?: CloseAction
   createTask?: CreateTaskAction
+  createAppealTasks?: CreateAppealTaskAction[]
   transferOwnership?: TransferOwnershipAction
-  createProgram?: CreateProgramAction
+  createCMReferral?: CreateCMReferralAction
+  createProgram?: CreateProgramAction  // Deprecated: use createCMReferral instead
 }
 
 // TAT (Turnaround Time) specific types
@@ -298,6 +330,7 @@ export type FieldCategory =
   | 'Enrollment'
   | 'Member'
   | 'Provider'
+  | 'Reconsideration'
   | 'Request'
   | 'Review Outcome'
   | 'Service'

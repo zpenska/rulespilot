@@ -129,6 +129,14 @@ const validateValueCount = (
   operator: StandardOperator,
   values: string[]
 ): string | null => {
+  // VALUED and NOT_VALUED operators don't require values
+  if (operator === 'VALUED' || operator === 'NOT_VALUED') {
+    if (values && values.length > 0) {
+      return `Operator ${operator} should not have any values`
+    }
+    return null
+  }
+
   if (!values || values.length === 0) {
     return 'At least one value is required'
   }
@@ -170,6 +178,11 @@ const validateDataType = (
   operator: StandardOperator
 ): string[] => {
   const errors: string[] = []
+
+  // Skip data type validation for VALUED/NOT_VALUED operators (no values to validate)
+  if (operator === 'VALUED' || operator === 'NOT_VALUED') {
+    return errors
+  }
 
   values.forEach((value) => {
     switch (dataType) {

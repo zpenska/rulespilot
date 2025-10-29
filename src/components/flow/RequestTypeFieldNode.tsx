@@ -5,7 +5,7 @@ import { FileText } from 'lucide-react'
 export interface RequestTypeFieldNodeData {
   values: string[]
   operator: string
-  [key: string]: any
+  [key: string]: unknown
 }
 
 function RequestTypeFieldNode({ data }: NodeProps) {

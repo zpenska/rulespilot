@@ -55,7 +55,7 @@ function BranchingWorkflowBuilderInner({ onClose, onSave }: BranchingWorkflowBui
     [setEdges]
   )
 
-  const onDragStart = (event: DragEvent, nodeType: string, nodeData: any = {}) => {
+  const onDragStart = (event: DragEvent, nodeType: string, nodeData: Record<string, unknown> = {}) => {
     event.dataTransfer.setData(
       'application/reactflow',
       JSON.stringify({ nodeType, ...nodeData })

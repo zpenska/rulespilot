@@ -101,6 +101,7 @@ export const sampleRules: Record<string, Rule> = {
     id: 'test-rule-1',
     code: 'RULE001',
     ruleDesc: 'Members in Pennsylvania',
+    ruleType: 'workflow',
     standardFieldCriteria: [sampleStandardCriteria.memberState],
     customFieldCriteria: [],
     status: 'active',
@@ -111,6 +112,7 @@ export const sampleRules: Record<string, Rule> = {
     id: 'test-rule-2',
     code: 'RULE002',
     ruleDesc: 'Medicare members over 65 in PA with orthopedic providers',
+    ruleType: 'workflow',
     standardFieldCriteria: [
       {
         field: 'ENROLLMENT_PLAN',
@@ -136,6 +138,7 @@ export const sampleRules: Record<string, Rule> = {
     id: 'test-rule-3',
     code: 'RULE003',
     ruleDesc: 'High-risk members with custom priority',
+    ruleType: 'workflow',
     standardFieldCriteria: [sampleStandardCriteria.memberState],
     customFieldCriteria: [sampleCustomCriteria.memberRiskScore, sampleCustomCriteria.requestPriority],
     weight: 150,
@@ -147,6 +150,7 @@ export const sampleRules: Record<string, Rule> = {
     id: 'test-rule-4',
     code: 'RULE004',
     ruleDesc: 'Inactive test rule',
+    ruleType: 'workflow',
     standardFieldCriteria: [sampleStandardCriteria.requestType],
     customFieldCriteria: [],
     status: 'inactive',

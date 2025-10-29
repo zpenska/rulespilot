@@ -314,7 +314,11 @@ export default function SkillForm({ skill, onClose, onSave }: SkillFormProps) {
                 onKeyDown={(e) => {
                   if (e.key === 'Enter') {
                     e.preventDefault()
-                    diagnosisMode === 'manual' ? handleAddDiagnosisCode() : handleDiagnosisAIQuery()
+                    if (diagnosisMode === 'manual') {
+                      handleAddDiagnosisCode()
+                    } else {
+                      handleDiagnosisAIQuery()
+                    }
                   }
                 }}
                 placeholder={
@@ -419,7 +423,11 @@ export default function SkillForm({ skill, onClose, onSave }: SkillFormProps) {
                 onKeyDown={(e) => {
                   if (e.key === 'Enter') {
                     e.preventDefault()
-                    serviceMode === 'manual' ? handleAddServiceCode() : handleServiceAIQuery()
+                    if (serviceMode === 'manual') {
+                      handleAddServiceCode()
+                    } else {
+                      handleServiceAIQuery()
+                    }
                   }
                 }}
                 placeholder={

@@ -1,0 +1,208 @@
+{
+  "rules": [
+    {
+      "sourceDateTimeField": "NOTIFICATION_DATE_TIME",
+      "holidayDates": [],
+      "holidayCategory": null,
+      "clinicalsRequestedResponseThresholdHours": null,
+      "ruleDesc": "Standard Outpatient Prior Authorization - 14 Calendar Days",
+      "customFieldCriteria": null,
+      "isActive": true,
+      "weight": 100,
+      "unitsOfMeasure": "CALENDAR_DAYS",
+      "standardFieldCriteria": [
+        {
+          "field": "REQUEST_TYPE",
+          "values": ["OUTPATIENT"]
+        },
+        {
+          "field": "REQUEST_URGENCY",
+          "values": ["ROUTINE"]
+        }
+      ],
+      "units": 14,
+      "holidayOffset": null,
+      "dueTime": "17:00",
+      "dateOperator": null,
+      "autoExtend": false,
+      "extendStatusReason": null
+    },
+    {
+      "sourceDateTimeField": "RECEIPT_DATE_TIME",
+      "holidayDates": [],
+      "holidayCategory": null,
+      "clinicalsRequestedResponseThresholdHours": 48,
+      "ruleDesc": "Urgent Review - 72 Hours from Receipt",
+      "customFieldCriteria": null,
+      "isActive": true,
+      "weight": 200,
+      "unitsOfMeasure": "HOURS",
+      "standardFieldCriteria": [
+        {
+          "field": "REQUEST_URGENCY",
+          "values": ["URGENT"]
+        }
+      ],
+      "units": 72,
+      "holidayOffset": null,
+      "dueTime": null,
+      "dateOperator": null,
+      "autoExtend": false,
+      "extendStatusReason": null
+    },
+    {
+      "sourceDateTimeField": "RECEIVED_DATE_TIME",
+      "holidayDates": ["20250704", "20250901", "20251225", "20260101"],
+      "holidayCategory": "FEDERAL_HOLIDAYS",
+      "clinicalsRequestedResponseThresholdHours": null,
+      "ruleDesc": "Expedited Review - 24 Hours Skip Holidays",
+      "customFieldCriteria": null,
+      "isActive": true,
+      "weight": 250,
+      "unitsOfMeasure": "HOURS",
+      "standardFieldCriteria": [
+        {
+          "field": "REQUEST_URGENCY",
+          "values": ["EXPEDITED", "EMERGENCY"]
+        }
+      ],
+      "units": 24,
+      "holidayOffset": 1,
+      "dueTime": null,
+      "dateOperator": null,
+      "autoExtend": false,
+      "extendStatusReason": null
+    },
+    {
+      "sourceDateTimeField": "REQUEST_DATE_TIME",
+      "holidayDates": ["20250704", "20250901", "20251128", "20251225", "20260101"],
+      "holidayCategory": "SKIPHDAY_CTGY_1",
+      "clinicalsRequestedResponseThresholdHours": null,
+      "ruleDesc": "Retrospective Review - 30 Calendar Days with Holiday Offset",
+      "customFieldCriteria": null,
+      "isActive": true,
+      "weight": 120,
+      "unitsOfMeasure": "CALENDAR_DAYS",
+      "standardFieldCriteria": [
+        {
+          "field": "REQUEST_TYPE",
+          "values": ["RETROSPECTIVE"]
+        }
+      ],
+      "units": 30,
+      "holidayOffset": 1,
+      "dueTime": "17:00",
+      "dateOperator": null,
+      "autoExtend": false,
+      "extendStatusReason": null
+    },
+    {
+      "sourceDateTimeField": "STATUS_CHANGE_DATE_TIME",
+      "holidayDates": [],
+      "holidayCategory": null,
+      "clinicalsRequestedResponseThresholdHours": null,
+      "ruleDesc": "Reconsideration Appeal - 30 Calendar Days from Status Change",
+      "customFieldCriteria": null,
+      "isActive": true,
+      "weight": 180,
+      "unitsOfMeasure": "CALENDAR_DAYS",
+      "standardFieldCriteria": [
+        {
+          "field": "RECONSIDERATION_TYPE",
+          "values": ["APPEAL", "GRIEVANCE"]
+        },
+        {
+          "field": "RECONSIDERATION_STATUS",
+          "values": ["OPEN", "PENDING"]
+        }
+      ],
+      "units": 30,
+      "holidayOffset": null,
+      "dueTime": "17:00",
+      "dateOperator": null,
+      "autoExtend": true,
+      "extendStatusReason": "PENDING_DOCUMENTATION"
+    },
+    {
+      "sourceDateTimeField": "NOTIFICATION_DATE_TIME",
+      "holidayDates": [],
+      "holidayCategory": null,
+      "clinicalsRequestedResponseThresholdHours": null,
+      "ruleDesc": "Concurrent Review - 1 Business Day by 5pm",
+      "customFieldCriteria": null,
+      "isActive": true,
+      "weight": 220,
+      "unitsOfMeasure": "BUSINESS_DAYS",
+      "standardFieldCriteria": [
+        {
+          "field": "REQUEST_TYPE",
+          "values": ["INPATIENT"]
+        },
+        {
+          "field": "SERVICE_REVIEW_TYPE",
+          "values": ["CONCURRENT"]
+        }
+      ],
+      "units": 1,
+      "holidayOffset": null,
+      "dueTime": "17:00",
+      "dateOperator": null,
+      "autoExtend": false,
+      "extendStatusReason": null
+    },
+    {
+      "sourceDateTimeField": "REQUEST_DATE_TIME",
+      "holidayDates": [],
+      "holidayCategory": null,
+      "clinicalsRequestedResponseThresholdHours": null,
+      "ruleDesc": "Post-Service Review - 60 Calendar Days",
+      "customFieldCriteria": null,
+      "isActive": true,
+      "weight": 110,
+      "unitsOfMeasure": "CALENDAR_DAYS",
+      "standardFieldCriteria": [
+        {
+          "field": "REQUEST_TYPE",
+          "values": ["RETROSPECTIVE"]
+        },
+        {
+          "field": "REQUEST_CLASSIFICATION",
+          "values": ["POST_SERVICE"]
+        }
+      ],
+      "units": 60,
+      "holidayOffset": null,
+      "dueTime": "17:00",
+      "dateOperator": null,
+      "autoExtend": false,
+      "extendStatusReason": null
+    },
+    {
+      "sourceDateTimeField": "NOTIFICATION_DATE_TIME",
+      "holidayDates": ["20250704", "20250901", "20251225", "20260101"],
+      "holidayCategory": "FEDERAL_HOLIDAYS",
+      "clinicalsRequestedResponseThresholdHours": 72,
+      "ruleDesc": "Appeal Response - 30 Days with Auto-Extend for Missing Docs",
+      "customFieldCriteria": null,
+      "isActive": true,
+      "weight": 190,
+      "unitsOfMeasure": "CALENDAR_DAYS",
+      "standardFieldCriteria": [
+        {
+          "field": "RECONSIDERATION_TYPE",
+          "values": ["APPEAL"]
+        },
+        {
+          "field": "RECONSIDERATION_LEVEL",
+          "values": ["FIRST_LEVEL", "SECOND_LEVEL"]
+        }
+      ],
+      "units": 30,
+      "holidayOffset": 1,
+      "dueTime": "17:00",
+      "dateOperator": null,
+      "autoExtend": true,
+      "extendStatusReason": "CLINICALS_REQUESTED"
+    }
+  ]
+}

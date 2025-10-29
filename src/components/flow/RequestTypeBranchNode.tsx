@@ -5,7 +5,7 @@ import { RequestTypeFilter } from '../../types/rules'
 
 export interface RequestTypeBranchNodeData {
   requestTypeFilter: RequestTypeFilter
-  [key: string]: any
+  [key: string]: unknown
 }
 
 function RequestTypeBranchNode({ data }: NodeProps) {

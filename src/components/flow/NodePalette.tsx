@@ -4,8 +4,16 @@ import { FIELD_DEFINITIONS } from '../../config/fieldDefinitions'
 import { useRulesStore } from '../../store/rulesStore'
 
 interface NodePaletteProps {
-  onDragStart: (event: DragEvent, nodeType: string, nodeData?: any) => void
+  onDragStart: (event: DragEvent, nodeType: string, nodeData?: Record<string, unknown>) => void
 }
+
+// Define actions for workflow rules (constant, moved outside component)
+const RULES_ACTIONS = [
+  { type: 'departmentRouting', label: 'Department Routing' },
+  { type: 'close', label: 'Close/Discharge' },
+  { type: 'generateLetters', label: 'Generate Letters' },
+  { type: 'hints', label: 'Add Hints' },
+]
 
 export default function NodePalette({ onDragStart }: NodePaletteProps) {
   const currentRuleType = useRulesStore((state) => state.currentRuleType)
@@ -27,7 +35,7 @@ export default function NodePalette({ onDragStart }: NodePaletteProps) {
       acc[def.category].push(def)
       return acc
     },
-    {} as Record<string, any[]>
+    {} as Record<string, typeof FIELD_DEFINITIONS[keyof typeof FIELD_DEFINITIONS][]>
   )
 
   const logicOperators = [
@@ -35,18 +43,10 @@ export default function NodePalette({ onDragStart }: NodePaletteProps) {
     { type: 'OR', label: 'OR' },
   ]
 
-  // Define actions based on rule type
-  const rulesActions = [
-    { type: 'departmentRouting', label: 'Department Routing' },
-    { type: 'close', label: 'Close/Discharge' },
-    { type: 'generateLetters', label: 'Generate Letters' },
-    { type: 'hints', label: 'Add Hints' },
-  ]
-
   // Get actions based on current rule type
   const actions = useMemo(() => {
     if (currentRuleType === 'workflow') {
-      return rulesActions
+      return RULES_ACTIONS
     }
     return [] // TAT and pullQueue don't have actions in the visual builder
   }, [currentRuleType])

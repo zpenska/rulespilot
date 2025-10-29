@@ -1,0 +1,186 @@
+[
+  {
+    "ruleDesc": "Missing Clinical Documentation Alert - High-Risk Procedures",
+    "standardFieldCriteria": [
+      {
+        "operator": "IN",
+        "field": "SERVICE_CODE",
+        "values": ["27447", "23472", "33935"]
+      },
+      {
+        "operator": "NOT_VALUED",
+        "field": "RECONSIDERATION_ALL_DOC_RECEIVED_DATE_TIME",
+        "values": []
+      }
+    ],
+    "isActive": true,
+    "weight": 200,
+    "hintsAction": {
+      "message": "WARNING: High-risk procedure requires clinical documentation. Request complete medical records and operative notes before approval.",
+      "context": ["SERVICES", "DIAGNOSIS"],
+      "displayLocation": "SERVICES",
+      "color": "RED"
+    }
+  },
+  {
+    "ruleDesc": "Prior Authorization History Warning - Recent Denial",
+    "standardFieldCriteria": [
+      {
+        "operator": "IN",
+        "field": "REQUEST_STATUS",
+        "values": ["PENDING", "REVIEW"]
+      },
+      {
+        "operator": "IN",
+        "field": "REVIEW_OUTCOME_STATUS",
+        "values": ["DENIED", "PARTIALLY_APPROVED"]
+      }
+    ],
+    "customFieldCriteria": [
+      {
+        "operator": "IN",
+        "association": "MEMBER",
+        "templateId": "RECENT_DENIAL_FLAG",
+        "values": ["YES"]
+      }
+    ],
+    "isActive": true,
+    "weight": 180,
+    "hintsAction": {
+      "message": "NOTICE: Member has recent denial or partial approval within last 90 days. Review previous determination and supporting documentation.",
+      "context": ["MEMBER_DEMOGRAPHICS", "SERVICES"],
+      "displayLocation": "MEMBER",
+      "color": "YELLOW"
+    }
+  },
+  {
+    "ruleDesc": "High-Risk Member Alert - Multiple Chronic Conditions",
+    "standardFieldCriteria": [
+      {
+        "operator": "IN",
+        "field": "REQUEST_DIAGNOSIS_CODE",
+        "values": ["E11", "I50", "I25", "N18"]
+      },
+      {
+        "operator": "GREATER_THAN_OR_EQUAL_TO",
+        "field": "MEMBER_AGE",
+        "values": ["65"]
+      }
+    ],
+    "customFieldCriteria": [
+      {
+        "operator": "IN",
+        "association": "MEMBER",
+        "templateId": "RISK_SCORE",
+        "values": ["HIGH", "VERY_HIGH"]
+      }
+    ],
+    "isActive": true,
+    "weight": 190,
+    "hintsAction": {
+      "message": "ALERT: High-risk member with multiple chronic conditions (Diabetes, CHF, CAD, CKD). Consider care coordination and case management referral.",
+      "context": ["MEMBER_DEMOGRAPHICS", "DIAGNOSIS", "BUSINESS_ENTERPRISE_CATEGORIES"],
+      "displayLocation": "MEMBER",
+      "color": "RED"
+    }
+  },
+  {
+    "ruleDesc": "Provider Network Status - Out of Network",
+    "standardFieldCriteria": [
+      {
+        "operator": "IN",
+        "field": "PROVIDER_PRIMARY_SPECIALTY",
+        "providerRole": "SERVICING",
+        "values": ["CARDIOLOGY", "ORTHOPEDICS", "NEUROSURGERY"]
+      }
+    ],
+    "customFieldCriteria": [
+      {
+        "operator": "IN",
+        "association": "REQUEST",
+        "templateId": "NETWORK_STATUS",
+        "values": ["OUT_OF_NETWORK", "NON_PAR"]
+      }
+    ],
+    "isActive": true,
+    "weight": 150,
+    "hintsAction": {
+      "message": "INFO: Out-of-network specialist provider. Verify member benefits for out-of-network coverage and obtain gap exception if applicable.",
+      "context": ["PROVIDER_DEMOGRAPHICS", "BUSINESS_ENTERPRISE_CATEGORIES"],
+      "displayLocation": "PROVIDER",
+      "color": "BLUE"
+    }
+  },
+  {
+    "ruleDesc": "Duplicate Request Warning - Similar Request in Last 30 Days",
+    "standardFieldCriteria": [
+      {
+        "operator": "IN",
+        "field": "REQUEST_STATUS",
+        "values": ["PENDING"]
+      }
+    ],
+    "customFieldCriteria": [
+      {
+        "operator": "IN",
+        "association": "REQUEST",
+        "templateId": "DUPLICATE_REQUEST_FLAG",
+        "values": ["POSSIBLE_DUPLICATE"]
+      }
+    ],
+    "isActive": true,
+    "weight": 170,
+    "hintsAction": {
+      "message": "CAUTION: Possible duplicate request detected. Similar authorization submitted within last 30 days. Review member history to avoid duplicate approvals.",
+      "context": ["SERVICES", "MEMBER_DEMOGRAPHICS"],
+      "displayLocation": "SERVICES",
+      "color": "YELLOW"
+    }
+  },
+  {
+    "ruleDesc": "State-Specific Requirements - Pennsylvania Mandated Benefits",
+    "standardFieldCriteria": [
+      {
+        "operator": "IN",
+        "field": "MEMBER_STATE",
+        "values": ["PA"]
+      },
+      {
+        "operator": "IN",
+        "field": "SERVICE_CODE",
+        "values": ["97110", "97112", "97116"]
+      }
+    ],
+    "isActive": true,
+    "weight": 140,
+    "hintsAction": {
+      "message": "INFO: Pennsylvania mandates coverage for physical therapy services up to 30 visits per year without prior authorization. Verify visit count before requiring PA.",
+      "context": ["BUSINESS_ENTERPRISE_CATEGORIES", "SERVICES"],
+      "displayLocation": "SERVICES",
+      "color": "BLUE"
+    }
+  },
+  {
+    "ruleDesc": "Billing Code Mismatch Alert - Diagnosis and Procedure Inconsistency",
+    "standardFieldCriteria": [
+      {
+        "operator": "IN",
+        "field": "REQUEST_DIAGNOSIS_CODE",
+        "values": ["M25.5"]
+      },
+      {
+        "operator": "IN",
+        "field": "SERVICE_CODE",
+        "values": ["93000", "93005", "93010"]
+      }
+    ],
+    "isActive": true,
+    "weight": 160,
+    "hintsAction": {
+      "message": "WARNING: Potential coding mismatch detected. Diagnosis code indicates joint pain, but service codes are for cardiac testing (ECG). Verify medical necessity and coding accuracy.",
+      "context": ["DIAGNOSIS", "SERVICES"],
+      "displayLocation": "DIAGNOSIS",
+      "color": "YELLOW"
+    }
+  }
+]

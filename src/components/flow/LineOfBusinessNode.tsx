@@ -5,7 +5,7 @@ import { Briefcase } from 'lucide-react'
 export interface LineOfBusinessNodeData {
   values: string[]
   operator: string
-  [key: string]: any
+  [key: string]: unknown
 }
 
 function LineOfBusinessNode({ data }: NodeProps) {

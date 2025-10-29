@@ -1,18 +1,18 @@
 import { memo } from 'react'
 import { Handle, Position, NodeProps } from '@xyflow/react'
-import { Zap, Building2, XCircle, Mail, CheckSquare, ArrowRightLeft, FolderPlus } from 'lucide-react'
+import { Zap, Building2, XCircle, Mail, CheckSquare, ArrowRightLeft, FolderPlus, LucideIcon } from 'lucide-react'
 
 export interface ActionNodeData {
   actionType: string
-  actionData?: any
-  [key: string]: any
+  actionData?: Record<string, unknown>
+  [key: string]: unknown
 }
 
 function ActionNode({ data }: NodeProps) {
   const { actionType, actionData } = data as unknown as ActionNodeData
 
   const getActionConfig = () => {
-    const configs: Record<string, { label: string; color: string; icon: any }> = {
+    const configs: Record<string, { label: string; color: string; icon: LucideIcon }> = {
       departmentRouting: {
         label: 'Department Routing',
         color: 'bg-orange-50 text-orange-700 border-orange-200',

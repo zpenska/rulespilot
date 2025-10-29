@@ -180,20 +180,20 @@ export async function chatWithAI(
     max_tokens: 1500,
     messages: [
       {
-        role: 'user',
+        role: 'user' as const,
         content: `${AI_KNOWLEDGE_BASE}
 
 You are an AI assistant helping users build healthcare authorization rules. Answer questions, provide guidance, and help troubleshoot issues.`,
       },
       ...conversationHistory.map((msg) => ({
-        role: msg.role,
+        role: msg.role as 'user' | 'assistant',
         content: msg.content,
       })),
       {
-        role: 'user',
+        role: 'user' as const,
         content: message,
       },
-    ] as any,
+    ],
   })
 
   return response.content[0].type === 'text' ? response.content[0].text : ''

@@ -3,28 +3,29 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // Rules collection - allow read/write for authenticated users
-    // For now, allow all (update this in production)
+    // Helper function to check if user is authenticated
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    // Rules collection - allow read/write for authenticated users only
     match /rules/{ruleId} {
-      allow read, write: if true;
+      allow read, write: if isAuthenticated();
     }
 
-    // Dictionaries collection - allow read/write for authenticated users
-    // For now, allow all (update this in production)
+    // Dictionaries collection - allow read/write for authenticated users only
     match /dictionaries/{dictionaryId} {
-      allow read, write: if true;
+      allow read, write: if isAuthenticated();
     }
 
-    // Config collection - allow read/write for authenticated users
-    // For now, allow all (update this in production)
+    // Config collection - allow read/write for authenticated users only
     match /config/{configId} {
-      allow read, write: if true;
+      allow read, write: if isAuthenticated();
     }
 
-    // Skills collection - allow read/write for authenticated users
-    // For now, allow all (update this in production)
+    // Skills collection - allow read/write for authenticated users only
     match /skills/{skillId} {
-      allow read, write: if true;
+      allow read, write: if isAuthenticated();
     }
 
     // Default deny all other collections

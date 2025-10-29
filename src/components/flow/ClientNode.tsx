@@ -5,7 +5,7 @@ import { Building } from 'lucide-react'
 export interface ClientNodeData {
   values: string[]
   operator: string
-  [key: string]: any
+  [key: string]: unknown
 }
 
 function ClientNode({ data }: NodeProps) {

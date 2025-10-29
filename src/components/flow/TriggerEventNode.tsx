@@ -5,7 +5,7 @@ import { TriggerEvent } from '../../types/rules'
 
 export interface TriggerEventNodeData {
   triggerEvents: TriggerEvent[]
-  [key: string]: any
+  [key: string]: unknown
 }
 
 const TRIGGER_LABELS: Record<TriggerEvent, string> = {

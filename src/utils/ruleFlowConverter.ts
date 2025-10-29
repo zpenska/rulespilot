@@ -5,22 +5,22 @@ export interface ConditionNodeData {
   type: 'standard' | 'custom'
   criteria: StandardFieldCriteria | CustomFieldCriteria
   index: number
-  [key: string]: any
+  [key: string]: unknown
 }
 
 export interface LogicNodeData {
   logic: 'AND' | 'OR'
-  [key: string]: any
+  [key: string]: unknown
 }
 
 export interface ActionNodeData {
   actionType: string
-  actionData: any
-  [key: string]: any
+  actionData: Record<string, unknown>
+  [key: string]: unknown
 }
 
 export interface TATCalculationNodeData extends TATParameters {
-  [key: string]: any
+  [key: string]: unknown
 }
 
 /**
@@ -281,7 +281,7 @@ export function nodesToRule(
     actionNodes.forEach((node) => {
       const data = node.data as unknown as ActionNodeData
       if (data.actionType && data.actionData) {
-        ;(actions as any)[data.actionType] = data.actionData
+        ;(actions as Record<string, unknown>)[data.actionType] = data.actionData
       }
     })
 

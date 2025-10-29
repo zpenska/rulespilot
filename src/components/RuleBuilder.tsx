@@ -13,6 +13,7 @@ import {
   TATParameters,
   SourceDateTimeField,
   UnitsOfMeasure,
+  DateOperator,
   TriggerEvent,
   RequestTypeFilter,
 } from '../types/rules'
@@ -138,7 +139,7 @@ export default function RuleBuilder({ rule, onClose, onSave }: RuleBuilderProps)
     const ruleType = rule?.ruleType || currentRuleType
 
     // Prepare rule data based on type
-    let ruleData: any = {
+    const ruleData: Record<string, unknown> = {
       ruleDesc,
       ruleType,
       standardFieldCriteria: standardCriteria,
@@ -799,7 +800,7 @@ export default function RuleBuilder({ rule, onClose, onSave }: RuleBuilderProps)
                     onChange={(e) =>
                       setTatParameters({
                         ...tatParameters,
-                        dateOperator: (e.target.value || null) as any,
+                        dateOperator: (e.target.value || null) as DateOperator | null,
                       })
                     }
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-primary focus:border-primary"
@@ -884,7 +885,7 @@ export default function RuleBuilder({ rule, onClose, onSave }: RuleBuilderProps)
                     if (e.target.checked) {
                       setActions({ ...actions, departmentRouting: { departmentCode: '' } })
                     } else {
-                      const { departmentRouting, ...rest } = actions
+                      const { departmentRouting: _departmentRouting, ...rest } = actions
                       setActions(rest)
                     }
                   }}
@@ -916,7 +917,7 @@ export default function RuleBuilder({ rule, onClose, onSave }: RuleBuilderProps)
                     if (e.target.checked) {
                       setActions({ ...actions, close: { dispositionCode: '' } })
                     } else {
-                      const { close, ...rest } = actions
+                      const { close: _close, ...rest } = actions
                       setActions(rest)
                     }
                   }}
@@ -947,7 +948,7 @@ export default function RuleBuilder({ rule, onClose, onSave }: RuleBuilderProps)
                     checked={!!actions.generateLetters && actions.generateLetters.length > 0}
                     onChange={(e) => {
                       if (!e.target.checked) {
-                        const { generateLetters, ...rest } = actions
+                        const { generateLetters: _generateLetters, ...rest } = actions
                         setActions(rest)
                       } else {
                         setActions({
@@ -1001,7 +1002,7 @@ export default function RuleBuilder({ rule, onClose, onSave }: RuleBuilderProps)
                                 (_, i) => i !== index
                               )
                               if (updated.length === 0) {
-                                const { generateLetters, ...rest } = actions
+                                const { generateLetters: _generateLetters, ...rest } = actions
                                 setActions(rest)
                               } else {
                                 setActions({ ...actions, generateLetters: updated })
@@ -1037,7 +1038,7 @@ export default function RuleBuilder({ rule, onClose, onSave }: RuleBuilderProps)
                               createTask: { taskType: '', taskReason: '' },
                             })
                           } else {
-                            const { createTask, ...rest } = actions
+                            const { createTask: _createTask, ...rest } = actions
                             setActions(rest)
                           }
                         }}
@@ -1154,6 +1155,217 @@ export default function RuleBuilder({ rule, onClose, onSave }: RuleBuilderProps)
                     )}
                   </div>
 
+                  {/* Create Appeal Tasks */}
+                  <div className="space-y-2">
+                    <div className="flex items-center space-x-3">
+                      <input
+                        type="checkbox"
+                        checked={!!actions.createAppealTasks && actions.createAppealTasks.length > 0}
+                        onChange={(e) => {
+                          if (!e.target.checked) {
+                            const { createAppealTasks: _createAppealTasks, ...rest } = actions
+                            setActions(rest)
+                          } else {
+                            setActions({
+                              ...actions,
+                              createAppealTasks: [{
+                                typeCode: '',
+                                priorityCode: '',
+                                reasonCode: '',
+                                units: '',
+                                unitsUomCode: '',
+                                calculationField: '',
+                                ownerUserId: '',
+                                description: '',
+                              }],
+                            })
+                          }
+                        }}
+                        className="rounded border-gray-300 text-primary focus:ring-primary"
+                      />
+                      <label className="text-sm font-medium text-gray-700">
+                        Create Appeal Task
+                      </label>
+                    </div>
+                    {actions.createAppealTasks && actions.createAppealTasks.length > 0 && (
+                      <div className="ml-6 space-y-3">
+                        {actions.createAppealTasks.map((task, index) => (
+                          <div key={index} className="p-3 bg-gray-50 rounded-md border border-gray-200">
+                            <div className="grid grid-cols-2 gap-3">
+                              <div>
+                                <label className="block text-xs font-medium text-gray-600 mb-1">
+                                  Type Code *
+                                </label>
+                                <input
+                                  type="text"
+                                  value={task.typeCode}
+                                  onChange={(e) => {
+                                    const updated = [...actions.createAppealTasks!]
+                                    updated[index] = { ...updated[index], typeCode: e.target.value }
+                                    setActions({ ...actions, createAppealTasks: updated })
+                                  }}
+                                  placeholder="e.g., TYPE1"
+                                  className="w-full px-3 py-1 text-sm border border-gray-300 rounded-md"
+                                />
+                              </div>
+                              <div>
+                                <label className="block text-xs font-medium text-gray-600 mb-1">
+                                  Priority Code *
+                                </label>
+                                <input
+                                  type="text"
+                                  value={task.priorityCode}
+                                  onChange={(e) => {
+                                    const updated = [...actions.createAppealTasks!]
+                                    updated[index] = { ...updated[index], priorityCode: e.target.value }
+                                    setActions({ ...actions, createAppealTasks: updated })
+                                  }}
+                                  placeholder="e.g., PRIORITY1"
+                                  className="w-full px-3 py-1 text-sm border border-gray-300 rounded-md"
+                                />
+                              </div>
+                              <div>
+                                <label className="block text-xs font-medium text-gray-600 mb-1">
+                                  Reason Code *
+                                </label>
+                                <input
+                                  type="text"
+                                  value={task.reasonCode}
+                                  onChange={(e) => {
+                                    const updated = [...actions.createAppealTasks!]
+                                    updated[index] = { ...updated[index], reasonCode: e.target.value }
+                                    setActions({ ...actions, createAppealTasks: updated })
+                                  }}
+                                  placeholder="e.g., REASON1"
+                                  className="w-full px-3 py-1 text-sm border border-gray-300 rounded-md"
+                                />
+                              </div>
+                              <div>
+                                <label className="block text-xs font-medium text-gray-600 mb-1">
+                                  Units *
+                                </label>
+                                <input
+                                  type="text"
+                                  value={task.units}
+                                  onChange={(e) => {
+                                    const updated = [...actions.createAppealTasks!]
+                                    updated[index] = { ...updated[index], units: e.target.value }
+                                    setActions({ ...actions, createAppealTasks: updated })
+                                  }}
+                                  placeholder="e.g., 1"
+                                  className="w-full px-3 py-1 text-sm border border-gray-300 rounded-md"
+                                />
+                              </div>
+                              <div>
+                                <label className="block text-xs font-medium text-gray-600 mb-1">
+                                  Units UOM Code *
+                                </label>
+                                <input
+                                  type="text"
+                                  value={task.unitsUomCode}
+                                  onChange={(e) => {
+                                    const updated = [...actions.createAppealTasks!]
+                                    updated[index] = { ...updated[index], unitsUomCode: e.target.value }
+                                    setActions({ ...actions, createAppealTasks: updated })
+                                  }}
+                                  placeholder="e.g., DAYS"
+                                  className="w-full px-3 py-1 text-sm border border-gray-300 rounded-md"
+                                />
+                              </div>
+                              <div>
+                                <label className="block text-xs font-medium text-gray-600 mb-1">
+                                  Calculation Field *
+                                </label>
+                                <input
+                                  type="text"
+                                  value={task.calculationField}
+                                  onChange={(e) => {
+                                    const updated = [...actions.createAppealTasks!]
+                                    updated[index] = { ...updated[index], calculationField: e.target.value }
+                                    setActions({ ...actions, createAppealTasks: updated })
+                                  }}
+                                  placeholder="e.g., REQUEST_DUE_DATE"
+                                  className="w-full px-3 py-1 text-sm border border-gray-300 rounded-md"
+                                />
+                              </div>
+                              <div>
+                                <label className="block text-xs font-medium text-gray-600 mb-1">
+                                  Owner User ID *
+                                </label>
+                                <input
+                                  type="text"
+                                  value={task.ownerUserId}
+                                  onChange={(e) => {
+                                    const updated = [...actions.createAppealTasks!]
+                                    updated[index] = { ...updated[index], ownerUserId: e.target.value }
+                                    setActions({ ...actions, createAppealTasks: updated })
+                                  }}
+                                  placeholder="e.g., USER1"
+                                  className="w-full px-3 py-1 text-sm border border-gray-300 rounded-md"
+                                />
+                              </div>
+                              <div className="col-span-2">
+                                <label className="block text-xs font-medium text-gray-600 mb-1">
+                                  Description *
+                                </label>
+                                <input
+                                  type="text"
+                                  value={task.description}
+                                  onChange={(e) => {
+                                    const updated = [...actions.createAppealTasks!]
+                                    updated[index] = { ...updated[index], description: e.target.value }
+                                    setActions({ ...actions, createAppealTasks: updated })
+                                  }}
+                                  placeholder="e.g., This is an example description"
+                                  className="w-full px-3 py-1 text-sm border border-gray-300 rounded-md"
+                                />
+                              </div>
+                            </div>
+                            {actions.createAppealTasks!.length > 1 && (
+                              <button
+                                onClick={() => {
+                                  const updated = actions.createAppealTasks!.filter((_, i) => i !== index)
+                                  if (updated.length === 0) {
+                                    const { createAppealTasks: _createAppealTasks, ...rest } = actions
+                                    setActions(rest)
+                                  } else {
+                                    setActions({ ...actions, createAppealTasks: updated })
+                                  }
+                                }}
+                                className="mt-2 text-xs text-red-600 hover:text-red-800"
+                              >
+                                Remove Task
+                              </button>
+                            )}
+                          </div>
+                        ))}
+                        <button
+                          onClick={() => {
+                            setActions({
+                              ...actions,
+                              createAppealTasks: [
+                                ...(actions.createAppealTasks || []),
+                                {
+                                  typeCode: '',
+                                  priorityCode: '',
+                                  reasonCode: '',
+                                  units: '',
+                                  unitsUomCode: '',
+                                  calculationField: '',
+                                  ownerUserId: '',
+                                  description: '',
+                                },
+                              ],
+                            })
+                          }}
+                          className="text-xs text-primary hover:text-primary-hover"
+                        >
+                          + Add Another Appeal Task
+                        </button>
+                      </div>
+                    )}
+                  </div>
+
                   {/* Transfer Ownership */}
                   <div className="space-y-2">
                     <div className="flex items-center space-x-3">
@@ -1167,7 +1379,7 @@ export default function RuleBuilder({ rule, onClose, onSave }: RuleBuilderProps)
                               transferOwnership: { transferTo: '' },
                             })
                           } else {
-                            const { transferOwnership, ...rest } = actions
+                            const { transferOwnership: _transferOwnership, ...rest } = actions
                             setActions(rest)
                           }
                         }}
@@ -1193,6 +1405,118 @@ export default function RuleBuilder({ rule, onClose, onSave }: RuleBuilderProps)
                     )}
                   </div>
 
+                  {/* Create CM Referral */}
+                  <div className="space-y-2">
+                    <div className="flex items-center space-x-3">
+                      <input
+                        type="checkbox"
+                        checked={!!actions.createCMReferral}
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            setActions({
+                              ...actions,
+                              createCMReferral: {
+                                programCode: '',
+                                sourceCode: '',
+                                severityCode: '',
+                                ownerDepartmentCode: '',
+                              },
+                            })
+                          } else {
+                            const { createCMReferral: _createCMReferral, ...rest } = actions
+                            setActions(rest)
+                          }
+                        }}
+                        className="rounded border-gray-300"
+                      />
+                      <label className="text-sm font-medium text-gray-700">Create CM Referral</label>
+                    </div>
+                    {actions.createCMReferral && (
+                      <div className="ml-6 grid grid-cols-2 gap-3">
+                        <div>
+                          <label className="block text-xs font-medium text-gray-600 mb-1">
+                            Program Code *
+                          </label>
+                          <input
+                            type="text"
+                            value={actions.createCMReferral.programCode}
+                            onChange={(e) =>
+                              setActions({
+                                ...actions,
+                                createCMReferral: {
+                                  ...actions.createCMReferral!,
+                                  programCode: e.target.value,
+                                },
+                              })
+                            }
+                            placeholder="e.g., PROGRAM1"
+                            className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-medium text-gray-600 mb-1">
+                            Source Code *
+                          </label>
+                          <input
+                            type="text"
+                            value={actions.createCMReferral.sourceCode}
+                            onChange={(e) =>
+                              setActions({
+                                ...actions,
+                                createCMReferral: {
+                                  ...actions.createCMReferral!,
+                                  sourceCode: e.target.value,
+                                },
+                              })
+                            }
+                            placeholder="e.g., SOURCE1"
+                            className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-medium text-gray-600 mb-1">
+                            Severity Code *
+                          </label>
+                          <input
+                            type="text"
+                            value={actions.createCMReferral.severityCode}
+                            onChange={(e) =>
+                              setActions({
+                                ...actions,
+                                createCMReferral: {
+                                  ...actions.createCMReferral!,
+                                  severityCode: e.target.value,
+                                },
+                              })
+                            }
+                            placeholder="e.g., SEVERITY1"
+                            className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-medium text-gray-600 mb-1">
+                            Owner Department Code *
+                          </label>
+                          <input
+                            type="text"
+                            value={actions.createCMReferral.ownerDepartmentCode}
+                            onChange={(e) =>
+                              setActions({
+                                ...actions,
+                                createCMReferral: {
+                                  ...actions.createCMReferral!,
+                                  ownerDepartmentCode: e.target.value,
+                                },
+                              })
+                            }
+                            placeholder="e.g., DEPT3"
+                            className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md"
+                          />
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
                   {/* Create Program */}
                   <div className="space-y-2">
                     <div className="flex items-center space-x-3">
@@ -1206,7 +1530,7 @@ export default function RuleBuilder({ rule, onClose, onSave }: RuleBuilderProps)
                               createProgram: { programName: '' },
                             })
                           } else {
-                            const { createProgram, ...rest } = actions
+                            const { createProgram: _createProgram, ...rest } = actions
                             setActions(rest)
                           }
                         }}
@@ -1343,18 +1667,32 @@ function StandardCriteriaEditor({
             </select>
           </div>
 
-          <div>
-            <label className="block text-xs font-medium text-gray-700 mb-1">
-              Values
-            </label>
-            <ValueInput
-              values={criteria.values}
-              onChange={handleValueChange}
-              operator={criteria.operator}
-              dataType={fieldDef?.dataType || 'STRING'}
-              dictionaryOptions={dictionaryOptions}
-            />
-          </div>
+          {/* Hide values input for VALUED/NOT_VALUED operators */}
+          {criteria.operator !== 'VALUED' && criteria.operator !== 'NOT_VALUED' && (
+            <div>
+              <label className="block text-xs font-medium text-gray-700 mb-1">
+                Values
+              </label>
+              <ValueInput
+                values={criteria.values}
+                onChange={handleValueChange}
+                operator={criteria.operator}
+                dataType={fieldDef?.dataType || 'STRING'}
+                dictionaryOptions={dictionaryOptions}
+              />
+            </div>
+          )}
+          {/* Show info message for VALUED/NOT_VALUED operators */}
+          {(criteria.operator === 'VALUED' || criteria.operator === 'NOT_VALUED') && (
+            <div>
+              <label className="block text-xs font-medium text-gray-700 mb-1">
+                Values
+              </label>
+              <div className="text-xs text-gray-500 italic px-2 py-1 bg-gray-50 rounded-md border border-gray-200">
+                No values required for {criteria.operator.replace(/_/g, ' ')} operator
+              </div>
+            </div>
+          )}
 
           {fieldDef?.requiresProviderRole && (
             <div>
@@ -1476,7 +1814,7 @@ function CustomCriteriaEditor({
             <ValueInput
               values={criteria.values}
               onChange={handleValueChange}
-              operator={criteria.operator as any}
+              operator={criteria.operator as StandardOperator}
               dataType="STRING"
             />
           </div>

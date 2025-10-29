@@ -4,7 +4,7 @@ import { Clock, Calendar, CalendarDays, CalendarClock } from 'lucide-react'
 import { TATParameters } from '../../types/rules'
 
 export interface TATCalculationNodeData extends TATParameters {
-  [key: string]: any
+  [key: string]: unknown
 }
 
 function TATCalculationNode({ data }: NodeProps) {

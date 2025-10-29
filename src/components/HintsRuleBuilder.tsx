@@ -70,7 +70,7 @@ export default function HintsRuleBuilder({ rule, onClose, onSave }: HintsRuleBui
 
 
   const handleSave = async () => {
-    const ruleData: any = {
+    const ruleData: Partial<Rule> = {
       ruleDesc,
       ruleType: 'hints',
       standardFieldCriteria: standardCriteria,
@@ -101,9 +101,10 @@ export default function HintsRuleBuilder({ rule, onClose, onSave }: HintsRuleBui
       }
       onSave()
       onClose()
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error saving rule:', error)
-      setErrors([error.message || 'Failed to save rule'])
+      const message = error instanceof Error ? error.message : 'Failed to save rule'
+      setErrors([message])
     } finally {
       setSaving(false)
     }
@@ -295,19 +296,28 @@ export default function HintsRuleBuilder({ rule, onClose, onSave }: HintsRuleBui
                         <option value="EQUALS">EQUALS</option>
                         <option value="GREATER_THAN">GREATER THAN</option>
                         <option value="LESS_THAN">LESS THAN</option>
+                        <option value="VALUED">VALUED</option>
+                        <option value="NOT_VALUED">NOT VALUED</option>
                       </select>
 
-                      <input
-                        type="text"
-                        value={criteria.values.join(', ')}
-                        onChange={(e) =>
-                          handleUpdateStandardCriteria(index, {
-                            values: e.target.value.split(',').map((v) => v.trim()).filter(Boolean),
-                          })
-                        }
-                        placeholder="Values (comma-separated)"
-                        className="px-3 py-2 text-sm border border-gray-300 rounded-md"
-                      />
+                      {/* Only show values input for operators that need values */}
+                      {criteria.operator !== 'VALUED' && criteria.operator !== 'NOT_VALUED' ? (
+                        <input
+                          type="text"
+                          value={criteria.values.join(', ')}
+                          onChange={(e) =>
+                            handleUpdateStandardCriteria(index, {
+                              values: e.target.value.split(',').map((v) => v.trim()).filter(Boolean),
+                            })
+                          }
+                          placeholder="Values (comma-separated)"
+                          className="px-3 py-2 text-sm border border-gray-300 rounded-md"
+                        />
+                      ) : (
+                        <div className="px-3 py-2 text-xs text-gray-500 italic bg-white rounded-md border border-gray-200">
+                          No values required
+                        </div>
+                      )}
                     </div>
                     <button
                       onClick={() => handleRemoveStandardCriteria(index)}

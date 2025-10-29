@@ -12,22 +12,29 @@ const LOCAL_STORAGE_KEY = 'pullQueueConfig'
  * Old format: departmentOrder: string[]
  * New format: departmentOrder: string[][]
  */
-function migrateConfig(config: any): PullQueueConfig {
+function migrateConfig(config: unknown): PullQueueConfig {
+  // Type guard for config structure
+  if (typeof config !== 'object' || config === null) {
+    throw new Error('Invalid config: expected object')
+  }
+
+  const configObj = config as Record<string, unknown>
+
   // Check if departmentOrder needs migration
-  if (config.departmentOrder && Array.isArray(config.departmentOrder)) {
-    const firstItem = config.departmentOrder[0]
+  if (configObj.departmentOrder && Array.isArray(configObj.departmentOrder)) {
+    const firstItem = configObj.departmentOrder[0]
 
     // If first item is a string, it's the old format - migrate it
     if (typeof firstItem === 'string') {
       console.log('Migrating old Pull Queue config format to new format')
       return {
-        ...config,
-        departmentOrder: config.departmentOrder.map((dept: string) => [dept]), // Wrap each dept in an array
-      }
+        ...configObj,
+        departmentOrder: configObj.departmentOrder.map((dept: string) => [dept]), // Wrap each dept in an array
+      } as PullQueueConfig
     }
   }
 
-  return config as PullQueueConfig
+  return configObj as PullQueueConfig
 }
 
 /**

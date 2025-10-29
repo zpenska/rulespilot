@@ -429,7 +429,7 @@ export function mergeWorkflowRules(rules: Rule[]): { nodes: Node[]; edges: Edge[
         // Add action nodes for this rule
         if (rule.actions) {
           const actionEntries = Object.entries(rule.actions).filter(
-            ([_, value]) => value !== undefined
+            ([_key, value]) => value !== undefined
           )
 
           actionEntries.forEach(([actionType, actionData], index) => {

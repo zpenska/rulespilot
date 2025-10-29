@@ -5,7 +5,7 @@ import { Database } from 'lucide-react'
 export interface FieldNodeData {
   fieldName: string
   category?: string
-  [key: string]: any
+  [key: string]: unknown
 }
 
 function FieldNode({ data }: NodeProps) {
