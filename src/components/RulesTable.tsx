@@ -170,7 +170,6 @@ export default function RulesTable({ currentRuleType, onRuleTypeChange }: RulesT
       filtered = filtered.filter(
         (r) =>
           r.code?.toLowerCase().includes(term) ||
-          r.ruleName?.toLowerCase().includes(term) ||
           r.ruleDesc?.toLowerCase().includes(term)
       )
     }
@@ -369,7 +368,6 @@ export default function RulesTable({ currentRuleType, onRuleTypeChange }: RulesT
   const handleViewJSON = (rule: Rule) => {
     const json = {
       code: rule.code,
-      ruleName: rule.ruleName,
       ruleDesc: rule.ruleDesc,
       standardFieldCriteria: rule.standardFieldCriteria,
       customFieldCriteria: rule.customFieldCriteria,
@@ -809,7 +807,7 @@ export default function RulesTable({ currentRuleType, onRuleTypeChange }: RulesT
                             {rule.code}
                           </td>
                           <td className="px-3 py-2 text-sm text-gray-600 max-w-md truncate">
-                            {rule.ruleName}
+                            {rule.ruleDesc}
                           </td>
                           <td className="px-3 py-2 text-sm text-gray-600">
                             {rule.weight ?? '-'}
@@ -820,12 +818,22 @@ export default function RulesTable({ currentRuleType, onRuleTypeChange }: RulesT
                           <td className="px-3 py-2 text-sm text-gray-500">
                             {rule.ruleType === 'tat' && rule.tatParameters ? (
                               <div className="flex flex-wrap gap-0.5">
-                                <span className="inline-flex px-1 py-0.5 rounded text-[10px] font-normal bg-teal-50 text-teal-700">
-                                  {rule.tatParameters.units} {rule.tatParameters.unitsOfMeasure.replace('_', ' ')}
+                                <span className="inline-flex px-1 py-0.5 rounded text-[10px] font-normal bg-blue-50 text-blue-600">
+                                  {rule.tatParameters.units} {rule.tatParameters.unitsOfMeasure.replace(/_/g, ' ').toLowerCase()}
                                 </span>
                                 {rule.tatParameters.dueTime && (
-                                  <span className="inline-flex px-1 py-0.5 rounded text-[10px] font-normal bg-cyan-50 text-cyan-700">
-                                    Due: {rule.tatParameters.dueTime}
+                                  <span className="inline-flex px-1 py-0.5 rounded text-[10px] font-normal bg-indigo-50 text-indigo-600">
+                                    {rule.tatParameters.dueTime}
+                                  </span>
+                                )}
+                                {rule.tatParameters.holidayOffset && (
+                                  <span className="inline-flex px-1 py-0.5 rounded text-[10px] font-normal bg-purple-50 text-purple-600">
+                                    Holiday +{rule.tatParameters.holidayOffset}
+                                  </span>
+                                )}
+                                {rule.tatParameters.autoExtend && (
+                                  <span className="inline-flex px-1 py-0.5 rounded text-[10px] font-normal bg-amber-50 text-amber-600">
+                                    Auto-Extend
                                   </span>
                                 )}
                               </div>

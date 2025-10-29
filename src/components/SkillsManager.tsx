@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Search, Trash2, Edit2, Power, PowerOff } from 'lucide-react'
+import { Search, Trash2, Power, PowerOff, Edit2 } from 'lucide-react'
 import { SkillDefinition } from '../types/rules'
 import { collection, getDocs, deleteDoc, doc, updateDoc } from 'firebase/firestore'
 import { db } from '../config/firebase'

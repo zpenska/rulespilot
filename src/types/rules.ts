@@ -247,8 +247,7 @@ export interface TATParameters {
 export interface Rule {
   id: string
   code: string  // Required: Rule Code (3-100 symbols)
-  ruleName: string  // Required: Rule Name
-  ruleDesc?: string  // Optional: Rule Description
+  ruleDesc: string  // Required: Rule Name (displayed as "Rule Name" in UI, exported as "ruleDesc" in JSON)
   ruleType: RuleType  // Type of rule: workflow, tat, pullQueue, hints, or skills
   standardFieldCriteria: StandardFieldCriteria[]
   customFieldCriteria: CustomFieldCriteria[]
@@ -270,9 +269,8 @@ export interface Rule {
 
 // For JSON export (without UI metadata) - Workflow Rules
 export interface RuleExport {
-  code?: string
-  ruleName?: string
-  ruleDesc?: string
+  code?: string  // Only used for import, not included in export
+  ruleDesc: string
   standardFieldCriteria: StandardFieldCriteria[]
   customFieldCriteria?: CustomFieldCriteria[]
   isActive: boolean
@@ -299,9 +297,8 @@ export interface TATCustomFieldCriteria {
 
 // For JSON export (without UI metadata) - TAT Rules
 export interface TATRuleExport {
-  code?: string
-  ruleName?: string
-  ruleDesc?: string
+  code?: string  // Only used for import, not included in export
+  ruleDesc: string
   sourceDateTimeField: SourceDateTimeField
   holidayDates?: string[]
   holidayCategory?: string | null

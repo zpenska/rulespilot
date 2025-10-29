@@ -215,7 +215,7 @@
         "field": "MEMBER_CLIENT",
         "operator": "EQUALS",
         "values": [
-          "BUPA"
+image.png          "BUPA"
         ]
       },
       {

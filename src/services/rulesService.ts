@@ -217,7 +217,7 @@ export const cloneRule = async (id: string): Promise<Rule> => {
   const clonedRule: Omit<Rule, 'id' | 'createdAt' | 'updatedAt'> = {
     ...original,
     code: `${original.code}-COPY`,
-    ruleName: `${original.ruleName} (Copy)`,
+    ruleDesc: `${original.ruleDesc} (Copy)`,
     status: 'inactive', // Cloned rules start as inactive
   }
 
@@ -299,8 +299,6 @@ export const exportTATRuleToJSON = (rule: Rule): TATRuleExport => {
   }
 
   const exported: TATRuleExport = {
-    code: rule.code,
-    ruleName: rule.ruleName,
     ruleDesc: rule.ruleDesc,
     sourceDateTimeField: rule.tatParameters.sourceDateTimeField,
     holidayDates: rule.tatParameters.holidayDates,
@@ -359,8 +357,6 @@ export const exportWorkflowRuleToJSON = (rule: Rule): RuleExport => {
   }))
 
   const exported: RuleExport = {
-    code: rule.code,
-    ruleName: rule.ruleName,
     ruleDesc: rule.ruleDesc,
     standardFieldCriteria,
     isActive: rule.status === 'active',
@@ -614,13 +610,12 @@ export const importRulesFromJSON = async (jsonData: any[]): Promise<Rule[]> => {
   for (const ruleData of jsonData) {
     try {
       // Convert RuleExport to Rule format
-      // For backwards compatibility: if code/ruleName not present, fall back to ruleDesc
+      // For backwards compatibility: if code not present, use auto-generated code
       // Use ruleType from data if present, otherwise default to 'workflow'
       const ruleToCreate: Partial<Rule> = {
         ruleType: ruleData.ruleType || 'workflow',
-        code: ruleData.code || ruleData.ruleDesc || '',
-        ruleName: ruleData.ruleName || ruleData.ruleDesc || '',
-        ruleDesc: ruleData.ruleDesc,
+        code: ruleData.code || `RULE${Date.now()}`,
+        ruleDesc: ruleData.ruleDesc || '',
         standardFieldCriteria: ruleData.standardFieldCriteria || [],
         customFieldCriteria: ruleData.customFieldCriteria || [],
         weight: ruleData.weight,
@@ -636,7 +631,7 @@ export const importRulesFromJSON = async (jsonData: any[]): Promise<Rule[]> => {
       const createdRule = await createRule(ruleToCreate as Rule)
       importedRules.push(createdRule)
     } catch (error) {
-      console.error('Error importing rule:', ruleData.ruleName || ruleData.ruleDesc, error)
+      console.error('Error importing rule:', ruleData.ruleDesc || ruleData.code, error)
       // Continue with other rules even if one fails
     }
   }
@@ -668,12 +663,11 @@ export const importTATRulesFromJSON = async (jsonData: TATRuleExport[]): Promise
       }))
 
       // Convert TATRuleExport to Rule format
-      // For backwards compatibility: if code/ruleName not present, fall back to ruleDesc
+      // For backwards compatibility: if code not present, use auto-generated code
       const ruleToCreate: Partial<Rule> = {
         ruleType: 'tat',
-        code: ruleData.code || ruleData.ruleDesc || '',
-        ruleName: ruleData.ruleName || ruleData.ruleDesc || '',
-        ruleDesc: ruleData.ruleDesc,
+        code: ruleData.code || `TAT${Date.now()}`,
+        ruleDesc: ruleData.ruleDesc || '',
         standardFieldCriteria,
         customFieldCriteria: customFieldCriteria || [],
         weight: ruleData.weight,
@@ -697,7 +691,7 @@ export const importTATRulesFromJSON = async (jsonData: TATRuleExport[]): Promise
       const createdRule = await createRule(ruleToCreate as Rule)
       importedRules.push(createdRule)
     } catch (error) {
-      console.error('Error importing TAT rule:', ruleData.ruleName || ruleData.ruleDesc, error)
+      console.error('Error importing TAT rule:', ruleData.ruleDesc || ruleData.code, error)
       // Continue with other rules even if one fails
     }
   }
@@ -724,7 +718,6 @@ export const searchRules = async (searchTerm: string): Promise<Rule[]> => {
   return allRules.filter(
     (rule) =>
       rule.code?.toLowerCase().includes(term) ||
-      rule.ruleName?.toLowerCase().includes(term) ||
       rule.ruleDesc?.toLowerCase().includes(term) ||
       rule.category?.toLowerCase().includes(term)
   )

@@ -331,15 +331,15 @@ export const validateRule = (rule: Partial<Rule>): ValidationError[] => {
     })
   }
 
-  // Validate rule name
-  if (!rule.ruleName || rule.ruleName.trim() === '') {
+  // Validate rule name (ruleDesc field)
+  if (!rule.ruleDesc || rule.ruleDesc.trim() === '') {
     errors.push({
-      field: 'ruleName',
+      field: 'ruleDesc',
       message: 'Rule name is required',
     })
-  } else if (rule.ruleName.length > 200) {
+  } else if (rule.ruleDesc.length > 200) {
     errors.push({
-      field: 'ruleName',
+      field: 'ruleDesc',
       message: 'Rule name must be 200 characters or less',
     })
   }

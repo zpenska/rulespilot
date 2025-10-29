@@ -3,8 +3,7 @@
   "rules": [
     {
       "code": "WF001",
-      "ruleName": "Orthopedic Surgery Prior Authorization - High-Cost Procedures",
-      "ruleDesc": "Routes high-cost orthopedic surgeries for clinical review",
+      "ruleDesc": "Orthopedic Surgery Prior Authorization - High-Cost Procedures",
       "standardFieldCriteria": [
         {
           "operator": "IN",
@@ -38,8 +37,7 @@
     },
     {
       "code": "WF002",
-      "ruleName": "Advanced Imaging Pre-Auth - CT and MRI Scans",
-      "ruleDesc": "Requires medical director review for high-cost imaging procedures",
+      "ruleDesc": "Advanced Imaging Pre-Auth - CT and MRI Scans",
       "standardFieldCriteria": [
         {
           "operator": "IN",
@@ -71,8 +69,7 @@
     },
     {
       "code": "WF003",
-      "ruleName": "Cardiology Specialty Referral Routing",
-      "ruleDesc": "Routes cardiology referrals to specialist team for PA, NJ, DE",
+      "ruleDesc": "Cardiology Specialty Referral Routing",
       "standardFieldCriteria": [
         {
           "operator": "IN",
@@ -101,8 +98,7 @@
     },
     {
       "code": "WF004",
-      "ruleName": "Emergency Services Auto-Approval",
-      "ruleDesc": "Auto-approves emergency service requests",
+      "ruleDesc": "Emergency Services Auto-Approval",
       "standardFieldCriteria": [
         {
           "operator": "IN",
@@ -128,8 +124,7 @@
     },
     {
       "code": "WF005",
-      "ruleName": "Durable Medical Equipment - Wheelchairs and Hospital Beds",
-      "ruleDesc": "Requires DME verification for wheelchairs and hospital beds",
+      "ruleDesc": "Durable Medical Equipment - Wheelchairs and Hospital Beds",
       "standardFieldCriteria": [
         {
           "operator": "IN",
@@ -158,8 +153,7 @@
     },
     {
       "code": "WF006",
-      "ruleName": "Home Health Services - Skilled Nursing",
-      "ruleDesc": "Creates CM referral and task for seniors requiring home health",
+      "ruleDesc": "Home Health Services - Skilled Nursing",
       "standardFieldCriteria": [
         {
           "operator": "IN",
@@ -196,8 +190,7 @@
     },
     {
       "code": "WF007",
-      "ruleName": "Organ Transplant Services - High Complexity",
-      "ruleDesc": "Routes organ transplant cases to specialized committee review",
+      "ruleDesc": "Organ Transplant Services - High Complexity",
       "standardFieldCriteria": [
         {
           "operator": "IN",
@@ -236,8 +229,7 @@
     },
     {
       "code": "WF008",
-      "ruleName": "Mental Health Outpatient Therapy - Multiple Sessions",
-      "ruleDesc": "Requires behavioral health review and provider credential verification for extended therapy",
+      "ruleDesc": "Mental Health Outpatient Therapy - Multiple Sessions",
       "standardFieldCriteria": [
         {
           "operator": "IN",
@@ -271,8 +263,7 @@
     },
     {
       "code": "WF009",
-      "ruleName": "Inpatient Hospital Admission Review",
-      "ruleDesc": "Concurrent review required for multi-day inpatient hospital stays",
+      "ruleDesc": "Inpatient Hospital Admission Review",
       "standardFieldCriteria": [
         {
           "operator": "IN",
@@ -306,8 +297,7 @@
     },
     {
       "code": "WF010",
-      "ruleName": "Experimental/Investigational Treatment Review",
-      "ruleDesc": "Medical policy review required for experimental or investigational treatments",
+      "ruleDesc": "Experimental/Investigational Treatment Review",
       "standardFieldCriteria": [
         {
           "operator": "IN",

@@ -45,7 +45,6 @@ interface RuleBuilderProps {
 export default function RuleBuilder({ rule, onClose, onSave }: RuleBuilderProps) {
   const [viewMode, setViewMode] = useState<'form' | 'visual'>('form')
   const [code, setCode] = useState(rule?.code || '')
-  const [ruleName, setRuleName] = useState(rule?.ruleName || '')
   const [ruleDesc, setRuleDesc] = useState(rule?.ruleDesc || '')
   const [weight, setWeight] = useState<number | undefined>(rule?.weight)
   const [activationDate, setActivationDate] = useState(rule?.activationDate || '')
@@ -143,7 +142,6 @@ export default function RuleBuilder({ rule, onClose, onSave }: RuleBuilderProps)
     // Prepare rule data based on type
     const ruleData: Record<string, unknown> = {
       code,
-      ruleName,
       ruleDesc,
       ruleType,
       standardFieldCriteria: standardCriteria,
@@ -257,7 +255,6 @@ export default function RuleBuilder({ rule, onClose, onSave }: RuleBuilderProps)
           <RuleFlowBuilder
             rule={{
               code,
-              ruleName,
               ruleDesc,
               ruleType: currentRuleType,
               standardFieldCriteria: standardCriteria,
@@ -309,23 +306,11 @@ export default function RuleBuilder({ rule, onClose, onSave }: RuleBuilderProps)
                 </label>
                 <input
                   type="text"
-                  value={ruleName}
-                  onChange={(e) => setRuleName(e.target.value)}
+                  value={ruleDesc}
+                  onChange={(e) => setRuleDesc(e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-primary focus:border-primary"
                   placeholder="Enter a Rule Name"
                   maxLength={200}
-                />
-              </div>
-              <div className="col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Rule Description (Optional)
-                </label>
-                <textarea
-                  value={ruleDesc}
-                  onChange={(e) => setRuleDesc(e.target.value)}
-                  rows={2}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-primary focus:border-primary"
-                  placeholder="Describe what this rule does..."
                 />
               </div>
               <div className="grid grid-cols-2 gap-4">

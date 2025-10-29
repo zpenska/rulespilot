@@ -30,8 +30,7 @@ const timestampToDate = (timestamp: any): Date => {
 const convertFirestoreRule = (id: string, data: DocumentData): Rule => ({
   id,
   code: data.code || '',
-  ruleName: data.ruleName || '',
-  ruleDesc: data.ruleDesc,
+  ruleDesc: data.ruleDesc || data.ruleName || '', // Migration: use ruleName if ruleDesc not present
   ruleType: data.ruleType || 'rules',
   standardFieldCriteria: data.standardFieldCriteria || [],
   customFieldCriteria: data.customFieldCriteria || [],
