@@ -23,15 +23,15 @@
       "isActive": true,
       "weight": 200,
       "actions": {
-        "reassign": {
+        "departmentRouting": {
           "departmentCode": "ORTHOREVIEW"
         },
-        "createTasks": [{
+        "createTask": {
           "taskType": "CLINICAL_REVIEW",
           "taskReason": "High-Cost Orthopedic Procedure",
           "daysUntilDue": 3,
           "taskOwner": "DEPT_ORTHO_CLINICALS"
-        }]
+        }
       }
     },
     {
@@ -51,15 +51,15 @@
       "isActive": true,
       "weight": 180,
       "actions": {
-        "reassign": {
+        "departmentRouting": {
           "departmentCode": "RADIOLOGYREVIEW"
         },
-        "createTasks": [{
+        "createTask": {
           "taskType": "MEDICAL_DIRECTOR_REVIEW",
           "taskReason": "High-Cost Imaging Authorization",
           "daysUntilDue": 2,
           "taskOwner": "USER_MEDDIR01"
-        }],
+        },
         "generateLetters": [{
           "letterName": "Imaging Pre-Auth Pending"
         }]
@@ -88,7 +88,7 @@
       "isActive": true,
       "weight": 150,
       "actions": {
-        "reassign": {
+        "departmentRouting": {
           "departmentCode": "CARDIO_SPECIALISTS"
         }
       }
@@ -135,15 +135,15 @@
       "isActive": true,
       "weight": 140,
       "actions": {
-        "reassign": {
+        "departmentRouting": {
           "departmentCode": "DME_REVIEW"
         },
-        "createTasks": [{
+        "createTask": {
           "taskType": "DME_VERIFICATION",
           "taskReason": "Verify Medical Necessity",
           "daysUntilDue": 5,
           "taskOwner": "DEPT_DME"
-        }]
+        }
       }
     },
     {
@@ -174,12 +174,12 @@
           "severityCode": "MODERATE",
           "ownerDepartmentCode": "CASE_MGMT"
         },
-        "createTasks": [{
+        "createTask": {
           "taskType": "HOME_HEALTH_ASSESSMENT",
           "taskReason": "Assess Home Environment",
           "daysUntilDue": 7,
           "taskOwner": "DEPT_HOMEHEALTH"
-        }]
+        }
       }
     },
     {
@@ -199,7 +199,7 @@
       "isActive": true,
       "weight": 300,
       "actions": {
-        "reassign": {
+        "departmentRouting": {
           "departmentCode": "TRANSPLANT_REVIEW"
         },
         "createAppealTasks": [{
@@ -242,15 +242,15 @@
       "isActive": true,
       "weight": 130,
       "actions": {
-        "reassign": {
+        "departmentRouting": {
           "departmentCode": "BEHAVIORAL_HEALTH"
         },
-        "createTasks": [{
+        "createTask": {
           "taskType": "THERAPIST_LICENSE_VERIFY",
           "taskReason": "Verify Provider Credentials",
           "daysUntilDue": 2,
           "taskOwner": "DEPT_CREDENTIALING"
-        }]
+        }
       }
     },
     {
@@ -275,15 +275,15 @@
       "isActive": true,
       "weight": 190,
       "actions": {
-        "reassign": {
+        "departmentRouting": {
           "departmentCode": "INPATIENT_REVIEW"
         },
-        "createTasks": [{
+        "createTask": {
           "taskType": "CONCURRENT_REVIEW",
           "taskReason": "Multi-Day Inpatient Stay",
           "daysUntilDue": 1,
           "taskOwner": "DEPT_CONCURRENT"
-        }]
+        }
       }
     },
     {
@@ -298,15 +298,15 @@
       "isActive": true,
       "weight": 280,
       "actions": {
-        "reassign": {
+        "departmentRouting": {
           "departmentCode": "CLINICAL_POLICY"
         },
-        "createTasks": [{
+        "createTask": {
           "taskType": "MEDICAL_POLICY_REVIEW",
           "taskReason": "Experimental Treatment Evaluation",
           "daysUntilDue": 10,
           "taskOwner": "DEPT_MED_POLICY"
-        }],
+        },
         "generateLetters": [{
           "letterName": "Experimental Treatment Under Review"
         }]
