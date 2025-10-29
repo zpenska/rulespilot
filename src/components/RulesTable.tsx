@@ -777,18 +777,19 @@ export default function RulesTable({ currentRuleType, onRuleTypeChange }: RulesT
                 ) : (
                   <table className="w-full divide-y divide-table-border" style={{ tableLayout: 'fixed' }}>
                     <colgroup>
-                      <col style={{ width: '4%' }} />
-                      <col style={{ width: '9%' }} />
-                      <col style={{ width: '13%' }} />
-                      <col style={{ width: '35%' }} />
-                      <col style={{ width: '7%' }} />
+                      <col style={{ width: '3%' }} />
                       <col style={{ width: '8%' }} />
-                      <col style={{ width: '14%' }} />
-                      <col style={{ width: '10%' }} />
+                      <col style={{ width: '11%' }} />
+                      <col style={{ width: '33%' }} />
+                      <col style={{ width: '6%' }} />
+                      <col style={{ width: '6%' }} />
+                      <col style={{ width: '20%' }} />
+                      <col style={{ width: '8%' }} />
+                      <col style={{ width: '5%' }} />
                     </colgroup>
                     <thead className="bg-bg-light sticky top-0">
                       <tr>
-                        <th className="px-4 py-2 text-left">
+                        <th className="px-3 py-2 text-left">
                           <input
                             type="checkbox"
                             checked={selectedRules.size === filteredRules.length}
@@ -796,28 +797,28 @@ export default function RulesTable({ currentRuleType, onRuleTypeChange }: RulesT
                             className="rounded border-gray-300 text-primary focus:ring-primary"
                           />
                         </th>
-                        <th className="px-4 py-2 text-left text-sm font-medium text-table-header">
+                        <th className="px-3 py-2 text-left text-sm font-medium text-table-header">
                           Status
                         </th>
-                        <th className="px-4 py-2 text-left text-sm font-medium text-table-header">
+                        <th className="px-3 py-2 text-left text-sm font-medium text-table-header">
                           Code
                         </th>
-                        <th className="px-4 py-2 text-left text-sm font-medium text-table-header">
+                        <th className="px-3 py-2 text-left text-sm font-medium text-table-header">
                           Description
                         </th>
-                        <th className="px-4 py-2 text-left text-sm font-medium text-table-header">
+                        <th className="px-3 py-2 text-left text-sm font-medium text-table-header">
                           Weight
                         </th>
-                        <th className="px-4 py-2 text-left text-sm font-medium text-table-header">
+                        <th className="px-3 py-2 text-left text-sm font-medium text-table-header">
                           Atoms
                         </th>
-                        <th className="px-4 py-2 text-left text-sm font-medium text-table-header">
+                        <th className="px-3 py-2 text-left text-sm font-medium text-table-header">
                           Rule Actions
                         </th>
-                        <th className="px-4 py-2 text-left text-sm font-medium text-table-header">
+                        <th className="px-3 py-2 text-left text-sm font-medium text-table-header">
                           Updated
                         </th>
-                        <th className="px-4 py-2 text-left text-sm font-medium text-table-header">
+                        <th className="px-3 py-2 text-left text-sm font-medium text-table-header">
                           Actions
                         </th>
                       </tr>
@@ -829,7 +830,7 @@ export default function RulesTable({ currentRuleType, onRuleTypeChange }: RulesT
                           className="hover:bg-gray-50 cursor-pointer"
                           onClick={() => navigate(`/${currentRuleType}/edit/${rule.id}`)}
                         >
-                          <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
+                          <td className="px-3 py-2" onClick={(e) => e.stopPropagation()}>
                             <input
                               type="checkbox"
                               checked={selectedRules.has(rule.id)}
@@ -837,7 +838,7 @@ export default function RulesTable({ currentRuleType, onRuleTypeChange }: RulesT
                               className="rounded border-gray-300 text-primary focus:ring-primary"
                             />
                           </td>
-                          <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
+                          <td className="px-3 py-2" onClick={(e) => e.stopPropagation()}>
                             <button
                               onClick={() => handleToggleStatus(rule)}
                               className={`inline-flex px-2.5 py-1 text-sm font-medium rounded-md ${
@@ -849,19 +850,19 @@ export default function RulesTable({ currentRuleType, onRuleTypeChange }: RulesT
                               {rule.status === 'active' ? 'Active' : 'Inactive'}
                             </button>
                           </td>
-                          <td className="px-4 py-3 text-sm font-medium text-gray-900">
+                          <td className="px-3 py-2 text-sm font-medium text-gray-900">
                             {rule.code}
                           </td>
-                          <td className="px-4 py-3 text-sm text-gray-600 max-w-md truncate">
+                          <td className="px-3 py-2 text-sm text-gray-600 max-w-md truncate">
                             {rule.ruleDesc}
                           </td>
-                          <td className="px-4 py-3 text-sm text-gray-600">
+                          <td className="px-3 py-2 text-sm text-gray-600">
                             {rule.weight ?? '-'}
                           </td>
-                          <td className="px-4 py-3 text-sm text-gray-600">
+                          <td className="px-3 py-2 text-sm text-gray-600">
                             {getAtoms(rule)}
                           </td>
-                          <td className="px-4 py-3 text-sm text-gray-500">
+                          <td className="px-3 py-2 text-sm text-gray-500">
                             {rule.ruleType === 'tat' && rule.tatParameters ? (
                               <div className="flex flex-wrap gap-1">
                                 <span className="inline-flex px-2 py-0.5 rounded text-sm font-medium bg-teal-50 text-teal-700">
@@ -901,10 +902,10 @@ export default function RulesTable({ currentRuleType, onRuleTypeChange }: RulesT
                               '-'
                             )}
                           </td>
-                          <td className="px-4 py-3 text-sm text-gray-600">
+                          <td className="px-3 py-2 text-sm text-gray-600">
                             {new Date(rule.updatedAt).toLocaleDateString()}
                           </td>
-                          <td className="px-4 py-3 text-sm font-medium" onClick={(e) => e.stopPropagation()}>
+                          <td className="px-3 py-2 text-sm font-medium" onClick={(e) => e.stopPropagation()}>
                             <button
                               ref={(el) => (buttonRefs.current[rule.id] = el)}
                               onClick={() => handleToggleDropdown(rule.id)}
