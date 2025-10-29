@@ -88,7 +88,7 @@ export default function SkillsManager() {
   const inactiveCount = skills.filter((s) => !s.active).length
 
   return (
-    <div className="bg-white rounded-b-xl px-6 py-4">
+    <div className="bg-white rounded-b-xl px-3 py-4">
       {/* Filter Tabs and Search */}
       <div className="flex items-center justify-between mb-4">
         <div className="inline-flex border border-gray-300 rounded-lg overflow-hidden">
