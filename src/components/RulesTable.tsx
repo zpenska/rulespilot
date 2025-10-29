@@ -465,17 +465,7 @@ export default function RulesTable({ currentRuleType, onRuleTypeChange }: RulesT
                 {showSettingsDropdown && (
                   <div className="absolute right-0 mt-2 w-56 bg-white rounded-md shadow-lg border border-gray-200 z-10">
                     <div className="py-1">
-                      <button
-                        onClick={() => {
-                          handleExportGlobal()
-                          setShowSettingsDropdown(false)
-                        }}
-                        className="w-full text-left px-4 py-2 text-sm font-medium text-primary hover:bg-gray-50 flex items-center space-x-2"
-                      >
-                        <Download className="w-4 h-4" />
-                        <span>Export Global (Workflow/Hints/Skills)</span>
-                      </button>
-                      <div className="border-t border-gray-100"></div>
+                      {/* Current Tab Import/Export */}
                       <button
                         onClick={() => {
                           currentRuleType === 'skills' ? handleImportSkills() : handleImportRules()
@@ -486,24 +476,40 @@ export default function RulesTable({ currentRuleType, onRuleTypeChange }: RulesT
                         <Upload className="w-4 h-4" />
                         <span>Import {currentRuleType === 'workflow' ? 'Workflow' : currentRuleType === 'hints' ? 'Hints' : currentRuleType === 'tat' ? 'TAT' : currentRuleType === 'skills' ? 'Skills' : ''} {currentRuleType === 'skills' ? '' : 'Rules'}</span>
                       </button>
-                      <div className="border-t border-gray-100"></div>
                       <button
                         onClick={() => {
                           currentRuleType === 'skills' ? handleExportSkills() : handleExportTabRules()
                           setShowSettingsDropdown(false)
                         }}
-                        className="w-full text-left px-4 py-2 text-sm font-medium text-primary hover:bg-gray-50 flex items-center space-x-2"
+                        className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center space-x-2"
                       >
                         <Download className="w-4 h-4" />
                         <span>Export {currentRuleType === 'workflow' ? 'Workflow' : currentRuleType === 'hints' ? 'Hints' : currentRuleType === 'tat' ? 'TAT' : currentRuleType === 'skills' ? 'Skills' : ''} {currentRuleType === 'skills' ? '' : 'Rules'}</span>
                       </button>
-                      <div className="border-t border-gray-100"></div>
+
+                      <div className="border-t border-gray-100 my-1"></div>
+
+                      {/* Global Export */}
+                      <button
+                        onClick={() => {
+                          handleExportGlobal()
+                          setShowSettingsDropdown(false)
+                        }}
+                        className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center space-x-2"
+                      >
+                        <Download className="w-4 h-4" />
+                        <span>Export Global (Workflow/Hints/Skills)</span>
+                      </button>
+
+                      <div className="border-t border-gray-100 my-1"></div>
+
+                      {/* Additional Export Options */}
                       <button
                         onClick={() => {
                           handleExportAll()
                           setShowSettingsDropdown(false)
                         }}
-                        className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center space-x-2"
+                        className="w-full text-left px-4 py-2 text-sm text-gray-600 hover:bg-gray-50 flex items-center space-x-2"
                       >
                         <Download className="w-4 h-4" />
                         <span>Export All Rules</span>
@@ -513,7 +519,7 @@ export default function RulesTable({ currentRuleType, onRuleTypeChange }: RulesT
                           handleExportActive()
                           setShowSettingsDropdown(false)
                         }}
-                        className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center space-x-2"
+                        className="w-full text-left px-4 py-2 text-sm text-gray-600 hover:bg-gray-50 flex items-center space-x-2"
                       >
                         <Download className="w-4 h-4" />
                         <span>Export Active (All Types)</span>
@@ -774,11 +780,11 @@ export default function RulesTable({ currentRuleType, onRuleTypeChange }: RulesT
                       <col style={{ width: '4%' }} />
                       <col style={{ width: '9%' }} />
                       <col style={{ width: '13%' }} />
-                      <col style={{ width: '32%' }} />
+                      <col style={{ width: '35%' }} />
                       <col style={{ width: '7%' }} />
-                      <col style={{ width: '18%' }} />
+                      <col style={{ width: '8%' }} />
+                      <col style={{ width: '14%' }} />
                       <col style={{ width: '10%' }} />
-                      <col style={{ width: '7%' }} />
                     </colgroup>
                     <thead className="bg-bg-light sticky top-0">
                       <tr>
