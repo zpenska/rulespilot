@@ -188,13 +188,13 @@ export default function SkillForm({ skill, onClose, onSave }: SkillFormProps) {
   return (
     <div className="flex flex-col h-full">
       {/* Header */}
-      <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
+      <div className="px-4 py-3 border-b border-gray-200 flex items-center justify-between flex-shrink-0">
         <div>
-          <h3 className="text-lg font-medium text-gray-900">
-            {skill ? 'Edit Skill' : 'Create New Skill'}
-          </h3>
-          <p className="text-sm text-gray-600 mt-1">
-            Create a new skill and map it to relevant diagnoses
+          <h2 className="text-base font-semibold text-gray-900">
+            {skill ? 'Edit Skill' : 'Create Skill'}
+          </h2>
+          <p className="text-xs text-gray-600 mt-0.5">
+            Map skills to relevant diagnosis and service codes
           </p>
         </div>
         <div className="flex items-center space-x-3">

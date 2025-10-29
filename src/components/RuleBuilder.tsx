@@ -207,9 +207,15 @@ export default function RuleBuilder({ rule, onClose, onSave }: RuleBuilderProps)
     <div className="flex flex-col h-full">
       {/* Header - Inline style without modal appearance */}
       <div className="px-4 py-3 border-b border-gray-200 flex items-center justify-between flex-shrink-0">
-        <h3 className="text-base font-medium text-gray-900">
-          {rule ? 'Edit Rule' : 'Create New Rule'}
-        </h3>
+        <div>
+          <h3 className="text-base font-semibold text-gray-900">
+            {rule ? `Edit ${currentRuleType === 'workflow' ? 'Workflow' : currentRuleType === 'tat' ? 'TAT' : 'Rule'}` : `Create ${currentRuleType === 'workflow' ? 'Workflow' : currentRuleType === 'tat' ? 'TAT' : 'New'} Rule`}
+          </h3>
+          <p className="text-xs text-gray-600 mt-0.5">
+            {currentRuleType === 'workflow' && 'Configure automated workflow actions and triggers'}
+            {currentRuleType === 'tat' && 'Configure turnaround time calculation parameters'}
+          </p>
+        </div>
 
         {/* View Mode Toggle */}
         <div className="flex items-center gap-2">
