@@ -1,7 +1,7 @@
 {
   "rules": [
     {
-      "code": "TAT-OUTPATIENT-001",
+      "code": "TAT001",
       "ruleName": "Standard Outpatient Prior Authorization - 14 Calendar Days",
       "ruleDesc": "Sets standard turnaround time for routine outpatient prior authorization requests",
       "sourceDateTimeField": "NOTIFICATION_DATE_TIME",
@@ -30,7 +30,7 @@
       "extendStatusReason": null
     },
     {
-      "code": "TAT-URGENT-001",
+      "code": "TAT002",
       "ruleName": "Urgent Review - 72 Hours from Receipt",
       "ruleDesc": "Establishes 72-hour turnaround time for urgent review requests",
       "sourceDateTimeField": "RECEIPT_DATE_TIME",
@@ -55,7 +55,7 @@
       "extendStatusReason": null
     },
     {
-      "code": "TAT-EXPEDITED-001",
+      "code": "TAT003",
       "ruleName": "Expedited Review - 24 Hours Skip Holidays",
       "ruleDesc": "Defines 24-hour turnaround for expedited and emergency requests with holiday offset",
       "sourceDateTimeField": "RECEIVED_DATE_TIME",
@@ -80,7 +80,7 @@
       "extendStatusReason": null
     },
     {
-      "code": "TAT-RETRO-001",
+      "code": "TAT004",
       "ruleName": "Retrospective Review - 30 Calendar Days with Holiday Offset",
       "ruleDesc": "Sets 30-day turnaround time for retrospective reviews with holiday adjustments",
       "sourceDateTimeField": "REQUEST_DATE_TIME",
@@ -105,7 +105,7 @@
       "extendStatusReason": null
     },
     {
-      "code": "TAT-RECON-001",
+      "code": "TAT005",
       "ruleName": "Reconsideration Appeal - 30 Calendar Days from Status Change",
       "ruleDesc": "Establishes 30-day turnaround for reconsideration appeals with auto-extension capability",
       "sourceDateTimeField": "STATUS_CHANGE_DATE_TIME",
@@ -134,7 +134,7 @@
       "extendStatusReason": "PENDING_DOCUMENTATION"
     },
     {
-      "code": "TAT-CONCURRENT-001",
+      "code": "TAT006",
       "ruleName": "Concurrent Review - 1 Business Day by 5pm",
       "ruleDesc": "Defines 1 business day turnaround for inpatient concurrent reviews",
       "sourceDateTimeField": "NOTIFICATION_DATE_TIME",
@@ -163,7 +163,7 @@
       "extendStatusReason": null
     },
     {
-      "code": "TAT-POST-SERVICE-001",
+      "code": "TAT007",
       "ruleName": "Post-Service Review - 60 Calendar Days",
       "ruleDesc": "Sets 60-day turnaround time for post-service retrospective reviews",
       "sourceDateTimeField": "REQUEST_DATE_TIME",
@@ -192,7 +192,7 @@
       "extendStatusReason": null
     },
     {
-      "code": "TAT-APPEAL-001",
+      "code": "TAT008",
       "ruleName": "Appeal Response - 30 Days with Auto-Extend for Missing Docs",
       "ruleDesc": "Establishes 30-day turnaround for appeals with auto-extension when clinicals requested",
       "sourceDateTimeField": "NOTIFICATION_DATE_TIME",

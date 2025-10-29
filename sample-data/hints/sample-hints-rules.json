@@ -1,6 +1,6 @@
 [
   {
-    "code": "HINT-DOCS-001",
+    "code": "HNT001",
     "ruleName": "Missing Clinical Documentation Alert - High-Risk Procedures",
     "ruleDesc": "Alerts reviewers when high-risk procedures lack required clinical documentation",
     "standardFieldCriteria": [
@@ -25,7 +25,7 @@
     }
   },
   {
-    "code": "HINT-HISTORY-001",
+    "code": "HNT002",
     "ruleName": "Prior Authorization History Warning - Recent Denial",
     "ruleDesc": "Warns reviewers about members with recent denials or partial approvals",
     "standardFieldCriteria": [
@@ -58,7 +58,7 @@
     }
   },
   {
-    "code": "HINT-RISK-001",
+    "code": "HNT003",
     "ruleName": "High-Risk Member Alert - Multiple Chronic Conditions",
     "ruleDesc": "Identifies high-risk members with multiple chronic conditions requiring care coordination",
     "standardFieldCriteria": [
@@ -91,7 +91,7 @@
     }
   },
   {
-    "code": "HINT-NETWORK-001",
+    "code": "HNT004",
     "ruleName": "Provider Network Status - Out of Network",
     "ruleDesc": "Alerts when specialist providers are out-of-network for benefit verification",
     "standardFieldCriteria": [
@@ -120,7 +120,7 @@
     }
   },
   {
-    "code": "HINT-DUPLICATE-001",
+    "code": "HNT005",
     "ruleName": "Duplicate Request Warning - Similar Request in Last 30 Days",
     "ruleDesc": "Detects potential duplicate authorization requests to prevent duplicate approvals",
     "standardFieldCriteria": [
@@ -148,7 +148,7 @@
     }
   },
   {
-    "code": "HINT-STATE-PA-001",
+    "code": "HNT006",
     "ruleName": "State-Specific Requirements - Pennsylvania Mandated Benefits",
     "ruleDesc": "Enforces Pennsylvania state-mandated benefit coverage requirements",
     "standardFieldCriteria": [
@@ -173,7 +173,7 @@
     }
   },
   {
-    "code": "HINT-CODING-001",
+    "code": "HNT007",
     "ruleName": "Billing Code Mismatch Alert - Diagnosis and Procedure Inconsistency",
     "ruleDesc": "Identifies inconsistencies between diagnosis and procedure codes",
     "standardFieldCriteria": [

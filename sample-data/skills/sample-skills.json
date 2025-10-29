@@ -1,8 +1,8 @@
 [
   {
-    "code": "CARDIO_SPEC",
+    "code": "CARDIO",
     "skillName": "Cardiology",
-    "skillCode": "CARDIO_SPEC",
+    "skillCode": "CARDIO",
     "description": "Cardiovascular diseases including ischemic heart disease, arrhythmias, and heart failure",
     "diagnosisCodes": ["I20", "I21", "I22", "I23", "I24", "I25", "I48", "I50"],
     "serviceCodes": ["93000", "93005", "93010", "93015", "93307", "93320", "93350"],
@@ -10,9 +10,9 @@
     "active": true
   },
   {
-    "code": "ORTHO_SPEC",
+    "code": "ORTHO",
     "skillName": "Orthopedics",
-    "skillCode": "ORTHO_SPEC",
+    "skillCode": "ORTHO",
     "description": "Musculoskeletal conditions including arthropathies, joint disorders, and bone diseases",
     "diagnosisCodes": ["M00", "M05", "M06", "M15", "M16", "M17", "M19", "M25"],
     "serviceCodes": ["27447", "29881", "23472", "27130", "29827"],
@@ -20,9 +20,9 @@
     "active": true
   },
   {
-    "code": "ONCO_SPEC",
+    "code": "ONCO",
     "skillName": "Oncology",
-    "skillCode": "ONCO_SPEC",
+    "skillCode": "ONCO",
     "description": "Malignant neoplasms and cancer treatment including chemotherapy and radiation",
     "diagnosisCodes": ["C18", "C34", "C50", "C61", "C64", "C91", "D05"],
     "serviceCodes": ["96400", "96401", "96405", "96409", "96413", "96417", "96450", "96521"],
@@ -30,9 +30,9 @@
     "active": true
   },
   {
-    "code": "ENDO_SPEC",
+    "code": "ENDO",
     "skillName": "Endocrinology",
-    "skillCode": "ENDO_SPEC",
+    "skillCode": "ENDO",
     "description": "Endocrine disorders including diabetes mellitus, thyroid disorders, and metabolic conditions",
     "diagnosisCodes": ["E10", "E11", "E13", "E05", "E06", "E78", "E66"],
     "serviceCodes": ["95250", "95251", "82947", "82950", "82962"],
@@ -40,9 +40,9 @@
     "active": true
   },
   {
-    "code": "NEPHRO_SPEC",
+    "code": "NEPHRO",
     "skillName": "Nephrology",
-    "skillCode": "NEPHRO_SPEC",
+    "skillCode": "NEPHRO",
     "description": "Kidney diseases including chronic kidney disease, acute renal failure, and dialysis",
     "diagnosisCodes": ["N17", "N18", "N19", "N25", "N26"],
     "serviceCodes": ["90935", "90937", "90945", "90947", "90960", "90989", "90993", "90999"],
@@ -50,9 +50,9 @@
     "active": true
   },
   {
-    "code": "PULMO_SPEC",
+    "code": "PULMO",
     "skillName": "Pulmonology",
-    "skillCode": "PULMO_SPEC",
+    "skillCode": "PULMO",
     "description": "Respiratory diseases including COPD, asthma, and sleep apnea",
     "diagnosisCodes": ["J43", "J44", "J45", "J46", "G47.3"],
     "serviceCodes": ["94010", "94060", "94200", "94375", "94726", "94727", "94728"],
@@ -60,9 +60,9 @@
     "active": true
   },
   {
-    "code": "NEURO_SPEC",
+    "code": "NEURO",
     "skillName": "Neurology",
-    "skillCode": "NEURO_SPEC",
+    "skillCode": "NEURO",
     "description": "Nervous system disorders including epilepsy, multiple sclerosis, and neuropathies",
     "diagnosisCodes": ["G20", "G35", "G40", "G56", "G57", "G62", "G80"],
     "serviceCodes": ["95860", "95861", "95863", "95867", "95869", "95870", "95886", "95887"],
@@ -70,9 +70,9 @@
     "active": true
   },
   {
-    "code": "GI_SPEC",
+    "code": "GI",
     "skillName": "Gastroenterology",
-    "skillCode": "GI_SPEC",
+    "skillCode": "GI",
     "description": "Digestive system disorders including IBD, liver disease, and GI cancers",
     "diagnosisCodes": ["K50", "K51", "K70", "K74", "K76", "K80", "K92"],
     "serviceCodes": ["43200", "43235", "43239", "43245", "43248", "43251", "45378", "45380"],
@@ -80,9 +80,9 @@
     "active": true
   },
   {
-    "code": "RHEUM_SPEC",
+    "code": "RHEUM",
     "skillName": "Rheumatology",
-    "skillCode": "RHEUM_SPEC",
+    "skillCode": "RHEUM",
     "description": "Autoimmune and inflammatory diseases including rheumatoid arthritis and lupus",
     "diagnosisCodes": ["M05", "M06", "M30", "M31", "M32", "M33", "M34", "M35", "M36"],
     "serviceCodes": ["20605", "20606", "20610", "20611"],
@@ -90,9 +90,9 @@
     "active": true
   },
   {
-    "code": "DERM_SPEC",
+    "code": "DERM",
     "skillName": "Dermatology",
-    "skillCode": "DERM_SPEC",
+    "skillCode": "DERM",
     "description": "Skin disorders including infections, inflammatory conditions, and skin cancers",
     "diagnosisCodes": ["L02", "L08", "L20", "L30", "L40", "L90", "C43", "C44"],
     "serviceCodes": ["11000", "11001", "11042", "11043", "11044", "11045", "11046", "11047"],
@@ -100,9 +100,9 @@
     "active": true
   },
   {
-    "code": "PSYCH_SPEC",
+    "code": "PSYCH",
     "skillName": "Psychiatry",
-    "skillCode": "PSYCH_SPEC",
+    "skillCode": "PSYCH",
     "description": "Mental health disorders including depression, anxiety, bipolar disorder, and schizophrenia",
     "diagnosisCodes": ["F10", "F20", "F31", "F32", "F33", "F40", "F41", "F43"],
     "serviceCodes": ["90832", "90834", "90837", "90839", "90840", "90846", "90847"],
@@ -110,9 +110,9 @@
     "active": true
   },
   {
-    "code": "OB_SPEC",
+    "code": "OB",
     "skillName": "Obstetrics",
-    "skillCode": "OB_SPEC",
+    "skillCode": "OB",
     "description": "Pregnancy, childbirth, and postpartum care including high-risk pregnancies",
     "diagnosisCodes": ["O00", "O10", "O11", "O24", "O30", "O36", "O80", "O82"],
     "serviceCodes": ["59400", "59409", "59410", "59510", "59514", "59515", "59610", "59622"],
@@ -120,9 +120,9 @@
     "active": true
   },
   {
-    "code": "PEDS_SPEC",
+    "code": "PEDS",
     "skillName": "Pediatrics",
-    "skillCode": "PEDS_SPEC",
+    "skillCode": "PEDS",
     "description": "Pediatric care including neonatal conditions, developmental disorders, and childhood illnesses",
     "diagnosisCodes": ["P00", "P05", "P07", "P22", "P27", "P28", "P29", "P92"],
     "serviceCodes": ["99381", "99382", "99383", "99384", "99385", "99391", "99392", "99393"],
@@ -130,9 +130,9 @@
     "active": true
   },
   {
-    "code": "PT_SPEC",
+    "code": "PT",
     "skillName": "Physical Therapy",
-    "skillCode": "PT_SPEC",
+    "skillCode": "PT",
     "description": "Rehabilitation services including therapeutic exercises, manual therapy, and functional training",
     "diagnosisCodes": ["M62.81", "M54.2", "M54.5", "M25.5", "S93.4", "S83.5"],
     "serviceCodes": ["97110", "97112", "97116", "97140", "97530", "97535", "97542"],
@@ -140,9 +140,9 @@
     "active": true
   },
   {
-    "code": "RAD_IMAGING",
+    "code": "RAD",
     "skillName": "Radiology - Advanced Imaging",
-    "skillCode": "RAD_IMAGING",
+    "skillCode": "RAD",
     "description": "Advanced diagnostic imaging including CT, MRI, and nuclear medicine",
     "diagnosisCodes": ["R91.8", "R93.0", "R93.1", "R93.5"],
     "serviceCodes": ["70450", "70551", "70552", "72148", "72149", "73721", "74178"],
@@ -150,9 +150,9 @@
     "active": true
   },
   {
-    "code": "PAIN_MGMT",
+    "code": "PAIN",
     "skillName": "Pain Management",
-    "skillCode": "PAIN_MGMT",
+    "skillCode": "PAIN",
     "description": "Chronic pain treatment including injections, nerve blocks, and interventional procedures",
     "diagnosisCodes": ["M54.2", "M54.4", "M54.5", "M79.1", "G89.21", "G89.29"],
     "serviceCodes": ["62310", "62311", "64483", "64484", "64490", "64491", "64493"],
@@ -160,9 +160,9 @@
     "active": true
   },
   {
-    "code": "SLEEP_MED",
+    "code": "SLEEP",
     "skillName": "Sleep Medicine",
-    "skillCode": "SLEEP_MED",
+    "skillCode": "SLEEP",
     "description": "Sleep disorders including sleep apnea, insomnia, and narcolepsy",
     "diagnosisCodes": ["G47.00", "G47.10", "G47.30", "G47.33", "G47.411", "G47.419"],
     "serviceCodes": ["95805", "95806", "95807", "95808", "95810", "95811"],
@@ -170,9 +170,9 @@
     "active": true
   },
   {
-    "code": "BARIATRIC_SURG",
+    "code": "BARI",
     "skillName": "Bariatric Surgery",
-    "skillCode": "BARIATRIC_SURG",
+    "skillCode": "BARI",
     "description": "Weight loss surgery including gastric bypass, sleeve gastrectomy, and lap band procedures",
     "diagnosisCodes": ["E66.01", "E66.09", "E66.1", "E66.2", "E66.8", "E66.9"],
     "serviceCodes": ["43644", "43645", "43770", "43771", "43774", "43775"],
@@ -180,9 +180,9 @@
     "active": true
   },
   {
-    "code": "BEHAVIORAL_SA",
+    "code": "BEHAV",
     "skillName": "Behavioral Health - Substance Abuse",
-    "skillCode": "BEHAVIORAL_SA",
+    "skillCode": "BEHAV",
     "description": "Substance abuse treatment including alcohol, opioid, and drug dependency programs",
     "diagnosisCodes": ["F10.1", "F10.2", "F11.1", "F11.2", "F12.1", "F12.2", "F14.1", "F14.2"],
     "serviceCodes": ["90832", "90834", "90837", "H0001", "H0005", "H0015", "H0020"],
@@ -190,13 +190,13 @@
     "active": true
   },
   {
-    "code": "HOME_HEALTH",
+    "code": "HOME",
     "skillName": "Home Health Services",
-    "skillCode": "HOME_HEALTH",
+    "skillCode": "HOME",
     "description": "In-home medical care including skilled nursing, home health aide services, and therapy",
     "diagnosisCodes": ["Z74.1", "Z74.2", "Z74.3", "Z75.5", "Z99.11", "Z99.12"],
     "serviceCodes": ["99341", "99342", "99343", "99344", "99345", "99347", "99348", "99349", "99350"],
-    "specialtyRequired": "HOME_HEALTH",
+    "specialtyRequired": "HOME",
     "active": true
   }
 ]

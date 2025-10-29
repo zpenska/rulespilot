@@ -879,11 +879,17 @@ export default function RulesTable({ currentRuleType, onRuleTypeChange }: RulesT
                                     {rule.hints.displayLocation.replace(/_/g, ' ')}
                                   </span>
                                 )}
-                                {rule.hints.context && rule.hints.context.map((ctx, idx) => (
-                                  <span key={idx} className="inline-flex px-1 py-0.5 rounded text-[10px] font-normal bg-blue-50 text-blue-600">
-                                    {ctx.replace(/_/g, ' ')}
-                                  </span>
-                                ))}
+                                {rule.hints.context && rule.hints.context.map((ctx, idx) => {
+                                  const shortName = ctx === 'MEMBER_DEMOGRAPHICS' ? 'Member' :
+                                                   ctx === 'PROVIDER_DEMOGRAPHICS' ? 'Provider' :
+                                                   ctx === 'BUSINESS_ENTERPRISE_CATEGORIES' ? 'Business' :
+                                                   ctx;
+                                  return (
+                                    <span key={idx} className="inline-flex px-1 py-0.5 rounded text-[10px] font-normal bg-blue-50 text-blue-600">
+                                      {shortName}
+                                    </span>
+                                  );
+                                })}
                               </div>
                             ) : (
                               '-'

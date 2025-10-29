@@ -2,7 +2,7 @@
   "type": "AUTO_WORKFLOW_RULES",
   "rules": [
     {
-      "code": "ORTHO-SURG-001",
+      "code": "WF001",
       "ruleName": "Orthopedic Surgery Prior Authorization - High-Cost Procedures",
       "ruleDesc": "Routes high-cost orthopedic surgeries for clinical review",
       "standardFieldCriteria": [
@@ -37,7 +37,7 @@
       }
     },
     {
-      "code": "IMAGING-CT-MRI-001",
+      "code": "WF002",
       "ruleName": "Advanced Imaging Pre-Auth - CT and MRI Scans",
       "ruleDesc": "Requires medical director review for high-cost imaging procedures",
       "standardFieldCriteria": [
@@ -70,7 +70,7 @@
       }
     },
     {
-      "code": "CARDIO-REF-001",
+      "code": "WF003",
       "ruleName": "Cardiology Specialty Referral Routing",
       "ruleDesc": "Routes cardiology referrals to specialist team for PA, NJ, DE",
       "standardFieldCriteria": [
@@ -100,7 +100,7 @@
       }
     },
     {
-      "code": "EMERG-AUTO-001",
+      "code": "WF004",
       "ruleName": "Emergency Services Auto-Approval",
       "ruleDesc": "Auto-approves emergency service requests",
       "standardFieldCriteria": [
@@ -127,7 +127,7 @@
       }
     },
     {
-      "code": "DME-EQUIP-001",
+      "code": "WF005",
       "ruleName": "Durable Medical Equipment - Wheelchairs and Hospital Beds",
       "ruleDesc": "Requires DME verification for wheelchairs and hospital beds",
       "standardFieldCriteria": [
@@ -157,7 +157,7 @@
       }
     },
     {
-      "code": "HOME-HEALTH-001",
+      "code": "WF006",
       "ruleName": "Home Health Services - Skilled Nursing",
       "ruleDesc": "Creates CM referral and task for seniors requiring home health",
       "standardFieldCriteria": [
@@ -195,7 +195,7 @@
       }
     },
     {
-      "code": "TRANSPLANT-001",
+      "code": "WF007",
       "ruleName": "Organ Transplant Services - High Complexity",
       "ruleDesc": "Routes organ transplant cases to specialized committee review",
       "standardFieldCriteria": [
@@ -235,7 +235,7 @@
       }
     },
     {
-      "code": "MENTAL-HEALTH-001",
+      "code": "WF008",
       "ruleName": "Mental Health Outpatient Therapy - Multiple Sessions",
       "ruleDesc": "Requires behavioral health review and provider credential verification for extended therapy",
       "standardFieldCriteria": [
@@ -270,7 +270,7 @@
       }
     },
     {
-      "code": "INPATIENT-ADMIT-001",
+      "code": "WF009",
       "ruleName": "Inpatient Hospital Admission Review",
       "ruleDesc": "Concurrent review required for multi-day inpatient hospital stays",
       "standardFieldCriteria": [
@@ -305,7 +305,7 @@
       }
     },
     {
-      "code": "EXPERIMENTAL-001",
+      "code": "WF010",
       "ruleName": "Experimental/Investigational Treatment Review",
       "ruleDesc": "Medical policy review required for experimental or investigational treatments",
       "standardFieldCriteria": [
