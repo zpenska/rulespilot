@@ -10,6 +10,7 @@ import {
   Node,
   Edge,
   EdgeChange,
+  NodeChange,
   useReactFlow,
   ReactFlowProvider,
   ConnectionLineType,
@@ -72,7 +73,7 @@ function RuleFlowBuilderInner({ rule, onNodesChange }: RuleFlowBuilderProps) {
   )
 
   const handleNodesChange = useCallback(
-    (changes: unknown) => {
+    (changes: NodeChange<Node>[]) => {
       onNodesChangeInternal(changes)
       if (onNodesChange) {
         // Notify parent of node changes

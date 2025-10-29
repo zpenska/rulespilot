@@ -22,14 +22,14 @@ const firebaseConfig = {
 // Only initialize if properly configured, otherwise set to null
 let app: FirebaseApp | null = null
 let analytics: Analytics | null = null
-let db: Firestore | null = null
-let auth: Auth | null = null
+let dbInstance: Firestore | null = null
+let authInstance: Auth | null = null
 
 if (isConfigured) {
   app = initializeApp(firebaseConfig)
   analytics = typeof window !== 'undefined' ? getAnalytics(app) : null
-  db = getFirestore(app)
-  auth = getAuth(app)
+  dbInstance = getFirestore(app)
+  authInstance = getAuth(app)
   console.log('Firebase initialized successfully')
 } else {
   console.warn(
@@ -38,5 +38,9 @@ if (isConfigured) {
   )
 }
 
-export { analytics, db, auth, isConfigured }
+// Export with type assertions since the app requires Firebase to function
+// The isConfigured check should be used at app startup to ensure these are available
+export const db = dbInstance as Firestore
+export const auth = authInstance as Auth
+export { analytics, isConfigured }
 export default app

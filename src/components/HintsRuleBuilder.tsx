@@ -97,7 +97,7 @@ export default function HintsRuleBuilder({ rule, onClose, onSave }: HintsRuleBui
       if (rule?.id) {
         await updateRule(rule.id, ruleData)
       } else {
-        await createRule(ruleData)
+        await createRule(ruleData as Omit<Rule, 'id' | 'createdAt' | 'updatedAt'>)
       }
       onSave()
       onClose()

@@ -58,14 +58,14 @@ function ActionNode({ data }: NodeProps) {
   const Icon = config.icon
   const nodeColor = config.color
 
-  const getActionDetails = () => {
+  const getActionDetails = (): string => {
     if (!actionData) return '(click to configure)'
 
     if (actionType === 'departmentRouting') {
-      return actionData.departmentCode || '(click to set department)'
+      return (actionData.departmentCode as string) || '(click to set department)'
     }
     if (actionType === 'close') {
-      return actionData.dispositionCode || '(click to set disposition)'
+      return (actionData.dispositionCode as string) || '(click to set disposition)'
     }
     if (actionType === 'generateLetters') {
       if (Array.isArray(actionData)) {
@@ -75,10 +75,10 @@ function ActionNode({ data }: NodeProps) {
       return '(click to configure)'
     }
     if (actionType === 'createTask') {
-      const taskType = actionData.taskType || ''
-      const taskReason = actionData.taskReason || ''
+      const taskType = (actionData.taskType as string) || ''
+      const taskReason = (actionData.taskReason as string) || ''
       const days = actionData.daysUntilDue
-      const owner = actionData.taskOwner
+      const owner = (actionData.taskOwner as string) || ''
 
       const parts: string[] = []
       if (taskType) parts.push(taskType)
@@ -90,10 +90,10 @@ function ActionNode({ data }: NodeProps) {
       return parts.slice(0, 2).join(' • ') + (parts.length > 2 ? '...' : '')
     }
     if (actionType === 'transferOwnership') {
-      return actionData.transferTo || '(click to set transfer target)'
+      return (actionData.transferTo as string) || '(click to set transfer target)'
     }
     if (actionType === 'createProgram') {
-      return actionData.programName || '(click to set program name)'
+      return (actionData.programName as string) || '(click to set program name)'
     }
 
     return '(click to configure)'

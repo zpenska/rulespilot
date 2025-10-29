@@ -34,7 +34,7 @@ function migrateConfig(config: unknown): PullQueueConfig {
     }
   }
 
-  return configObj as PullQueueConfig
+  return configObj as unknown as PullQueueConfig
 }
 
 /**

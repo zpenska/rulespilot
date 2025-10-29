@@ -329,7 +329,7 @@ export default function RulesTable({ currentRuleType, onRuleTypeChange }: RulesT
         const rulesWithType = rulesData.map((r: unknown) => ({
           ...(r as Record<string, unknown>),
           ruleType: currentRuleType,
-        }))
+        })) as any[]
         importedRules = await importRulesFromJSON(rulesWithType)
       }
 

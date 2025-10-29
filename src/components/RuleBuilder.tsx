@@ -192,7 +192,7 @@ export default function RuleBuilder({ rule, onClose, onSave }: RuleBuilderProps)
         await updateRule(rule.id, ruleData)
         savedRule = { ...rule, ...ruleData, updatedAt: new Date().toISOString() }
       } else {
-        savedRule = await createRule(ruleData)
+        savedRule = await createRule(ruleData as Omit<Rule, 'id' | 'createdAt' | 'updatedAt'>)
       }
       onSave(savedRule)
       onClose()

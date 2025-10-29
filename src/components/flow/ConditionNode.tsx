@@ -119,7 +119,7 @@ function ConditionNode({ data }: NodeProps) {
                 value={criteria?.operator || 'IN'}
                 onChange={(e) => {
                   if (criteria) {
-                    criteria.operator = e.target.value
+                    criteria.operator = e.target.value as any
                   }
                   setIsEditingOperator(false)
                 }}
