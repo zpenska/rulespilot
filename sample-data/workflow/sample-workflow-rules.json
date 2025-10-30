@@ -213,9 +213,9 @@
           "typeCode": "TRANSPLANT_COMMITTEE",
           "priorityCode": "HIGH",
           "reasonCode": "TRANSPLANT_REVIEW",
-          "units": "7",
+          "units": 7,
           "unitsUomCode": "DAYS",
-          "calculationField": "REQUEST_RECEIVED_DATE",
+          "calculationField": "REQUEST_DUE_DATE",
           "ownerUserId": "USER_TRANSPLANT_COORD",
           "description": "Multi-disciplinary transplant committee review required"
         }],
