@@ -1204,7 +1204,7 @@ export default function RuleBuilder({ rule, onClose, onSave }: RuleBuilderProps)
                                 typeCode: '',
                                 priorityCode: '',
                                 reasonCode: '',
-                                units: '',
+                                units: 0,
                                 unitsUomCode: '',
                                 calculationField: '',
                                 ownerUserId: '',
@@ -1277,11 +1277,11 @@ export default function RuleBuilder({ rule, onClose, onSave }: RuleBuilderProps)
                                   Units *
                                 </label>
                                 <input
-                                  type="text"
+                                  type="number"
                                   value={task.units}
                                   onChange={(e) => {
                                     const updated = [...actions.createAppealTasks!]
-                                    updated[index] = { ...updated[index], units: e.target.value }
+                                    updated[index] = { ...updated[index], units: parseInt(e.target.value, 10) || 0 }
                                     setActions({ ...actions, createAppealTasks: updated })
                                   }}
                                   placeholder="e.g., 1"
@@ -1381,7 +1381,7 @@ export default function RuleBuilder({ rule, onClose, onSave }: RuleBuilderProps)
                                   typeCode: '',
                                   priorityCode: '',
                                   reasonCode: '',
-                                  units: '',
+                                  units: 0,
                                   unitsUomCode: '',
                                   calculationField: '',
                                   ownerUserId: '',

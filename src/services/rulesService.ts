@@ -326,9 +326,16 @@ export const exportTATRuleToJSON = (rule: Rule): TATRuleExport => {
  */
 export const exportWorkflowRuleToJSON = (rule: Rule): RuleExport => {
   // Reorder standardFieldCriteria to match required JSON format
+  // Also transform operator names for engine compatibility
   const standardFieldCriteria = rule.standardFieldCriteria.map((criteria) => {
+    // Transform operator names
+    let operator = criteria.operator
+    if (operator === 'GREATER_THAN_OR_EQUAL_TO') {
+      operator = 'GREATER_THAN_OR_EQUAL' as any
+    }
+
     const ordered: any = {
-      operator: criteria.operator,
+      operator,
       field: criteria.field,
     }
 
@@ -368,14 +375,117 @@ export const exportWorkflowRuleToJSON = (rule: Rule): RuleExport => {
     exported.customFieldCriteria = customFieldCriteria
   }
 
-  // Include hintsAction if this is a hints rule
+  // Include hintsAction if this is a hints rule - transform to generateWorkflowMessage
   if (rule.hints) {
-    (exported as any).hintsAction = rule.hints
+    // Map color to messageType
+    let messageType: 'INFO' | 'WARNING' | 'IMPORTANT' = 'INFO'
+    if (rule.hints.color === 'RED') {
+      messageType = 'IMPORTANT'
+    } else if (rule.hints.color === 'YELLOW') {
+      messageType = 'WARNING'
+    } else if (rule.hints.color === 'BLUE' || rule.hints.color === 'GREEN') {
+      messageType = 'INFO'
+    }
+
+    // Add generateWorkflowMessage action
+    (exported as any).actions = {
+      generateWorkflowMessage: {
+        message: rule.hints.message,
+        messageType,
+      }
+    }
+
+    // Add WORKFLOW_STEP criteria based on context array
+    if (rule.hints.context && rule.hints.context.length > 0) {
+      const workflowStepValues: string[] = []
+      const hasMemberDemographics = rule.hints.context.includes('MEMBER_DEMOGRAPHICS')
+
+      for (const ctx of rule.hints.context) {
+        switch (ctx) {
+          case 'MEMBER_DEMOGRAPHICS':
+            workflowStepValues.push('MEMBER')
+            break
+          case 'PROVIDER_DEMOGRAPHICS':
+            workflowStepValues.push('PROVIDER')
+            break
+          case 'SERVICES':
+            workflowStepValues.push('SERVICE')
+            break
+          case 'DIAGNOSIS':
+            workflowStepValues.push('DIAGNOSIS')
+            break
+          case 'BUSINESS_ENTERPRISE_CATEGORIES':
+            // Only add MEMBER if MEMBER_DEMOGRAPHICS is not already in the context
+            if (!hasMemberDemographics) {
+              workflowStepValues.push('MEMBER')
+            }
+            break
+        }
+      }
+
+      // Add WORKFLOW_STEP criteria if we have any values
+      if (workflowStepValues.length > 0) {
+        standardFieldCriteria.push({
+          operator: 'IN',
+          field: 'WORKFLOW_STEP' as any,
+          values: workflowStepValues,
+        })
+      }
+    }
   }
 
-  // Include actions if they exist - pass through as-is (no field renaming)
-  if (rule.actions && Object.keys(rule.actions).length > 0) {
-    exported.actions = rule.actions
+  // Include actions if they exist - transform for engine format
+  // Note: If hints are present, they take precedence (hints and actions should be mutually exclusive)
+  if (rule.actions && Object.keys(rule.actions).length > 0 && !rule.hints) {
+    const transformedActions: any = {}
+
+    // Transform departmentRouting -> reassign
+    if (rule.actions.departmentRouting) {
+      transformedActions.reassign = {
+        departmentCode: rule.actions.departmentRouting.departmentCode,
+      }
+    }
+
+    // Transform createTask -> createTasks (array)
+    if (rule.actions.createTask) {
+      const task = rule.actions.createTask
+      transformedActions.createTasks = [{
+        typeCode: task.taskType,
+        reasonCode: task.taskReason,
+        units: task.daysUntilDue || 0,
+        unitsUomCode: 'DAYS',
+        calculationField: 'REQUEST_DUE_DATE',
+        priorityCode: 'MEDIUM',
+        ...(task.taskOwner && { ownerDepartmentCode: task.taskOwner }),
+      }]
+    }
+
+    // Keep other actions as-is
+    if (rule.actions.generateLetters) {
+      transformedActions.generateLetters = rule.actions.generateLetters
+    }
+    if (rule.actions.close) {
+      transformedActions.close = rule.actions.close
+    }
+    if (rule.actions.createCMReferral) {
+      transformedActions.createCMReferral = rule.actions.createCMReferral
+    }
+    if (rule.actions.transferOwnership) {
+      transformedActions.transferOwnership = rule.actions.transferOwnership
+    }
+    if (rule.actions.createProgram) {
+      transformedActions.createProgram = rule.actions.createProgram
+    }
+
+    // Transform createAppealTasks - ensure units is numeric
+    if (rule.actions.createAppealTasks) {
+      transformedActions.createAppealTasks = rule.actions.createAppealTasks.map(task => ({
+        ...task,
+        units: typeof task.units === 'string' ? parseInt(task.units, 10) : task.units,
+      }))
+    }
+
+    exported.actions = transformedActions
   }
 
   // Include workflow-specific fields

@@ -397,6 +397,13 @@ export const FIELD_DEFINITIONS: Record<StandardFieldName, FieldDefinition> = {
     allowedOperators: ['IN', 'NOT_IN'],
     dictionaryKey: 'stage_type',
   },
+  // Workflow fields
+  WORKFLOW_STEP: {
+    name: 'WORKFLOW_STEP',
+    category: 'Request',
+    dataType: 'STRING',
+    allowedOperators: ['IN', 'NOT_IN'],
+  },
 }
 
 // Helper function to get fields by category

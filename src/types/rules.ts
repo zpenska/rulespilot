@@ -92,6 +92,8 @@ export type StandardFieldName =
   // Stage Fields
   | 'STAGE_PRIMARY_SERVICE_CODE'
   | 'STAGE_TYPE'
+  // Workflow Fields
+  | 'WORKFLOW_STEP'
 
 // Standard Field Criteria structure
 export interface StandardFieldCriteria {
@@ -136,12 +138,23 @@ export interface DepartmentRoutingAction {
   departmentCode: string
 }
 
+// Engine format for reassign action (exported format)
+export interface ReassignAction {
+  departmentCode: string
+}
+
 export interface GenerateLetterAction {
   letterName: string
 }
 
 export interface CloseAction {
   dispositionCode: string
+}
+
+// Engine format for workflow message action (exported format for hints)
+export interface GenerateWorkflowMessageAction {
+  message: string
+  messageType: 'INFO' | 'WARNING' | 'IMPORTANT'
 }
 
 export type MessageContext =
@@ -178,11 +191,23 @@ export interface CreateTaskAction {
   autoClose?: boolean
 }
 
+// Engine format for createTasks action (exported format)
+export interface CreateTasksAction {
+  typeCode: string
+  reasonCode: string
+  units: number
+  unitsUomCode: string
+  calculationField: string
+  ownerDepartmentCode?: string
+  ownerUserId?: string
+  priorityCode: string
+}
+
 export interface CreateAppealTaskAction {
   typeCode: string
   priorityCode: string
   reasonCode: string
-  units: string
+  units: number  // Changed from string to number for consistency
   unitsUomCode: string
   calculationField: string
   ownerUserId: string
