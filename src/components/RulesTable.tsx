@@ -203,7 +203,13 @@ export default function RulesTable({ currentRuleType, onRuleTypeChange }: RulesT
 
   const handleDelete = async (ruleId: string) => {
     if (confirm('Are you sure you want to delete this rule?')) {
-      await deleteRule(ruleId)
+      try {
+        await deleteRule(ruleId)
+        // Success feedback could be added here if desired
+      } catch (error) {
+        console.error('Error deleting rule:', error)
+        alert(`Failed to delete rule: ${error instanceof Error ? error.message : 'Unknown error'}`)
+      }
     }
   }
 
@@ -224,8 +230,13 @@ export default function RulesTable({ currentRuleType, onRuleTypeChange }: RulesT
 
   const handleBulkDelete = async () => {
     if (confirm(`Are you sure you want to delete ${selectedRules.size} rules?`)) {
-      await bulkDeleteRules(Array.from(selectedRules))
-      setSelectedRules(new Set())
+      try {
+        await bulkDeleteRules(Array.from(selectedRules))
+        setSelectedRules(new Set())
+      } catch (error) {
+        console.error('Error bulk deleting rules:', error)
+        alert(`Failed to delete rules: ${error instanceof Error ? error.message : 'Unknown error'}`)
+      }
     }
   }
 
@@ -976,9 +987,9 @@ export default function RulesTable({ currentRuleType, onRuleTypeChange }: RulesT
                                   </button>
                                   <div className="border-t border-gray-100"></div>
                                   <button
-                                    onClick={() => {
-                                      handleDelete(rule.id)
+                                    onClick={async () => {
                                       setOpenDropdown(null)
+                                      await handleDelete(rule.id)
                                     }}
                                     className="w-full text-left px-3 py-1.5 text-sm text-red-600 hover:bg-red-50 flex items-center space-x-2"
                                   >

@@ -200,6 +200,9 @@ export const updateRule = async (id: string, updates: Partial<Rule>): Promise<vo
  * Delete a rule
  */
 export const deleteRule = async (id: string): Promise<void> => {
+  if (!db) {
+    throw new Error('Firebase not configured. Cannot delete rule.')
+  }
   const docRef = doc(db, RULES_COLLECTION, id)
   await deleteDoc(docRef)
 }
@@ -249,6 +252,9 @@ export const bulkUpdateStatus = async (
  * Bulk delete rules
  */
 export const bulkDeleteRules = async (ruleIds: string[]): Promise<void> => {
+  if (!db) {
+    throw new Error('Firebase not configured. Cannot delete rules.')
+  }
   const batch = writeBatch(db)
 
   ruleIds.forEach((id) => {
