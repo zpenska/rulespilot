@@ -459,9 +459,9 @@ export const exportWorkflowRuleToJSON = (rule: Rule): RuleExport => {
         typeCode: task.taskType,
         reasonCode: task.taskReason,
         units: task.daysUntilDue || 0,
-        unitsUomCode: 'DAYS',
-        calculationField: 'REQUEST_DUE_DATE',
-        priorityCode: 'MEDIUM',
+        unitsUomCode: task.unitsUomCode || 'DAYS',  // Use stored value or default to DAYS
+        calculationField: task.calculationField || 'REQUEST_DUE_DATE',  // Use stored value or default
+        priorityCode: task.priorityCode || 'MEDIUM',  // Use stored value or default to MEDIUM
         ...(task.taskOwner && { ownerDepartmentCode: task.taskOwner }),
       }]
     }
@@ -746,6 +746,29 @@ export const importRulesFromJSON = async (jsonData: any[]): Promise<Rule[]> => {
       // Convert RuleExport to Rule format
       // For backwards compatibility: if code not present, use auto-generated code
       // Use ruleType from data if present, otherwise default to 'workflow'
+
+      // Transform actions if needed (engine format -> UI format)
+      let transformedActions = ruleData.actions
+      if (ruleData.actions?.createTasks && Array.isArray(ruleData.actions.createTasks)) {
+        // Convert createTasks (engine format) to createTask (UI format)
+        const engineTask = ruleData.actions.createTasks[0] // Take first task
+        transformedActions = {
+          ...ruleData.actions,
+          createTask: {
+            taskType: engineTask.typeCode,
+            taskReason: engineTask.reasonCode,
+            daysUntilDue: engineTask.units,
+            taskOwner: engineTask.ownerDepartmentCode || engineTask.ownerUserId,
+            autoClose: false,
+            priorityCode: engineTask.priorityCode,
+            unitsUomCode: engineTask.unitsUomCode,
+            calculationField: engineTask.calculationField,
+          },
+        }
+        // Remove createTasks since we've converted it to createTask
+        delete transformedActions.createTasks
+      }
+
       const ruleToCreate: Partial<Rule> = {
         ruleType: ruleData.ruleType || 'workflow',
         code: ruleData.code || `RULE${Date.now()}`,
@@ -754,7 +777,7 @@ export const importRulesFromJSON = async (jsonData: any[]): Promise<Rule[]> => {
         customFieldCriteria: ruleData.customFieldCriteria || [],
         weight: ruleData.weight,
         status: ruleData.isActive ? 'active' : 'inactive',
-        actions: ruleData.actions,
+        actions: transformedActions,
         hints: ruleData.hintsAction,
         triggerEvents: ruleData.triggerEvents,
         requestTypeFilter: ruleData.requestTypeFilter,

@@ -189,6 +189,9 @@ export interface CreateTaskAction {
   daysUntilDue?: number | null
   taskOwner?: string | null  // Dept code or user
   autoClose?: boolean
+  priorityCode?: string  // Priority code for task (e.g., "MEDTP2", "MEDIUM")
+  unitsUomCode?: string  // Unit of measure (e.g., "HOURS", "DAYS")
+  calculationField?: string  // Field to calculate from (e.g., "REQUEST_DUE_DATE")
 }
 
 // Engine format for createTasks action (exported format)

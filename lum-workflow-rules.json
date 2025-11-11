@@ -1,0 +1,337 @@
+{
+  "type": "AUTO_WORKFLOW_RULES",
+  "rules": [
+    {
+      "code": "LUM001",
+      "ruleDesc": "Review Outcome Status is PEND; Review Outcome Status Reason is LUMRSR15; Service Review Type is not LUMRRT02 \u2192 Route to UMHCSC",
+      "standardFieldCriteria": [
+        {
+          "operator": "IN",
+          "field": "REVIEW_OUTCOME_STATUS",
+          "values": [
+            "PEND"
+          ]
+        },
+        {
+          "operator": "IN",
+          "field": "REVIEW_OUTCOME_STATUS_REASON",
+          "values": [
+            "LUMRSR15"
+          ]
+        },
+        {
+          "operator": "NOT_IN",
+          "field": "SERVICE_REVIEW_TYPE",
+          "values": [
+            "LUMRRT02"
+          ]
+        },
+        {
+          "operator": "IN",
+          "field": "ENROLLMENT_LINE_OF_BUSINESS",
+          "values": [
+            "HCSCTRIBALON_SELFFUNDED_ NONERISA_UM_CM",
+            "HCSCTRIBALON_SELFFUNDED_ ERISA_UM_CM",
+            "HCSCTRIBALT_SELFFUNDED_ NONERISA_UM_CM",
+            "HCSCTRIBALT_SELFFUNDED_ ERISA_UM_CM",
+            "HCSCTRIBALNT_SELFFUNDED_NONERISA_UM_CM",
+            "HCSCTRIBALNT_SELFFUNDED_ ERISA_UM_CM",
+            "HCSCTX_SELFFUNDED_NONERISA_UM",
+            "HCSCTX_SELFFUNDED_NONERISA_UM_CM",
+            "HCSCTX_SELFFUNDED_ERISA_UM_CM",
+            "HCSCTX_SELFFUNDED_ERISA_UM",
+            "HCSCOK_SELFFUNDED_NONERISA_UM",
+            "HCSCOK_SELFFUNDED_NONERISA_UM_CM",
+            "HCSCOK_SELFFUNDED_ERISA_UM_CM",
+            "HCSCOK_SELFFUNDED_ERISA_UM",
+            "HCSCNM_SELFFUNDED_NONERISA_UM",
+            "HCSCNM_SELFFUNDED_NONERISA_UM_CM",
+            "HCSCNM_SELFFUNDED_ERISA_UM_CM",
+            "HCSCNM_SELFFUNDED_ERISA_UM",
+            "HCSCMT_SELFFUNDED_NONERISA_UM",
+            "HCSCMT_SELFFUNDED_NONERISA_UM_CM",
+            "HCSCMT_SELFFUNDED_ERISA_UM",
+            "HCSCMT_ SELFFUNDED_ERISA_UM_CM",
+            "HCSCIL_SELFFUNDED_NONERISA_UM",
+            "HCSCIL_SELFFUNDED_NONERISA_UM_CM",
+            "HCSCIL_SELFFUNDED_ERISA_UM_CM",
+            "HCSCIL_SELFFUNDED_ERISA_UM"
+          ]
+        }
+      ],
+      "customFieldCriteria": [],
+      "isActive": true,
+      "weight": 100,
+      "actions": {
+        "departmentRouting": {
+          "departmentCode": "UMHCSC"
+        }
+      }
+    },
+    {
+      "code": "LUM002",
+      "ruleDesc": "Review Outcome Status is PEND; Review Outcome Status Reason is LUMRSR15; Service Review Type is not LUMRRT02 \u2192 Route to EMEMR",
+      "standardFieldCriteria": [
+        {
+          "operator": "IN",
+          "field": "REVIEW_OUTCOME_STATUS",
+          "values": [
+            "PEND"
+          ]
+        },
+        {
+          "operator": "IN",
+          "field": "REVIEW_OUTCOME_STATUS_REASON",
+          "values": [
+            "LUMRSR15"
+          ]
+        },
+        {
+          "operator": "NOT_IN",
+          "field": "SERVICE_REVIEW_TYPE",
+          "values": [
+            "LUMRRT02"
+          ]
+        },
+        {
+          "operator": "IN",
+          "field": "ENROLLMENT_LINE_OF_BUSINESS",
+          "values": [
+            "WELLSTARHEALTHSYSTEM_SELFFUNDED_ERISA_UM_CM",
+            "OHIOHEALTHY_FULLYINSURED_UM",
+            "OHIOHEALTHY_SELFFUNDED_ERISA_UM",
+            "OHIOHEALTHY_LEVELFUNDED_UM"
+          ]
+        }
+      ],
+      "customFieldCriteria": [],
+      "isActive": true,
+      "weight": 100,
+      "actions": {
+        "departmentRouting": {
+          "departmentCode": "EMEMR"
+        }
+      }
+    },
+    {
+      "code": "LUM003",
+      "ruleDesc": "Review Outcome Status is PEND; Review Outcome Status Reason is LUMRSR15; Service Review Type is not LUMRRT02 \u2192 Route to UMCENTRAL",
+      "standardFieldCriteria": [
+        {
+          "operator": "IN",
+          "field": "REVIEW_OUTCOME_STATUS",
+          "values": [
+            "PEND"
+          ]
+        },
+        {
+          "operator": "IN",
+          "field": "REVIEW_OUTCOME_STATUS_REASON",
+          "values": [
+            "LUMRSR15"
+          ]
+        },
+        {
+          "operator": "NOT_IN",
+          "field": "SERVICE_REVIEW_TYPE",
+          "values": [
+            "LUMRRT02"
+          ]
+        },
+        {
+          "operator": "IN",
+          "field": "ENROLLMENT_LINE_OF_BUSINESS",
+          "values": [
+            "ELANBENEFITSSERVICES_SELFFUNDED_ERISA_UM_CM",
+            "EVHC_SELFFUNDED_ERISA_UM_CM",
+            "EVHC_SELFFUNDED_ERISA_UM",
+            "PSERS_SELFFUNDED_NONERISA_ELDERCARE",
+            "PSERS_SELFFUNDED_NONERISA_TRADITIONAL",
+            "LHB_SELFFUNDED_ERISA_ UM_CM",
+            "LHB_SELFFUNDED_ERISA_UM",
+            "LHB_SELFFUNDED_NONERISA_UM_CM",
+            "METLIFE_FULLYINSURED_UM_CM",
+            "PLANSALUDMENONITA_SELFFUNDED_ERISA_UM",
+            "PROMISEHEALTHPLAN_LEVELFUNDED_ERISA_UM_CM",
+            "LHB_CMMC"
+          ]
+        }
+      ],
+      "customFieldCriteria": [],
+      "isActive": true,
+      "weight": 100,
+      "actions": {
+        "departmentRouting": {
+          "departmentCode": "UMCENTRAL"
+        }
+      }
+    },
+    {
+      "code": "LUM004",
+      "ruleDesc": "Review Outcome Status is PEND; Review Outcome Status Reason is LUMRSR14 \u2192 Route to RFI",
+      "standardFieldCriteria": [
+        {
+          "operator": "IN",
+          "field": "REVIEW_OUTCOME_STATUS",
+          "values": [
+            "PEND"
+          ]
+        },
+        {
+          "operator": "IN",
+          "field": "REVIEW_OUTCOME_STATUS_REASON",
+          "values": [
+            "LUMRSR14"
+          ]
+        }
+      ],
+      "customFieldCriteria": [],
+      "isActive": true,
+      "weight": 100,
+      "actions": {
+        "departmentRouting": {
+          "departmentCode": "RFI"
+        }
+      }
+    },
+    {
+      "code": "LUM005",
+      "ruleDesc": "Review Outcome Status is PEND; Review Outcome Status Reason is LUMRSR04, LUMRSR05... \u2192 Route to PROUTCOME",
+      "standardFieldCriteria": [
+        {
+          "operator": "IN",
+          "field": "REVIEW_OUTCOME_STATUS",
+          "values": [
+            "PEND"
+          ]
+        },
+        {
+          "operator": "IN",
+          "field": "REVIEW_OUTCOME_STATUS_REASON",
+          "values": [
+            "LUMRSR04",
+            "LUMRSR05",
+            "LUMRSR06",
+            "LUMRSR09",
+            "LUMRSR10",
+            "LUMRSR11",
+            "LUMRSR12",
+            "LUMRSR13"
+          ]
+        }
+      ],
+      "customFieldCriteria": [],
+      "isActive": true,
+      "weight": 100,
+      "actions": {
+        "departmentRouting": {
+          "departmentCode": "PROUTCOME"
+        }
+      }
+    },
+    {
+      "code": "LUM006",
+      "ruleDesc": "Service Review Type is LUMRRT02 \u2192 Route to CLAIMS",
+      "standardFieldCriteria": [
+        {
+          "operator": "IN",
+          "field": "SERVICE_REVIEW_TYPE",
+          "values": [
+            "LUMRRT02"
+          ]
+        }
+      ],
+      "customFieldCriteria": [],
+      "isActive": true,
+      "weight": 100,
+      "actions": {
+        "departmentRouting": {
+          "departmentCode": "CLAIMS"
+        }
+      }
+    },
+    {
+      "code": "LUM007",
+      "ruleDesc": "Request Type is INPATIENT OUTPATIENT; Request Urgency is MEDRU6; Review Outcome Status Reason is LUMRSR14 \u2192 Create LUMTT16 task",
+      "standardFieldCriteria": [
+        {
+          "operator": "IN",
+          "field": "REQUEST_TYPE",
+          "values": [
+            "INPATIENT",
+            "OUTPATIENT"
+          ]
+        },
+        {
+          "operator": "IN",
+          "field": "REQUEST_URGENCY",
+          "values": [
+            "MEDRU6"
+          ]
+        },
+        {
+          "operator": "IN",
+          "field": "REVIEW_OUTCOME_STATUS_REASON",
+          "values": [
+            "LUMRSR14"
+          ]
+        }
+      ],
+      "customFieldCriteria": [],
+      "isActive": true,
+      "weight": 100,
+      "actions": {
+        "createTask": {
+          "taskType": "LUMTT16",
+          "taskReason": "LUMTR81",
+          "daysUntilDue": 48,
+          "priorityCode": "MEDTP2",
+          "unitsUomCode": "HOURS",
+          "calculationField": "REQUEST_DUE_DATE"
+        }
+      }
+    },
+    {
+      "code": "LUM008",
+      "ruleDesc": "Request Type is INPATIENT OUTPATIENT; Request Urgency is MEDRU1, MEDRU4; Review Outcome Status Reason is LUMRSR14 \u2192 Create LUMTT16 task",
+      "standardFieldCriteria": [
+        {
+          "operator": "IN",
+          "field": "REQUEST_TYPE",
+          "values": [
+            "INPATIENT",
+            "OUTPATIENT"
+          ]
+        },
+        {
+          "operator": "IN",
+          "field": "REQUEST_URGENCY",
+          "values": [
+            "MEDRU1",
+            "MEDRU4"
+          ]
+        },
+        {
+          "operator": "IN",
+          "field": "REVIEW_OUTCOME_STATUS_REASON",
+          "values": [
+            "LUMRSR14"
+          ]
+        }
+      ],
+      "customFieldCriteria": [],
+      "isActive": true,
+      "weight": 100,
+      "actions": {
+        "createTask": {
+          "taskType": "LUMTT16",
+          "taskReason": "LUMTR81",
+          "daysUntilDue": 45,
+          "priorityCode": "MEDTP2",
+          "unitsUomCode": "DAYS",
+          "calculationField": "REQUEST_DUE_DATE"
+        }
+      }
+    }
+  ]
+}
