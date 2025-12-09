@@ -55,6 +55,19 @@ export const FIELD_DEFINITIONS: Record<StandardFieldName, FieldDefinition> = {
     allowedOperators: ['IN', 'NOT_IN'],
     dictionaryKey: 'member_client',
   },
+  MEMBER_PCP_MCO_ID_AND_TYPE: {
+    name: 'MEMBER_PCP_MCO_ID_AND_TYPE',
+    category: 'Member',
+    dataType: 'STRING',
+    allowedOperators: ['EQUALS_STANDARD_FIELD', 'NOT_EQUALS_STANDARD_FIELD'],
+  },
+  MEMBER_POSTAL_CODE: {
+    name: 'MEMBER_POSTAL_CODE',
+    category: 'Member',
+    dataType: 'STRING',
+    allowedOperators: ['IN', 'NOT_IN'],
+    dictionaryKey: 'member_postal_code',
+  },
   MEMBER_STATE: {
     name: 'MEMBER_STATE',
     category: 'Member',
@@ -72,6 +85,13 @@ export const FIELD_DEFINITIONS: Record<StandardFieldName, FieldDefinition> = {
     requiresProviderRole: true,
     requiresAlternateIdType: true,
     dictionaryKey: 'provider_alternate_id',
+  },
+  PROVIDER_MCO_ID_AND_TYPE: {
+    name: 'PROVIDER_MCO_ID_AND_TYPE',
+    category: 'Provider',
+    dataType: 'STRING',
+    allowedOperators: ['EQUALS_STANDARD_FIELD', 'NOT_EQUALS_STANDARD_FIELD'],
+    requiresProviderRole: true,
   },
   PROVIDER_NPI: {
     name: 'PROVIDER_NPI',
@@ -190,7 +210,7 @@ export const FIELD_DEFINITIONS: Record<StandardFieldName, FieldDefinition> = {
     name: 'REQUEST_DIAGNOSIS_CODE',
     category: 'Request',
     dataType: 'STRING',
-    allowedOperators: ['IN', 'NOT_IN'],
+    allowedOperators: ['IN', 'NOT_IN', 'BETWEEN'],
     dictionaryKey: 'diagnosis_code',
   },
   REQUEST_DISPOSITION: {
@@ -237,7 +257,7 @@ export const FIELD_DEFINITIONS: Record<StandardFieldName, FieldDefinition> = {
     name: 'REQUEST_PRIMARY_DIAGNOSIS_CODE',
     category: 'Request',
     dataType: 'STRING',
-    allowedOperators: ['IN', 'NOT_IN'],
+    allowedOperators: ['IN', 'NOT_IN', 'BETWEEN'],
     dictionaryKey: 'diagnosis_code',
   },
   REQUEST_STATE: {
@@ -316,7 +336,7 @@ export const FIELD_DEFINITIONS: Record<StandardFieldName, FieldDefinition> = {
     name: 'SERVICE_CODE',
     category: 'Service',
     dataType: 'STRING',
-    allowedOperators: ['IN', 'NOT_IN'],
+    allowedOperators: ['IN', 'NOT_IN', 'BETWEEN'],
     dictionaryKey: 'service_code',
   },
   SERVICE_LEVEL_OF_CARE: {

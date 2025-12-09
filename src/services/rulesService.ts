@@ -374,6 +374,15 @@ export const exportWorkflowRuleToJSON = (rule: Rule): RuleExport => {
     standardFieldCriteria,
     isActive: rule.status === 'active',
     weight: rule.weight ?? 100, // Default weight to 100 if not set
+    atoms: rule.atoms ?? 0,
+  }
+
+  // Add effective date/time if present - convert YYYY-MM-DD to ISO 8601 timestamp
+  if (rule.activationDate) {
+    (exported as any).startEffectiveDateTime = `${rule.activationDate}T00:00:00Z`
+  }
+  if (rule.expirationDate) {
+    (exported as any).endEffectiveDateTime = `${rule.expirationDate}T23:59:59Z`
   }
 
   // Only include customFieldCriteria if it exists and has items
@@ -456,19 +465,30 @@ export const exportWorkflowRuleToJSON = (rule: Rule): RuleExport => {
     if (rule.actions.createTask) {
       const task = rule.actions.createTask
       transformedActions.createTasks = [{
-        typeCode: task.taskType,
-        reasonCode: task.taskReason,
-        units: task.daysUntilDue || 0,
-        unitsUomCode: task.unitsUomCode || 'DAYS',  // Use stored value or default to DAYS
-        calculationField: task.calculationField || 'REQUEST_DUE_DATE',  // Use stored value or default
-        priorityCode: task.priorityCode || 'MEDIUM',  // Use stored value or default to MEDIUM
-        ...(task.taskOwner && { ownerDepartmentCode: task.taskOwner }),
+        typeCode: task.typeCode,
+        reasonCode: task.reasonCode,
+        units: task.units,
+        unitsUomCode: task.unitsUomCode,
+        calculationField: task.calculationField,
+        priorityCode: task.priorityCode,
+        ownerDepartmentCode: task.ownerDepartmentCode,
+        ...(task.ownerUserId && { ownerUserId: task.ownerUserId }),
+        ...(task.description && { description: task.description }),
       }]
     }
 
     // Keep other actions as-is
+    if (rule.actions.assignSkill) {
+      transformedActions.assignSkill = rule.actions.assignSkill
+    }
+    if (rule.actions.assignLicenses) {
+      transformedActions.assignLicenses = rule.actions.assignLicenses
+    }
     if (rule.actions.generateLetters) {
       transformedActions.generateLetters = rule.actions.generateLetters
+    }
+    if (rule.actions.generateWorkflowMessage) {
+      transformedActions.generateWorkflowMessage = rule.actions.generateWorkflowMessage
     }
     if (rule.actions.close) {
       transformedActions.close = rule.actions.close
@@ -755,18 +775,29 @@ export const importRulesFromJSON = async (jsonData: any[]): Promise<Rule[]> => {
         transformedActions = {
           ...ruleData.actions,
           createTask: {
-            taskType: engineTask.typeCode,
-            taskReason: engineTask.reasonCode,
-            daysUntilDue: engineTask.units,
-            taskOwner: engineTask.ownerDepartmentCode || engineTask.ownerUserId,
-            autoClose: false,
-            priorityCode: engineTask.priorityCode,
+            typeCode: engineTask.typeCode,
+            reasonCode: engineTask.reasonCode,
+            units: engineTask.units,
             unitsUomCode: engineTask.unitsUomCode,
             calculationField: engineTask.calculationField,
+            priorityCode: engineTask.priorityCode,
+            ownerDepartmentCode: engineTask.ownerDepartmentCode,
+            ownerUserId: engineTask.ownerUserId,
+            description: engineTask.description,
           },
         }
         // Remove createTasks since we've converted it to createTask
         delete transformedActions.createTasks
+      }
+
+      // Convert ISO timestamps to YYYY-MM-DD dates
+      let activationDate: string | undefined
+      let expirationDate: string | undefined
+      if (ruleData.startEffectiveDateTime) {
+        activationDate = ruleData.startEffectiveDateTime.split('T')[0]
+      }
+      if (ruleData.endEffectiveDateTime) {
+        expirationDate = ruleData.endEffectiveDateTime.split('T')[0]
       }
 
       const ruleToCreate: Partial<Rule> = {
@@ -776,6 +807,9 @@ export const importRulesFromJSON = async (jsonData: any[]): Promise<Rule[]> => {
         standardFieldCriteria: ruleData.standardFieldCriteria || [],
         customFieldCriteria: ruleData.customFieldCriteria || [],
         weight: ruleData.weight,
+        atoms: ruleData.atoms,
+        activationDate,
+        expirationDate,
         status: ruleData.isActive ? 'active' : 'inactive',
         actions: transformedActions,
         hints: ruleData.hintsAction,

@@ -19,6 +19,8 @@ export type StandardOperator =
   | 'IN'
   | 'NOT_IN'
   | 'EQUALS'
+  | 'EQUALS_STANDARD_FIELD'
+  | 'NOT_EQUALS_STANDARD_FIELD'
   | 'GREATER_THAN_OR_EQUAL_TO'
   | 'GREATER_THAN'
   | 'LESS_THAN_OR_EQUAL_TO'
@@ -42,9 +44,12 @@ export type StandardFieldName =
   // Member Fields
   | 'MEMBER_AGE'
   | 'MEMBER_CLIENT'
+  | 'MEMBER_PCP_MCO_ID_AND_TYPE'
+  | 'MEMBER_POSTAL_CODE'
   | 'MEMBER_STATE'
   // Provider Fields
   | 'PROVIDER_ALTERNATE_ID'
+  | 'PROVIDER_MCO_ID_AND_TYPE'
   | 'PROVIDER_NPI'
   | 'PROVIDER_PRIMARY_ADDRESS_POSTAL_CODE'
   | 'PROVIDER_PRIMARY_ADDRESS_STATE'
@@ -154,7 +159,7 @@ export interface CloseAction {
 // Engine format for workflow message action (exported format for hints)
 export interface GenerateWorkflowMessageAction {
   message: string
-  messageType: 'INFO' | 'WARNING' | 'IMPORTANT'
+  messageType: 'SUCCESS' | 'INFO' | 'WARNING' | 'IMPORTANT' | 'ERROR'
 }
 
 export type MessageContext =
@@ -184,14 +189,15 @@ export interface HintsAction {
 }
 
 export interface CreateTaskAction {
-  taskType: string
-  taskReason: string
-  daysUntilDue?: number | null
-  taskOwner?: string | null  // Dept code or user
-  autoClose?: boolean
-  priorityCode?: string  // Priority code for task (e.g., "MEDTP2", "MEDIUM")
-  unitsUomCode?: string  // Unit of measure (e.g., "HOURS", "DAYS")
-  calculationField?: string  // Field to calculate from (e.g., "REQUEST_DUE_DATE")
+  typeCode: string
+  priorityCode: string
+  reasonCode: string
+  units: number
+  unitsUomCode: TaskUnitsUomCode
+  calculationField: string
+  ownerDepartmentCode: string
+  ownerUserId?: string
+  description?: string
 }
 
 // Engine format for createTasks action (exported format)
@@ -210,11 +216,12 @@ export interface CreateAppealTaskAction {
   typeCode: string
   priorityCode: string
   reasonCode: string
-  units: number  // Changed from string to number for consistency
-  unitsUomCode: string
+  units: number
+  unitsUomCode: TaskUnitsUomCode
   calculationField: string
-  ownerUserId: string
-  description: string
+  ownerDepartmentCode: string
+  ownerUserId?: string
+  description?: string
 }
 
 export interface TransferOwnershipAction {
@@ -234,8 +241,11 @@ export interface CreateProgramAction {
 
 // Combined actions interface (for workflow rules only)
 export interface RuleActions {
+  assignSkill?: AssignSkillAction
+  assignLicenses?: AssignLicenseAction
   departmentRouting?: DepartmentRoutingAction
   generateLetters?: GenerateLetterAction[]
+  generateWorkflowMessage?: GenerateWorkflowMessageAction
   close?: CloseAction
   createTask?: CreateTaskAction
   createAppealTasks?: CreateAppealTaskAction[]
@@ -253,6 +263,9 @@ export type SourceDateTimeField =
   | 'STATUS_CHANGE_DATE_TIME'
 
 export type UnitsOfMeasure = 'HOURS' | 'CALENDAR_DAYS' | 'BUSINESS_DAYS'
+
+// Task action units of measure
+export type TaskUnitsUomCode = 'MINUTES' | 'HOURS' | 'DAYS' | 'WEEKS' | 'MONTHS' | 'YEARS'
 
 export type DateOperator = '=' | '<' | '>' | '<=' | '>='
 
@@ -303,6 +316,9 @@ export interface RuleExport {
   customFieldCriteria?: CustomFieldCriteria[]
   isActive: boolean
   weight: number
+  atoms?: number
+  startEffectiveDateTime?: string  // ISO 8601 timestamp
+  endEffectiveDateTime?: string    // ISO 8601 timestamp
   actions?: RuleActions
   triggerEvents?: TriggerEvent[]
   requestTypeFilter?: RequestTypeFilter

@@ -1067,7 +1067,15 @@ export default function RuleBuilder({ rule, onClose, onSave }: RuleBuilderProps)
                           if (e.target.checked) {
                             setActions({
                               ...actions,
-                              createTask: { taskType: '', taskReason: '' },
+                              createTask: {
+                                typeCode: '',
+                                reasonCode: '',
+                                units: 0,
+                                unitsUomCode: 'DAYS' as const,
+                                calculationField: 'REQUEST_DUE_DATE',
+                                priorityCode: '',
+                                ownerDepartmentCode: '',
+                              },
                             })
                           } else {
                             const { createTask: _createTask, ...rest } = actions
@@ -1082,17 +1090,17 @@ export default function RuleBuilder({ rule, onClose, onSave }: RuleBuilderProps)
                       <div className="ml-6 space-y-3">
                         <div>
                           <label className="block text-xs font-medium text-gray-600 mb-1">
-                            Task Type
+                            Type Code *
                           </label>
                           <input
                             type="text"
-                            value={actions.createTask.taskType}
+                            value={actions.createTask.typeCode}
                             onChange={(e) =>
                               setActions({
                                 ...actions,
                                 createTask: {
                                   ...actions.createTask!,
-                                  taskType: e.target.value,
+                                  typeCode: e.target.value,
                                 },
                               })
                             }
@@ -1102,17 +1110,17 @@ export default function RuleBuilder({ rule, onClose, onSave }: RuleBuilderProps)
                         </div>
                         <div>
                           <label className="block text-xs font-medium text-gray-600 mb-1">
-                            Task Reason
+                            Reason Code *
                           </label>
                           <input
                             type="text"
-                            value={actions.createTask.taskReason}
+                            value={actions.createTask.reasonCode}
                             onChange={(e) =>
                               setActions({
                                 ...actions,
                                 createTask: {
                                   ...actions.createTask!,
-                                  taskReason: e.target.value,
+                                  reasonCode: e.target.value,
                                 },
                               })
                             }
@@ -1120,22 +1128,40 @@ export default function RuleBuilder({ rule, onClose, onSave }: RuleBuilderProps)
                             className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md"
                           />
                         </div>
+                        <div>
+                          <label className="block text-xs font-medium text-gray-600 mb-1">
+                            Priority Code *
+                          </label>
+                          <input
+                            type="text"
+                            value={actions.createTask.priorityCode}
+                            onChange={(e) =>
+                              setActions({
+                                ...actions,
+                                createTask: {
+                                  ...actions.createTask!,
+                                  priorityCode: e.target.value,
+                                },
+                              })
+                            }
+                            placeholder="e.g., HIGH"
+                            className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md"
+                          />
+                        </div>
                         <div className="grid grid-cols-2 gap-3">
                           <div>
                             <label className="block text-xs font-medium text-gray-600 mb-1">
-                              Days Until Due
+                              Units *
                             </label>
                             <input
                               type="number"
-                              value={actions.createTask.daysUntilDue || ''}
+                              value={actions.createTask.units}
                               onChange={(e) =>
                                 setActions({
                                   ...actions,
                                   createTask: {
                                     ...actions.createTask!,
-                                    daysUntilDue: e.target.value
-                                      ? parseInt(e.target.value)
-                                      : null,
+                                    units: parseInt(e.target.value) || 0,
                                   },
                                 })
                               }
@@ -1145,43 +1171,109 @@ export default function RuleBuilder({ rule, onClose, onSave }: RuleBuilderProps)
                           </div>
                           <div>
                             <label className="block text-xs font-medium text-gray-600 mb-1">
-                              Task Owner
+                              Units UOM *
                             </label>
-                            <input
-                              type="text"
-                              value={actions.createTask.taskOwner || ''}
+                            <select
+                              value={actions.createTask.unitsUomCode}
                               onChange={(e) =>
                                 setActions({
                                   ...actions,
                                   createTask: {
                                     ...actions.createTask!,
-                                    taskOwner: e.target.value || null,
+                                    unitsUomCode: e.target.value as any,
                                   },
                                 })
                               }
-                              placeholder="e.g., Dept: UMTATIBC"
                               className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md"
-                            />
+                            >
+                              <option value="MINUTES">Minutes</option>
+                              <option value="HOURS">Hours</option>
+                              <option value="DAYS">Days</option>
+                              <option value="WEEKS">Weeks</option>
+                              <option value="MONTHS">Months</option>
+                              <option value="YEARS">Years</option>
+                            </select>
                           </div>
                         </div>
                         <div>
-                          <label className="flex items-center space-x-2">
-                            <input
-                              type="checkbox"
-                              checked={actions.createTask.autoClose || false}
-                              onChange={(e) =>
-                                setActions({
-                                  ...actions,
-                                  createTask: {
-                                    ...actions.createTask!,
-                                    autoClose: e.target.checked,
-                                  },
-                                })
-                              }
-                              className="rounded border-gray-300"
-                            />
-                            <span className="text-xs text-gray-600">Auto-close task</span>
+                          <label className="block text-xs font-medium text-gray-600 mb-1">
+                            Calculation Field *
                           </label>
+                          <input
+                            type="text"
+                            value={actions.createTask.calculationField}
+                            onChange={(e) =>
+                              setActions({
+                                ...actions,
+                                createTask: {
+                                  ...actions.createTask!,
+                                  calculationField: e.target.value,
+                                },
+                              })
+                            }
+                            placeholder="e.g., REQUEST_DUE_DATE"
+                            className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-medium text-gray-600 mb-1">
+                            Owner Department Code *
+                          </label>
+                          <input
+                            type="text"
+                            value={actions.createTask.ownerDepartmentCode}
+                            onChange={(e) =>
+                              setActions({
+                                ...actions,
+                                createTask: {
+                                  ...actions.createTask!,
+                                  ownerDepartmentCode: e.target.value,
+                                },
+                              })
+                            }
+                            placeholder="e.g., UMTATIBC"
+                            className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-medium text-gray-600 mb-1">
+                            Owner User ID (Optional)
+                          </label>
+                          <input
+                            type="text"
+                            value={actions.createTask.ownerUserId || ''}
+                            onChange={(e) =>
+                              setActions({
+                                ...actions,
+                                createTask: {
+                                  ...actions.createTask!,
+                                  ownerUserId: e.target.value || undefined,
+                                },
+                              })
+                            }
+                            placeholder="e.g., USER123"
+                            className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-medium text-gray-600 mb-1">
+                            Description (Optional)
+                          </label>
+                          <textarea
+                            value={actions.createTask.description || ''}
+                            onChange={(e) =>
+                              setActions({
+                                ...actions,
+                                createTask: {
+                                  ...actions.createTask!,
+                                  description: e.target.value || undefined,
+                                },
+                              })
+                            }
+                            placeholder="Task description"
+                            rows={2}
+                            className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md"
+                          />
                         </div>
                       </div>
                     )}
@@ -1205,10 +1297,11 @@ export default function RuleBuilder({ rule, onClose, onSave }: RuleBuilderProps)
                                 priorityCode: '',
                                 reasonCode: '',
                                 units: 0,
-                                unitsUomCode: '',
-                                calculationField: '',
-                                ownerUserId: '',
-                                description: '',
+                                unitsUomCode: 'DAYS' as const,
+                                calculationField: 'REQUEST_DUE_DATE',
+                                ownerDepartmentCode: '',
+                                ownerUserId: undefined,
+                                description: undefined,
                               }],
                             })
                           }
@@ -1292,17 +1385,22 @@ export default function RuleBuilder({ rule, onClose, onSave }: RuleBuilderProps)
                                 <label className="block text-xs font-medium text-gray-600 mb-1">
                                   Units UOM Code *
                                 </label>
-                                <input
-                                  type="text"
+                                <select
                                   value={task.unitsUomCode}
                                   onChange={(e) => {
                                     const updated = [...actions.createAppealTasks!]
-                                    updated[index] = { ...updated[index], unitsUomCode: e.target.value }
+                                    updated[index] = { ...updated[index], unitsUomCode: e.target.value as any }
                                     setActions({ ...actions, createAppealTasks: updated })
                                   }}
-                                  placeholder="e.g., DAYS"
                                   className="w-full px-3 py-1 text-sm border border-gray-300 rounded-md"
-                                />
+                                >
+                                  <option value="MINUTES">Minutes</option>
+                                  <option value="HOURS">Hours</option>
+                                  <option value="DAYS">Days</option>
+                                  <option value="WEEKS">Weeks</option>
+                                  <option value="MONTHS">Months</option>
+                                  <option value="YEARS">Years</option>
+                                </select>
                               </div>
                               <div>
                                 <label className="block text-xs font-medium text-gray-600 mb-1">
@@ -1322,14 +1420,30 @@ export default function RuleBuilder({ rule, onClose, onSave }: RuleBuilderProps)
                               </div>
                               <div>
                                 <label className="block text-xs font-medium text-gray-600 mb-1">
-                                  Owner User ID *
+                                  Owner Department Code *
                                 </label>
                                 <input
                                   type="text"
-                                  value={task.ownerUserId}
+                                  value={task.ownerDepartmentCode}
                                   onChange={(e) => {
                                     const updated = [...actions.createAppealTasks!]
-                                    updated[index] = { ...updated[index], ownerUserId: e.target.value }
+                                    updated[index] = { ...updated[index], ownerDepartmentCode: e.target.value }
+                                    setActions({ ...actions, createAppealTasks: updated })
+                                  }}
+                                  placeholder="e.g., DEPT1"
+                                  className="w-full px-3 py-1 text-sm border border-gray-300 rounded-md"
+                                />
+                              </div>
+                              <div>
+                                <label className="block text-xs font-medium text-gray-600 mb-1">
+                                  Owner User ID (Optional)
+                                </label>
+                                <input
+                                  type="text"
+                                  value={task.ownerUserId || ''}
+                                  onChange={(e) => {
+                                    const updated = [...actions.createAppealTasks!]
+                                    updated[index] = { ...updated[index], ownerUserId: e.target.value || undefined }
                                     setActions({ ...actions, createAppealTasks: updated })
                                   }}
                                   placeholder="e.g., USER1"
@@ -1338,14 +1452,14 @@ export default function RuleBuilder({ rule, onClose, onSave }: RuleBuilderProps)
                               </div>
                               <div className="col-span-2">
                                 <label className="block text-xs font-medium text-gray-600 mb-1">
-                                  Description *
+                                  Description (Optional)
                                 </label>
                                 <input
                                   type="text"
-                                  value={task.description}
+                                  value={task.description || ''}
                                   onChange={(e) => {
                                     const updated = [...actions.createAppealTasks!]
-                                    updated[index] = { ...updated[index], description: e.target.value }
+                                    updated[index] = { ...updated[index], description: e.target.value || undefined }
                                     setActions({ ...actions, createAppealTasks: updated })
                                   }}
                                   placeholder="e.g., This is an example description"
@@ -1382,10 +1496,11 @@ export default function RuleBuilder({ rule, onClose, onSave }: RuleBuilderProps)
                                   priorityCode: '',
                                   reasonCode: '',
                                   units: 0,
-                                  unitsUomCode: '',
-                                  calculationField: '',
-                                  ownerUserId: '',
-                                  description: '',
+                                  unitsUomCode: 'DAYS' as const,
+                                  calculationField: 'REQUEST_DUE_DATE',
+                                  ownerDepartmentCode: '',
+                                  ownerUserId: undefined,
+                                  description: undefined,
                                 },
                               ],
                             })

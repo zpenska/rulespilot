@@ -112,10 +112,10 @@ export const validateCustomCriteria = (
   }
 
   // Association must be valid
-  if (!['MEMBER', 'ENROLLMENT', 'REQUEST'].includes(criteria.association)) {
+  if (!['MEMBER', 'ENROLLMENT', 'REQUEST', 'SERVICE'].includes(criteria.association)) {
     errors.push({
       field: criteria.templateId,
-      message: 'Association must be MEMBER, ENROLLMENT, or REQUEST',
+      message: 'Association must be MEMBER, ENROLLMENT, REQUEST, or SERVICE',
     })
   }
 
@@ -152,9 +152,24 @@ const validateValueCount = (
       }
       break
 
+    case 'EQUALS_STANDARD_FIELD':
+    case 'NOT_EQUALS_STANDARD_FIELD':
+      // First value must be the field name to compare against
+      // Second value (if field is provider field) must be provider role
+      // Third value (if field is PROVIDER_ALTERNATE_ID) must be alternate ID type
+      if (values.length === 0) {
+        return `Operator ${operator} requires at least 1 value (the field name to compare against)`
+      }
+      break
+
     case 'BETWEEN':
-      if (values.length !== 2) {
-        return 'BETWEEN operator requires exactly 2 values (lower and upper bound)'
+      // BETWEEN requires at least 2 values (can have multiple pairs for string ranges)
+      if (values.length < 2) {
+        return 'BETWEEN operator requires at least 2 values (lower and upper bound)'
+      }
+      // For multiple ranges, must have even number of values
+      if (values.length % 2 !== 0) {
+        return 'BETWEEN operator with multiple ranges requires an even number of values'
       }
       break
 
@@ -179,8 +194,9 @@ const validateDataType = (
 ): string[] => {
   const errors: string[] = []
 
-  // Skip data type validation for VALUED/NOT_VALUED operators (no values to validate)
-  if (operator === 'VALUED' || operator === 'NOT_VALUED') {
+  // Skip data type validation for operators that don't use literal values
+  if (operator === 'VALUED' || operator === 'NOT_VALUED' ||
+      operator === 'EQUALS_STANDARD_FIELD' || operator === 'NOT_EQUALS_STANDARD_FIELD') {
     return errors
   }
 
@@ -300,6 +316,172 @@ export const validateActions = (actions?: RuleActions): ValidationError[] => {
       errors.push({
         field: 'actions.close.dispositionCode',
         message: 'Disposition code is required for close action',
+      })
+    }
+  }
+
+  // Validate createTask
+  if (actions.createTask) {
+    const task = actions.createTask
+    if (!task.typeCode || task.typeCode.trim() === '') {
+      errors.push({
+        field: 'actions.createTask.typeCode',
+        message: 'Type code is required for createTask action',
+      })
+    }
+    if (!task.priorityCode || task.priorityCode.trim() === '') {
+      errors.push({
+        field: 'actions.createTask.priorityCode',
+        message: 'Priority code is required for createTask action',
+      })
+    }
+    if (!task.reasonCode || task.reasonCode.trim() === '') {
+      errors.push({
+        field: 'actions.createTask.reasonCode',
+        message: 'Reason code is required for createTask action',
+      })
+    }
+    if (task.units === undefined || task.units === null) {
+      errors.push({
+        field: 'actions.createTask.units',
+        message: 'Units is required for createTask action',
+      })
+    }
+    if (!task.unitsUomCode || task.unitsUomCode.trim() === '') {
+      errors.push({
+        field: 'actions.createTask.unitsUomCode',
+        message: 'Units UOM code is required for createTask action',
+      })
+    }
+    if (!task.calculationField || task.calculationField.trim() === '') {
+      errors.push({
+        field: 'actions.createTask.calculationField',
+        message: 'Calculation field is required for createTask action',
+      })
+    }
+    if (!task.ownerDepartmentCode || task.ownerDepartmentCode.trim() === '') {
+      errors.push({
+        field: 'actions.createTask.ownerDepartmentCode',
+        message: 'Owner department code is required for createTask action',
+      })
+    }
+  }
+
+  // Validate createAppealTasks
+  if (actions.createAppealTasks) {
+    if (!Array.isArray(actions.createAppealTasks) || actions.createAppealTasks.length === 0) {
+      errors.push({
+        field: 'actions.createAppealTasks',
+        message: 'At least one appeal task is required for createAppealTasks action',
+      })
+    } else {
+      actions.createAppealTasks.forEach((task, index) => {
+        if (!task.typeCode || task.typeCode.trim() === '') {
+          errors.push({
+            field: `actions.createAppealTasks[${index}].typeCode`,
+            message: `Type code is required for appeal task at index ${index}`,
+          })
+        }
+        if (!task.priorityCode || task.priorityCode.trim() === '') {
+          errors.push({
+            field: `actions.createAppealTasks[${index}].priorityCode`,
+            message: `Priority code is required for appeal task at index ${index}`,
+          })
+        }
+        if (!task.reasonCode || task.reasonCode.trim() === '') {
+          errors.push({
+            field: `actions.createAppealTasks[${index}].reasonCode`,
+            message: `Reason code is required for appeal task at index ${index}`,
+          })
+        }
+        if (task.units === undefined || task.units === null) {
+          errors.push({
+            field: `actions.createAppealTasks[${index}].units`,
+            message: `Units is required for appeal task at index ${index}`,
+          })
+        }
+        if (!task.unitsUomCode || task.unitsUomCode.trim() === '') {
+          errors.push({
+            field: `actions.createAppealTasks[${index}].unitsUomCode`,
+            message: `Units UOM code is required for appeal task at index ${index}`,
+          })
+        }
+        if (!task.calculationField || task.calculationField.trim() === '') {
+          errors.push({
+            field: `actions.createAppealTasks[${index}].calculationField`,
+            message: `Calculation field is required for appeal task at index ${index}`,
+          })
+        }
+        if (!task.ownerDepartmentCode || task.ownerDepartmentCode.trim() === '') {
+          errors.push({
+            field: `actions.createAppealTasks[${index}].ownerDepartmentCode`,
+            message: `Owner department code is required for appeal task at index ${index}`,
+          })
+        }
+      })
+    }
+  }
+
+  // Validate assignSkill
+  if (actions.assignSkill) {
+    if (!actions.assignSkill.skillCode || actions.assignSkill.skillCode.trim() === '') {
+      errors.push({
+        field: 'actions.assignSkill.skillCode',
+        message: 'Skill code is required for assignSkill action',
+      })
+    }
+  }
+
+  // Validate assignLicenses
+  if (actions.assignLicenses) {
+    if (!Array.isArray(actions.assignLicenses.licenseCodes) || actions.assignLicenses.licenseCodes.length === 0) {
+      errors.push({
+        field: 'actions.assignLicenses.licenseCodes',
+        message: 'At least one license code is required for assignLicenses action',
+      })
+    }
+  }
+
+  // Validate generateWorkflowMessage
+  if (actions.generateWorkflowMessage) {
+    if (!actions.generateWorkflowMessage.message || actions.generateWorkflowMessage.message.trim() === '') {
+      errors.push({
+        field: 'actions.generateWorkflowMessage.message',
+        message: 'Message is required for generateWorkflowMessage action',
+      })
+    }
+    if (!actions.generateWorkflowMessage.messageType || actions.generateWorkflowMessage.messageType.trim() === '') {
+      errors.push({
+        field: 'actions.generateWorkflowMessage.messageType',
+        message: 'Message type is required for generateWorkflowMessage action',
+      })
+    }
+  }
+
+  // Validate createCMReferral
+  if (actions.createCMReferral) {
+    if (!actions.createCMReferral.programCode || actions.createCMReferral.programCode.trim() === '') {
+      errors.push({
+        field: 'actions.createCMReferral.programCode',
+        message: 'Program code is required for createCMReferral action',
+      })
+    }
+    if (!actions.createCMReferral.sourceCode || actions.createCMReferral.sourceCode.trim() === '') {
+      errors.push({
+        field: 'actions.createCMReferral.sourceCode',
+        message: 'Source code is required for createCMReferral action',
+      })
+    }
+    if (!actions.createCMReferral.severityCode || actions.createCMReferral.severityCode.trim() === '') {
+      errors.push({
+        field: 'actions.createCMReferral.severityCode',
+        message: 'Severity code is required for createCMReferral action',
+      })
+    }
+    if (!actions.createCMReferral.ownerDepartmentCode || actions.createCMReferral.ownerDepartmentCode.trim() === '') {
+      errors.push({
+        field: 'actions.createCMReferral.ownerDepartmentCode',
+        message: 'Owner department code is required for createCMReferral action',
       })
     }
   }
