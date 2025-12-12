@@ -195,7 +195,7 @@ export interface CreateTaskAction {
   units: number
   unitsUomCode: TaskUnitsUomCode
   calculationField: string
-  ownerDepartmentCode: string
+  ownerDepartmentCode?: string
   ownerUserId?: string
   description?: string
 }
@@ -219,7 +219,7 @@ export interface CreateAppealTaskAction {
   units: number
   unitsUomCode: TaskUnitsUomCode
   calculationField: string
-  ownerDepartmentCode: string
+  ownerDepartmentCode?: string
   ownerUserId?: string
   description?: string
 }

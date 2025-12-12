@@ -359,12 +359,6 @@ export const validateActions = (actions?: RuleActions): ValidationError[] => {
         message: 'Calculation field is required for createTask action',
       })
     }
-    if (!task.ownerDepartmentCode || task.ownerDepartmentCode.trim() === '') {
-      errors.push({
-        field: 'actions.createTask.ownerDepartmentCode',
-        message: 'Owner department code is required for createTask action',
-      })
-    }
   }
 
   // Validate createAppealTasks
@@ -410,12 +404,6 @@ export const validateActions = (actions?: RuleActions): ValidationError[] => {
           errors.push({
             field: `actions.createAppealTasks[${index}].calculationField`,
             message: `Calculation field is required for appeal task at index ${index}`,
-          })
-        }
-        if (!task.ownerDepartmentCode || task.ownerDepartmentCode.trim() === '') {
-          errors.push({
-            field: `actions.createAppealTasks[${index}].ownerDepartmentCode`,
-            message: `Owner department code is required for appeal task at index ${index}`,
           })
         }
       })

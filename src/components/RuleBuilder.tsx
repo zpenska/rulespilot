@@ -1074,7 +1074,6 @@ export default function RuleBuilder({ rule, onClose, onSave }: RuleBuilderProps)
                                 unitsUomCode: 'DAYS' as const,
                                 calculationField: 'REQUEST_DUE_DATE',
                                 priorityCode: '',
-                                ownerDepartmentCode: '',
                               },
                             })
                           } else {
@@ -1217,17 +1216,17 @@ export default function RuleBuilder({ rule, onClose, onSave }: RuleBuilderProps)
                         </div>
                         <div>
                           <label className="block text-xs font-medium text-gray-600 mb-1">
-                            Owner Department Code *
+                            Owner Department Code (Optional)
                           </label>
                           <input
                             type="text"
-                            value={actions.createTask.ownerDepartmentCode}
+                            value={actions.createTask.ownerDepartmentCode || ''}
                             onChange={(e) =>
                               setActions({
                                 ...actions,
                                 createTask: {
                                   ...actions.createTask!,
-                                  ownerDepartmentCode: e.target.value,
+                                  ownerDepartmentCode: e.target.value || undefined,
                                 },
                               })
                             }
@@ -1299,9 +1298,6 @@ export default function RuleBuilder({ rule, onClose, onSave }: RuleBuilderProps)
                                 units: 0,
                                 unitsUomCode: 'DAYS' as const,
                                 calculationField: 'REQUEST_DUE_DATE',
-                                ownerDepartmentCode: '',
-                                ownerUserId: undefined,
-                                description: undefined,
                               }],
                             })
                           }
@@ -1420,14 +1416,14 @@ export default function RuleBuilder({ rule, onClose, onSave }: RuleBuilderProps)
                               </div>
                               <div>
                                 <label className="block text-xs font-medium text-gray-600 mb-1">
-                                  Owner Department Code *
+                                  Owner Department Code (Optional)
                                 </label>
                                 <input
                                   type="text"
-                                  value={task.ownerDepartmentCode}
+                                  value={task.ownerDepartmentCode || ''}
                                   onChange={(e) => {
                                     const updated = [...actions.createAppealTasks!]
-                                    updated[index] = { ...updated[index], ownerDepartmentCode: e.target.value }
+                                    updated[index] = { ...updated[index], ownerDepartmentCode: e.target.value || undefined }
                                     setActions({ ...actions, createAppealTasks: updated })
                                   }}
                                   placeholder="e.g., DEPT1"
@@ -1498,9 +1494,6 @@ export default function RuleBuilder({ rule, onClose, onSave }: RuleBuilderProps)
                                   units: 0,
                                   unitsUomCode: 'DAYS' as const,
                                   calculationField: 'REQUEST_DUE_DATE',
-                                  ownerDepartmentCode: '',
-                                  ownerUserId: undefined,
-                                  description: undefined,
                                 },
                               ],
                             })
